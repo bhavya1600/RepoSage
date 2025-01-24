@@ -1,0 +1,12 @@
+# Ignore all Markdown files
+*.md
+
+# Ignore specific files
+analysis_results.json
+.env
+
+# Ignore Node.js modules directory
+node_modules/
+
+# Ignore .bolt file
+.bolt

@@ -1,0 +1,20 @@
+{
+  "name": "github-repo-analyzer",
+  "version": "1.0.0",
+  "description": "Analyze GitHub repositories using LLM",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "octokit": "^3.1.1",
+    "openai": "^4.20.1",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
