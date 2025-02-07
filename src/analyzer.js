@@ -168,7 +168,7 @@ async function smartFileFilter(files, projectUnderstanding) {
   const filePaths = files.map(f => f.path);
 
   try {
-    const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the project structure and identify essential files needed to understand this codebase.
+    const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the project structure and identify essential files needed to understand this codebase. Ignore .md files.
 Project Type Analysis:
 ${projectUnderstanding}
 
@@ -184,8 +184,9 @@ DO NOT use Markdown formatting or any additional explanation.`;
       temperature: 0.2,
       max_tokens: 2000
     });
-    await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
 
+    await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
+    
     // Clean the response and handle markdown formatting
     const rawResponse = response.choices[0].message.content;
     const cleanedResponse = rawResponse
@@ -257,7 +258,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
 
   Analyze this code file (${filePath}) and provide a clear, human-readable explanation of its key functionality and role. Focus on:
     1. Main purpose and responsibilities
-    2. Key functions and their purposes
+    2. Key functions and their purposes (Format: This function expects these inputs, their datatypes, does this processing and then returns/ outputs this data and its datatype)
     3. Important interactions with other parts of the system
     4. Notable features or patterns
 
@@ -279,8 +280,10 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   File tree:
   ${fileList}
   
-  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. Include:
+  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. Format template:
     {
+      "name": "",
+      "path": "",
       "imports": [],
       "mainPurpose": "",
       "type": "",
@@ -291,7 +294,11 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     }
 
     Code:
-    ${content}`;
+    ${content}
+    
+    Reply only with JSON data so we can read it using (given metadataResponse is your response.): jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content)
+    DO NOT use Markdown formatting or any additional explanation.
+    `;
 
   const metadataResponse = await openai.chat.completions.create({
     model: "gpt-4o-mini-2024-07-18",
@@ -299,19 +306,20 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     temperature: 0.3,
     max_tokens: 2000
   });
+
+  console.log(metadataResponse.choices[0].message.content);
+
+  // let jsonMetadata;
+  // try {
+  //   jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content);
+  // } catch (error) {
+  //   jsonMetadata = { error: 'Failed to parse JSON metadata' };
+  // }
+  await saveApiCallContent("analyzeCode - metadata", metadataResponse.choices[0].message.content); // Save API response
   
-
-  let jsonMetadata;
-  try {
-    jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content);
-  } catch (error) {
-    jsonMetadata = { error: 'Failed to parse JSON metadata' };
-  }
-  await saveApiCallContent("analyzeCode - metadata", jsonMetadata); // Save API response
-
   return {
     textAnalysis: analysisResponse.choices[0].message.content,
-    jsonMetadata
+    jsonMetadata: metadataResponse.choices[0].message.content
   };
 }
 

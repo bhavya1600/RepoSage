@@ -5,10 +5,11 @@ export async function saveToFile(filename, analysis) {
   const repoUrl = `https://github.com/${analysis.repository.owner.login}/${analysis.repository.name}`;
   const branch = analysis.repository.default_branch;
 
-  // Function to create GitHub file link with proper URL encoding
+  // Updated: Remove leading "root/" from file paths before encoding.
   const createGitHubLink = (filePath) => {
-    const encodedPath = filePath.split('/').map(part => encodeURIComponent(part)).join('/');
-    return `[${filePath}](${repoUrl}/blob/${branch}/${encodedPath})`;
+    const cleanPath = filePath.replace(/^root\/?/, '');
+    const encodedPath = cleanPath.split('/').map(part => encodeURIComponent(part)).join('/');
+    return `[${cleanPath}](${repoUrl}/blob/${branch}/${encodedPath})`;
   };
 
   // Save the main markdown analysis with clean, human-readable format
@@ -53,8 +54,15 @@ ${analysis.summary}`;
   await writeFile(jsonFilename, JSON.stringify(jsonContent, null, 2), 'utf8');
 }
 
-function formatFileTree(node, indent, repoUrl, branch) {
+function formatFileTree(node, indent, repoUrl, branch, parentPath = '') {
   let result = '';
+  // If this is the top-level "root", use an empty path; otherwise, accumulate normally.
+  const currentPath =
+    parentPath === '' && node.name === 'root'
+      ? ''
+      : parentPath
+      ? `${parentPath}/${node.name}`
+      : node.name;
   
   if (node.type === 'directory') {
     if (node.name !== 'root') {
@@ -62,14 +70,17 @@ function formatFileTree(node, indent, repoUrl, branch) {
     }
     
     const childIndent = node.name === 'root' ? indent : indent + '&nbsp;&nbsp;&nbsp;&nbsp;';
-    for (const [name, child] of Object.entries(node.children)) {
-      result += formatFileTree(child, childIndent, repoUrl, branch);
+    for (const child of Object.values(node.children)) {
+      result += formatFileTree(child, childIndent, repoUrl, branch, currentPath);
     }
   } else {
-    // Create full path by combining parent directories
-    let fullPath = getFullPath(node);
-    // Encode the full path for the URL
-    const encodedPath = fullPath.split('/').map(part => encodeURIComponent(part)).join('/');
+    // Use node.path if available; otherwise use the accumulated currentPath
+    let fullPath = node.path || currentPath;
+    fullPath = fullPath.replace(/^root\/?/, '');
+    const encodedPath = fullPath
+      .split('/')
+      .map(part => encodeURIComponent(part))
+      .join('/');
     result += `${indent}📄 [${node.name}](${repoUrl}/blob/${branch}/${encodedPath})\n`;
   }
   
@@ -77,14 +88,16 @@ function formatFileTree(node, indent, repoUrl, branch) {
 }
 
 function getFullPath(node) {
+  // Use the full path if available
+  if (node.path) return node.path;
+  
+  // Fallback: reconstruct the path using parent references
   let path = [];
   let current = node;
-  
-  // Traverse up the tree to build the full path
   while (current && current.name !== 'root') {
     path.unshift(current.name);
     current = current.parent;
   }
-  
-  return path.join('/');
+  // Updated: Remove leading "root/" if present.
+  return path.join('/').replace(/^root\/?/, '');
 }
