@@ -19,16 +19,19 @@ Name: ${analysis.repository.name}
 Description: ${analysis.repository.description}
 Primary Language: ${analysis.repository.language}
 
+## Project Understanding
+${analysis.projectUnderstanding}
+
 ## Project Structure
 ${formatFileTree(analysis.fileTree, '', repoUrl, branch)}
+
+## Call Hierarchy
+${analysis.callHierarchy}
 
 ## File Analyses
 ${analysis.fileAnalysis.map(file => `
 ### ${createGitHubLink(file.path)}
 ${file.analysis}`).join('\n')}
-
-## Call Hierarchy
-${analysis.callHierarchy}
 
 ## Summary
 ${analysis.summary}`;

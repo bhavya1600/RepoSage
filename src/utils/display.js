@@ -8,20 +8,20 @@ export function displayResults(analysis) {
   console.log(`Description: ${analysis.repository.description}`);
   console.log(`Language: ${analysis.repository.language}`);
 
+  console.log(chalk.bold('\n📋 Summary:'));
+  console.log(analysis.summary);
+
   console.log(chalk.bold('\n🌳 Project Structure:'));
   displayFileTree(analysis.fileTree, '');
+
+  console.log(chalk.bold('\n🔄 Call Hierarchy:'));
+  console.log(analysis.callHierarchy);
 
   console.log(chalk.bold('\n📝 File Analyses:'));
   for (const file of analysis.fileAnalysis) {
     console.log(chalk.bold(`\n${file.path}:`));
     console.log(file.analysis);
   }
-
-  console.log(chalk.bold('\n🔄 Call Hierarchy:'));
-  console.log(analysis.callHierarchy);
-
-  console.log(chalk.bold('\n📋 Summary:'));
-  console.log(analysis.summary);
 
   console.log(chalk.bold('\n💾 Output Files:'));
   console.log('- analysis_results.md (Human-readable analysis)');

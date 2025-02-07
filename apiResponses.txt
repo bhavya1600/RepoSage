@@ -1,0 +1,2465 @@
+----- analyzeProjectStructure -----
+The `ollama_pdf_rag` repository is a project designed to facilitate interaction with PDF documents through a local Retrieval Augmented Generation (RAG) application using Ollama and LangChain. Below is a concise analysis of its file structure, main components, tech stack, and architecture:
+
+### Main Components
+1. **Source Code (`src/`)**:
+   - **App (`src/app/`)**: Contains the Streamlit application files, including UI components for chat, PDF viewing, and sidebar controls.
+   - **Core Functionality (`src/core/`)**: Implements the main logic of the application, including document processing, vector embeddings, and the RAG pipeline.
+
+2. **Data Storage (`data/`)**:
+   - Stores PDFs and vector database files, allowing the application to manage document inputs and retrieval efficiently.
+
+3. **Notebooks (`notebooks/`)**:
+   - Contains Jupyter notebooks for experimentation and testing various functionalities of the RAG pipeline.
+
+4. **Tests (`tests/`)**:
+   - Includes unit tests for different components of the application, ensuring code reliability and correctness.
+
+5. **Documentation (`docs/`)**:
+   - Comprehensive documentation covering API references, development guidelines, installation instructions, and user guides.
+
+6. **Configuration and CI/CD (`.github/`)**:
+   - Contains GitHub workflows for continuous integration, issue templates, and pre-commit hooks for maintaining code quality.
+
+### Tech Stack
+- **Programming Language**: Python
+- **Frameworks**: 
+  - **Streamlit**: For building the web interface.
+  - **LangChain**: For implementing the RAG functionality.
+- **Libraries**: 
+  - `pdfplumber` for PDF processing.
+  - `chromadb` for managing vector databases.
+- **Environment Management**: Uses a virtual environment (`venv`) for dependency management.
+
+### Architecture
+- **Local Processing**: The application is designed to run entirely on the user's machine, ensuring data privacy.
+- **RAG Implementation**: Combines document retrieval and generative capabilities to allow users to interact with PDFs through a chat interface.
+- **User Interface**: Streamlit provides a clean and intuitive interface for users to upload PDFs, select models, and engage in conversations with the content of the documents.
+- **Testing and Quality Assurance**: The project employs unit tests and CI/CD practices to maintain high code quality and reliability.
+
+### Summary
+Overall, the `ollama_pdf_rag` project is a well-structured application that leverages modern Python libraries and frameworks to provide a robust solution for interacting with PDF documents using advanced AI techniques. The clear separation of concerns in its architecture facilitates easy maintenance and scalability.
+
+----- smartFileFilter -----
+[
+    "README.md",
+    "requirements.txt",
+    "run.py",
+    "src/app/main.py",
+    "src/core/rag.py",
+    "tests/test_rag.py",
+    "docs/getting-started/installation.md",
+    "docs/user-guide/chat-interface.md"
+]
+
+----- analyzeCode - analysis -----
+The `README.md` file serves as the primary documentation for the "Ollama PDF RAG" project, providing essential information about its functionality, setup, and usage. Below is a detailed analysis of its key aspects:
+
+### 1. Main Purpose and Responsibilities
+The main purpose of the project is to create a local Retrieval Augmented Generation (RAG) application that allows users to interactively chat with PDF documents. It leverages the capabilities of **Ollama** and **LangChain** to process and retrieve information from PDFs, enabling users to ask questions and receive contextually relevant answers. The project includes both a user-friendly Streamlit web interface for direct interaction and Jupyter notebooks for experimentation and development.
+
+### 2. Key Functions and Their Purposes
+- **Local Processing**: The application processes data locally, ensuring that no sensitive information leaves the user's machine.
+- **PDF Processing**: It intelligently chunks PDF documents for better retrieval and understanding.
+- **Multi-Query Retrieval**: This feature enhances context understanding by allowing the system to handle multiple queries effectively.
+- **RAG Implementation**: The project employs an advanced RAG pipeline using LangChain, which integrates the retrieval of information with generative capabilities.
+- **User Interface**: The Streamlit interface provides an intuitive way for users to upload PDFs, select models, and interact with the document through a chat interface.
+
+### 3. Important Interactions with Other Parts of the System
+- **Source Code Structure**: The `src` directory contains the core functionality and the Streamlit application. Key components include:
+  - **Core Functionality**: Modules like `document.py`, `embeddings.py`, `llm.py`, and `rag.py` handle document processing, vector embeddings, and the RAG pipeline.
+  - **Streamlit Application**: The `app` directory contains UI components such as `chat.py`, `pdf_viewer.py`, and `sidebar.py`, which manage user interactions and display.
+- **Data Storage**: The `data` directory is used for storing PDF documents and vector databases, which are essential for the retrieval process.
+- **Testing and Documentation**: The `tests` directory contains unit tests to ensure code quality, while the `docs` directory provides additional documentation for users and developers.
+
+### 4. Notable Features or Patterns
+- **Video Tutorial**: A video tutorial link is provided, which is helpful for users who prefer visual guidance.
+- **
+
+----- analyzeCode - metadata -----
+Based on the provided README.md content, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [
+    "ollama",
+    "streamlit",
+    "pdfplumber",
+    "langchain",
+    "langchain-core",
+    "langchain-ollama",
+    "chromadb"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "run",
+      "purpose": "Runs the Streamlit application.",
+      "input": "None",
+      "output": "Streamlit web interface for interacting with PDFs."
+    },
+    {
+      "name": "upload_pdf",
+      "purpose": "Handles PDF uploads in the Streamlit interface.",
+      "input": "PDF file",
+      "output": "Processed PDF for interaction."
+    },
+    {
+      "name": "ask_question",
+      "purpose": "Facilitates querying the PDF content.",
+      "input": "User question",
+      "output": "Response based on PDF content."
+    }
+  ],
+  "dependencies": [
+    "ollama==0.4.4",
+    "streamlit==1.40.0",
+    "pdfplumber==0.11.4",
+    "langchain==0.1.20",
+    "langchain-core==0.1.53",
+    "langchain-ollama==0.0.2",
+    "chromadb==0.4.22"
+  ],
+  "mainPurpose": "To enable users to interact with and query PDF documents locally using a chat interface.",
+  "type": "Python application",
+  "finalReturnType(s)": "Streamlit application interface and Jupyter notebook for experimentation."
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: Lists the libraries that are imported and used in the application.
+- **exports**: Currently empty as no specific exports are mentioned in the README.
+- **functions**: Contains a list of key functions with their names, purposes, inputs, and outputs.
+- **dependencies**: Lists the required packages along with their versions.
+- **mainPurpose**: Describes the primary goal of the application.
+- **type**: Indicates the programming language and nature of the application.
+- **finalReturnType(s)**: Describes what the application ultimately provides to the user (the Streamlit interface and Jupyter notebook).
+
+----- analyzeCode - analysis -----
+The `docs/getting-started/installation.md` file serves as an installation guide for the "Ollama PDF RAG" project. It provides users with step-by-step instructions on how to set up the application on their systems, ensuring they have the necessary prerequisites and dependencies to run the software effectively. Here’s a breakdown of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this document is to facilitate the installation process of the "Ollama PDF RAG" application. It outlines the necessary steps to ensure that users can successfully install and run the application on their local machines. The guide is structured to cater to users with varying levels of technical expertise, providing clear instructions for each step of the installation process.
+
+### 2. Key Functions and Their Purposes
+- **Prerequisites Section**: This section lists the essential software and tools required before installation, including Python, pip, git, and the Ollama application. It ensures users are prepared with the right environment.
+  
+- **Installing Ollama**: Instructions are provided for downloading and installing the Ollama application, along with commands to pull the necessary models. This step is crucial as the application relies on these models for its functionality.
+
+- **Installing Ollama PDF RAG**: This section details the cloning of the repository and setting up a virtual environment, which is a best practice for Python projects. It isolates dependencies and avoids conflicts with other projects.
+
+- **Verifying Installation**: Users are guided on how to start the application and access it via a web browser, confirming that the installation was successful.
+
+- **Troubleshooting**: Common issues that users might encounter during installation are addressed, with potential solutions provided. This proactive approach helps users resolve problems without needing extensive technical support.
+
+### 3. Important Interactions with Other Parts of the System
+- The installation guide interacts with the broader project by linking to other documentation, such as the Quick Start Guide and User Guide. This ensures that after installation, users have clear pathways to learn how to use the application effectively.
+  
+- The guide also emphasizes the need for the Ollama application and its models, indicating that the functionality of the "Ollama PDF RAG" project is dependent on these external components.
+
+### 4. Notable Features or Patterns
+- **Clear Structure**: The document is organized into distinct sections, making it easy for users to follow along. Each section is clearly labeled, and steps are
+
+----- analyzeCode - metadata -----
+Based on the provided installation guide for Ollama PDF RAG, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [],
+  "exports": [],
+  "functions": [],
+  "dependencies": [
+    "Python 3.9 or higher",
+    "pip",
+    "git",
+    "Ollama",
+    "requirements.txt"
+  ],
+  "mainPurpose": "To guide users in installing and setting up Ollama PDF RAG on their systems.",
+  "type": "Installation Guide",
+  "finalReturnType(s)": "None"
+}
+```
+
+### Explanation:
+- **imports**: No specific imports are mentioned in the installation guide as it is not a code file but a documentation file.
+- **exports**: No exports are mentioned.
+- **functions**: There are no specific functions defined in the document since it is a guide rather than a code implementation.
+- **dependencies**: Lists the required software and files needed for installation.
+- **mainPurpose**: Describes the overall goal of the document.
+- **type**: Indicates that this is an installation guide.
+- **finalReturnType(s)**: Since this is not a code file, it does not have a return type.
+
+----- analyzeCode - analysis -----
+The `docs/user-guide/chat-interface.md` file serves as a comprehensive guide for users of the Streamlit-based chat interface within the Ollama PDF RAG (Retrieval-Augmented Generation) project. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this document is to provide users with clear instructions on how to effectively use the chat interface designed for interacting with PDF documents. It outlines the features of the interface, guides users through the process of uploading PDFs, selecting models, and engaging in chat, while also offering tips for optimal use.
+
+### 2. Key Functions and Their Purposes
+- **PDF Upload**: Users can drag and drop PDF files into the interface, allowing for easy and flexible document management. The interface supports multiple file uploads, although there are file size limitations.
+  
+- **Model Selection**: Users can choose from various Ollama models, view their status, and switch between them as needed. This functionality allows users to tailor the chat experience based on their requirements.
+
+- **Chat Window**: The chat window facilitates real-time communication, displaying message history and providing source citations for responses. Users can clear the conversation for a fresh start.
+
+- **PDF Viewer**: This feature allows users to navigate through the uploaded PDF, zoom in and out, and highlight relevant sections, enhancing the interaction between the chat and the document.
+
+### 3. Important Interactions with Other Parts of the System
+The chat interface interacts closely with:
+- **PDF Processing**: The ability to upload and view PDFs indicates that the system has underlying functionality to process and extract information from these documents, likely utilizing the `src/core/document.py` and related modules.
+  
+- **Model Management**: The model selection feature suggests integration with the model management components, possibly involving `src/core/llm.py` for handling language models and their responses.
+
+- **User Interface Components**: The chat window and PDF viewer are likely implemented as part of the Streamlit app, utilizing components defined in `src/app/components/*.py` files, such as `chat.py` and `pdf_viewer.py`.
+
+### 4. Notable Features or Patterns
+- **User-Centric Design**: The guide emphasizes ease of use with features like drag-and-drop for PDFs and real-time chat, making it accessible for users with varying technical skills.
+
+- **Performance and Troubleshooting Tips**: The inclusion of performance monitoring and troubleshooting advice indicates a
+
+----- analyzeCode - metadata -----
+Based on the provided content from the `docs/user-guide/chat-interface.md`, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [],
+  "exports": [],
+  "functions": [
+    {
+      "name": "uploadPDF",
+      "purpose": "Allows users to upload PDF files for interaction.",
+      "input": "PDF file(s)",
+      "output": "Confirmation of upload and display in PDF viewer"
+    },
+    {
+      "name": "selectModel",
+      "purpose": "Enables users to choose an Ollama model for chat.",
+      "input": "Model selection input",
+      "output": "Selected model status and readiness for chat"
+    },
+    {
+      "name": "sendMessage",
+      "purpose": "Handles sending messages in the chat window.",
+      "input": "User's message",
+      "output": "Response from the model"
+    },
+    {
+      "name": "clearChat",
+      "purpose": "Clears the chat history for a fresh start.",
+      "input": "None",
+      "output": "Empty chat window"
+    },
+    {
+      "name": "navigatePDF",
+      "purpose": "Allows users to navigate through the PDF pages.",
+      "input": "Page number or navigation command",
+      "output": "Display of the specified page in the PDF viewer"
+    }
+  ],
+  "dependencies": [],
+  "mainPurpose": "To provide a user-friendly interface for interacting with PDFs and chat models.",
+  "type": "User Interface Documentation",
+  "finalReturnType(s)": "User interactions and responses from the chat model"
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: This field is empty as there are no specific imports mentioned in the document.
+- **exports**: This field is also empty as there are no exports specified.
+- **functions**: This section outlines hypothetical functions based on the features described in the document, including their names, purposes, inputs, and outputs.
+- **dependencies**: This field is empty as there are no dependencies mentioned.
+- **mainPurpose**: A brief description of the primary goal of the chat interface.
+- **type**: Indicates that this document is a user interface guide.
+- **finalReturnType(s)**: Describes the expected outcomes of using the chat interface.
+
+----- analyzeCode - analysis -----
+The `run.py` script serves as the entry point for launching a Streamlit application that is part of a larger project. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of `run.py` is to execute the Streamlit application defined in `src/app/main.py`. It checks for the existence of the application file and then uses the `subprocess` module to run the Streamlit server. This script is crucial for users or developers who want to start the application easily without needing to navigate to the specific directory or manually run the Streamlit command.
+
+### 2. Key Functions and Their Purposes
+- **`main()`**: This is the main function of the script. Its responsibilities include:
+  - Defining the path to the Streamlit application (`src/app/main.py`).
+  - Checking if the application file exists. If it does not, it prints an error message and exits the script with a non-zero status code.
+  - Attempting to run the Streamlit application using the `subprocess.run()` method. If the command fails (for example, if Streamlit is not installed or there are errors in the application), it catches the exception and prints an error message before exiting.
+
+### 3. Important Interactions with Other Parts of the System
+- **File Path Handling**: The script uses `Path` from the `pathlib` module to construct the file path for the Streamlit application. This approach is more robust and cross-platform compared to using string paths directly.
+- **Subprocess Interaction**: The script interacts with the system shell through the `subprocess` module, which allows it to run external commands (in this case, the Streamlit command). This interaction is crucial for launching the Streamlit server and is a common pattern in Python scripts that need to execute shell commands.
+
+### 4. Notable Features or Patterns
+- **Error Handling**: The script includes basic error handling for both file existence and subprocess execution. This is important for user experience, as it provides clear feedback about what went wrong if the application fails to start.
+- **Modular Design**: By separating the main functionality into a `main()` function and using the `if __name__ == "__main__":` construct, the script is designed to be both executable as a standalone script and importable as a module without executing the main function. This is a common best practice in Python
+
+----- analyzeCode - metadata -----
+Based on the provided code, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [
+    "subprocess",
+    "sys",
+    "pathlib.Path"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "main",
+      "purpose": "Run the Streamlit application.",
+      "input": "",
+      "output": "None"
+    }
+  ],
+  "dependencies": [
+    "streamlit"
+  ],
+  "mainPurpose": "To run a Streamlit application located at src/app/main.py.",
+  "type": "script",
+  "finalReturnType(s)": "None"
+}
+``` 
+
+### Explanation:
+- **imports**: Lists the modules imported in the script.
+- **exports**: There are no exports in this script.
+- **functions**: Describes the `main` function, including its purpose, input, and output.
+- **dependencies**: Indicates that the script depends on the `streamlit` package to run the application.
+- **mainPurpose**: Summarizes the main objective of the script.
+- **type**: Classifies the script as a standalone script.
+- **finalReturnType(s)**: Indicates that the script does not return any value (None).
+
+----- analyzeCode - analysis -----
+The `src/app/main.py` file is the core of a Streamlit application designed for PDF-based Retrieval-Augmented Generation (RAG) using the Ollama and LangChain frameworks. Below is a detailed analysis of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this application is to allow users to upload PDF documents, process them, and interact with the content using a language model. Users can ask questions about the uploaded PDF, and the application retrieves relevant information based on the document's content. The application leverages RAG techniques to enhance the interaction by combining document retrieval with language model capabilities.
+
+### 2. Key Functions and Their Purposes
+- **`extract_model_names(models_info: Any) -> Tuple[str, ...]`**: This function extracts and returns the names of available language models from the Ollama API response. It handles different response formats and logs the process.
+
+- **`create_vector_db(file_upload) -> Chroma`**: This function creates a vector database from the uploaded PDF file. It saves the PDF temporarily, loads its content, splits it into manageable chunks, and generates embeddings using the Ollama embeddings model. The resulting vector database is stored persistently.
+
+- **`process_question(question: str, vector_db: Chroma, selected_model: str) -> str`**: This function processes a user’s question by querying the vector database and using the selected language model to generate a response. It constructs a prompt for the model, retrieves relevant documents, and formats the final answer.
+
+- **`extract_all_pages_as_images(file_upload) -> List[Any]`**: This function extracts all pages from the uploaded PDF as images, which can be displayed in the Streamlit interface.
+
+- **`delete_vector_db(vector_db: Optional[Chroma]) -> None`**: This function deletes the vector database and clears related session state variables, ensuring that users can start fresh if needed.
+
+- **`main() -> None`**: The main function orchestrates the entire application. It sets up the Streamlit interface, handles user interactions (like file uploads and model selection), and manages the chat interface for user queries.
+
+### 3. Important Interactions with Other Parts of the System
+- **Integration with LangChain and Ollama**: The application utilizes various components from the LangChain library, such as document loaders, embeddings, and retrievers. It interacts with the Ollama API to list available
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information derived from the provided code:
+
+```json
+{
+  "imports": [
+    "streamlit as st",
+    "logging",
+    "os",
+    "tempfile",
+    "shutil",
+    "pdfplumber",
+    "ollama",
+    "warnings",
+    "langchain_community.document_loaders.UnstructuredPDFLoader",
+    "langchain_ollama.OllamaEmbeddings",
+    "langchain_text_splitters.RecursiveCharacterTextSplitter",
+    "langchain_community.vectorstores.Chroma",
+    "langchain.prompts.ChatPromptTemplate",
+    "langchain.prompts.PromptTemplate",
+    "langchain_core.output_parsers.StrOutputParser",
+    "langchain_ollama.ChatOllama",
+    "langchain_core.runnables.RunnablePassthrough",
+    "langchain.retrievers.multi_query.MultiQueryRetriever",
+    "typing.List",
+    "typing.Tuple",
+    "typing.Dict",
+    "typing.Any",
+    "typing.Optional"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "extract_model_names",
+      "purpose": "Extract model names from the provided models information.",
+      "input": "models_info: Any",
+      "output": "Tuple[str, ...]"
+    },
+    {
+      "name": "create_vector_db",
+      "purpose": "Create a vector database from an uploaded PDF file.",
+      "input": "file_upload (st.UploadedFile)",
+      "output": "Chroma"
+    },
+    {
+      "name": "process_question",
+      "purpose": "Process a user question using the vector database and selected language model.",
+      "input": "question (str), vector_db (Chroma), selected_model (str)",
+      "output": "str"
+    },
+    {
+      "name": "extract_all_pages_as_images",
+      "purpose": "Extract all pages from a PDF file as images.",
+      "input": "file_upload (st.UploadedFile)",
+      "output": "List[Any]"
+    },
+    {
+      "name": "delete_vector_db",
+      "purpose": "Delete the vector database and clear related session state.",
+      "input": "vector_db (Optional[Chroma])",
+      "output": "None"
+    },
+    {
+      "name": "main",
+      "purpose": "Main function to run the Streamlit application.",
+     
+
+----- analyzeCode - analysis -----
+The `rag.py` file implements a Retrieval Augmented Generation (RAG) pipeline, which is a sophisticated approach to enhance the capabilities of language models by integrating them with external data sources. Below is a detailed analysis of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `RAGPipeline` class is to manage the RAG process, which combines retrieval of relevant information from a vector database with the generative capabilities of a language model (LLM). This allows the system to provide contextually relevant answers to user queries by retrieving pertinent documents or data before generating a response.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, vector_db: Any, llm_manager: LLMManager)`**: 
+  - This is the constructor for the `RAGPipeline` class. It initializes the pipeline with a vector database and an LLM manager. It also sets up the retriever and the processing chain.
+  
+- **`_setup_retriever(self) -> MultiQueryRetriever`**:
+  - This private method configures a `MultiQueryRetriever` using the vector database and the language model. It retrieves relevant documents based on the queries provided to the LLM. If any error occurs during setup, it logs the error and raises an exception.
+
+- **`_setup_chain(self) -> Any`**:
+  - This private method establishes the processing chain that combines the context retrieved by the retriever with the question input. It utilizes the LLM and an output parser to format the response. Similar to `_setup_retriever`, it logs errors and raises exceptions if issues arise.
+
+- **`get_response(self, question: str) -> str`**:
+  - This public method is the main interface for users to query the RAG pipeline. It takes a question as input, retrieves relevant context, and generates a response using the configured chain. It logs the question being processed and handles any exceptions that may occur during the response generation.
+
+### 3. Important Interactions with Other Parts of the System
+- **Interaction with `LLMManager`**: The `RAGPipeline` relies heavily on the `LLMManager` class to manage the language model and provide necessary prompts for both retrieval and generation. This indicates a modular design where the language model's configuration and behavior are encapsulated within the `LLMManager`.
+  
+- **Integration with `MultiQueryRetriever`
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information about the provided code file `src/core/rag.py`:
+
+```json
+{
+  "imports": [
+    "logging",
+    "Any",
+    "Dict",
+    "RunnablePassthrough",
+    "StrOutputParser",
+    "MultiQueryRetriever",
+    "LLMManager"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "__init__",
+      "purpose": "Initializes the RAGPipeline with a vector database and LLM manager.",
+      "input": "vector_db: Any, llm_manager: LLMManager",
+      "output": "None"
+    },
+    {
+      "name": "_setup_retriever",
+      "purpose": "Sets up the multi-query retriever from the vector database and LLM manager.",
+      "input": "None",
+      "output": "MultiQueryRetriever"
+    },
+    {
+      "name": "_setup_chain",
+      "purpose": "Sets up the RAG chain using the retriever and LLM manager.",
+      "input": "None",
+      "output": "Any"
+    },
+    {
+      "name": "get_response",
+      "purpose": "Gets a response for a given question using the RAG pipeline.",
+      "input": "question: str",
+      "output": "str"
+    }
+  ],
+  "dependencies": [
+    "langchain_core.runnables",
+    "langchain_core.output_parsers",
+    "langchain.retrievers.multi_query",
+    "src/core/llm"
+  ],
+  "mainPurpose": "Implements a Retrieval Augmented Generation (RAG) pipeline for generating responses based on retrieved information.",
+  "type": "Class",
+  "finalReturnType(s)": "str"
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: Lists all the modules and classes imported in the file.
+- **exports**: Currently empty as there are no explicit exports defined in the file.
+- **functions**: Contains an array of objects, each representing a method in the `RAGPipeline` class, detailing their names, purposes, inputs, and outputs.
+- **dependencies**: Lists the external modules that the code relies on.
+- **mainPurpose**: Describes the overall functionality of the `RAGPipeline` class.
+- **type**: Indicates that the primary structure in the file is a class.
+-
+
+----- analyzeCode - analysis -----
+The provided code is a unit test suite for the `RAGPipeline` class, which is part of a system that implements a Retrieval-Augmented Generation (RAG) approach. This test suite is designed to validate the functionality and reliability of the RAG pipeline, ensuring that it behaves as expected under various conditions. Below is a detailed analysis of the code based on the specified focus areas:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `TestRAGPipeline` class is to verify the correctness of the `RAGPipeline` implementation. This includes testing the setup of the retriever and chain components, as well as the response generation functionality. The tests ensure that the pipeline can handle various types of input, including normal questions, empty strings, long questions, and questions with special characters. Additionally, the tests check for proper error handling and resource management.
+
+### 2. Key Functions and Their Purposes
+- **`setUp(self)`**: This method is called before each test case. It initializes the necessary mock objects and patches dependencies to isolate the `RAGPipeline` from external components. This setup includes creating mocks for the vector database and LLM manager, as well as patching the `MultiQueryRetriever` and `RunnablePassthrough` classes.
+  
+- **`tearDown(self)`**: This method is called after each test case to clean up any patches that were applied, ensuring that tests do not interfere with each other.
+
+- **`test_setup_retriever(self)`**: Verifies that the retriever is correctly set up by calling the `_setup_retriever` method and checking that the vector database's `as_retriever` method is called exactly once.
+
+- **`test_setup_chain(self)`**: Tests the setup of the chain by calling the `_setup_chain` method and ensuring it returns the expected mock chain.
+
+- **`test_get_response(self)`**: Tests the `get_response` method of the `RAGPipeline`, ensuring that it correctly invokes the chain with a question and returns the expected response.
+
+- **`test_get_response_empty_question(self)`**: Tests how the pipeline handles an empty question, ensuring it returns an empty string.
+
+- **`test_get_response_long_question(self)`**: Validates the pipeline's response to a very long question, ensuring it can handle large input sizes.
+
+- **`test_get_response_special_characters(self)`**: Checks the pipeline's ability to
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information extracted from the provided code file `tests/test_rag.py`:
+
+```json
+{
+  "imports": [
+    "unittest",
+    "unittest.mock.Mock",
+    "unittest.mock.patch",
+    "unittest.mock.MagicMock",
+    "src.core.rag.RAGPipeline",
+    "langchain_core.documents.Document",
+    "langchain.retrievers.multi_query.MultiQueryRetriever",
+    "langchain_core.output_parsers.StrOutputParser"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "setUp",
+      "purpose": "Set up test cases and mocks for RAGPipeline tests.",
+      "input": "",
+      "output": ""
+    },
+    {
+      "name": "tearDown",
+      "purpose": "Clean up patches after tests.",
+      "input": "",
+      "output": ""
+    },
+    {
+      "name": "test_setup_retriever",
+      "purpose": "Test the setup of the retriever in the RAG pipeline.",
+      "input": "",
+      "output": "retriever"
+    },
+    {
+      "name": "test_setup_chain",
+      "purpose": "Test the setup of the chain in the RAG pipeline.",
+      "input": "",
+      "output": "chain"
+    },
+    {
+      "name": "test_get_response",
+      "purpose": "Test getting a response from the RAG pipeline.",
+      "input": "question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_get_response_empty_question",
+      "purpose": "Test handling of an empty question.",
+      "input": "",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_get_response_long_question",
+      "purpose": "Test handling of a very long question.",
+      "input": "long_question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_get_response_special_characters",
+      "purpose": "Test handling of questions with special characters.",
+      "input": "special_question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_chain_error_handling",
+      "purpose": "Test error handling in the chain.",
+      "input": "question (str)",
+      "output": "raises Exception"
+   
+
+----- analyzeCallHierarchy -----
+Based on the provided project understanding and file metadata, we can outline the call hierarchy for the `ollama_pdf_rag` application. This hierarchy will illustrate how the application flows from the entry point through various files and functions, highlighting important function calls and dependencies between modules.
+
+### 1. Entry Point File
+The entry point for the application is likely `run.py`. This file typically serves as the starting point for executing the application and may initialize the Streamlit server.
+
+### 2. Main Execution Flow
+1. **`run.py`**:
+   - This file is responsible for starting the application. It likely imports the main application logic from `src/app/main.py` and initializes the Streamlit interface.
+   - **Function Call**: `app.run()`
+
+2. **`src/app/main.py`**:
+   - This file contains the Streamlit application code, including the UI components for chat, PDF viewing, and sidebar controls.
+   - **Function Calls**:
+     - `load_pdf()`: Loads the PDF document.
+     - `init_chat()`: Initializes the chat interface.
+     - `handle_user_input()`: Processes user input and interacts with the RAG pipeline.
+     - Calls to functions in `src/core/rag.py` for document processing and retrieval.
+
+3. **`src/core/rag.py`**:
+   - This file implements the core logic of the RAG pipeline, including document processing, vector embeddings, and retrieval.
+   - **Function Calls**:
+     - `process_document()`: Processes the uploaded PDF.
+     - `embed_vectors()`: Generates vector embeddings for the document.
+     - `retrieve_response()`: Retrieves relevant information based on user queries.
+     - These functions may call utility functions or classes from libraries like `pdfplumber` and `chromadb`.
+
+### 3. Important Function Calls Between Files
+- **From `run.py` to `src/app/main.py`**:
+  - `main.run()`: Starts the Streamlit application.
+  
+- **From `src/app/main.py` to `src/core/rag.py`**:
+  - `rag.process_document(pdf_file)`: Processes the uploaded PDF file.
+  - `rag.embed_vectors(document)`: Creates vector embeddings for the processed document.
+  - `rag.retrieve_response(user_query)`: Retrieves a response based on the user's query.
+
+### 4. Dependencies Between Modules
+- **`run.py`** depends on `src/app/main.py` for the application logic.
+- **`src/app/main.py`** depends on `src/core/rag.py` for core RAG functionality.
+- **`src/core/rag.py`** depends on external libraries like `pdfplumber` for PDF processing and `chromadb` for vector database management.
+
+### 5. Visual Mapping of Function Calls
+Here's a simplified visual representation of the function call hierarchy:
+
+```
+run.py
+  └── main.run()  ──> src/app/main.py
+                      ├── load_pdf()
+                      ├── init_chat()
+                      └── handle_user_input()
+                          └── rag.process_document(pdf_file) ──> src/core/rag.py
+                              ├── embed_vectors(document)
+                              └── retrieve_response(user_query)
+```
+
+### Summary
+The `ollama_pdf_rag` application starts execution from `run.py`, which initializes the Streamlit application defined in `src/app/main.py`. User interactions in the chat interface lead to calls to the core functionality implemented in `src/core/rag.py`, where document processing and retrieval occur. This structured flow ensures clear separation of concerns and modularity, making the application easier to maintain and extend.
+
+----- generateSummary -----
+### Project Summary: ollama_pdf_rag
+
+**Purpose and Functionality**:  
+The `ollama_pdf_rag` project is a demonstration of a Retrieval Augmented Generation (RAG) pipeline that allows users to interact with PDF documents through a chat interface. Users can upload PDFs and ask questions, receiving contextually relevant answers based on the content of the documents.
+
+**Tech Stack and Architecture**:  
+The project is built using Jupyter Notebook and employs the Streamlit framework for the user interface. It utilizes libraries such as `pdfplumber` for PDF processing and `chromadb` for managing vector embeddings and retrieval.
+
+**Key Components and Their Interactions**:
+1. **Entry Point**: The application starts from `run.py`, which initializes the Streamlit server.
+2. **Main Application Logic**: `src/app/main.py` handles the UI components, including chat and PDF viewing, and processes user inputs.
+3. **Core RAG Functionality**: `src/core/rag.py` implements the logic for document processing, vector embedding, and information retrieval based on user queries.
+
+**Notable Features**:
+- Users can upload PDFs and interact with them via a chat interface.
+- The application processes documents to create vector embeddings, enabling efficient retrieval of relevant information.
+- It supports a modular architecture, making it easy to maintain and extend.
+
+**Code Organization and Structure**:
+The project is organized into several key files:
+- `run.py`: Entry point for the application.
+- `src/app/main.py`: Contains the Streamlit application logic.
+- `src/core/rag.py`: Implements the core RAG functionalities.
+- The project also includes documentation and tests to support user onboarding and ensure code reliability.
+
+Overall, `ollama_pdf_rag` provides a user-friendly interface for engaging with PDF documents, leveraging advanced retrieval techniques to enhance user experience.
+
+----- analyzeProjectStructure -----
+The `ollama_pdf_rag` repository is a project designed to facilitate interaction with PDF documents using a local Retrieval Augmented Generation (RAG) pipeline, leveraging technologies such as Ollama and LangChain. Below is a concise analysis of its file structure, main components, tech stack, and architecture:
+
+### Main Components
+1. **Source Code (`src/`)**:
+   - **`app/`**: Contains the Streamlit application components, including:
+     - `chat.py`: Handles the chat interface.
+     - `pdf_viewer.py`: Manages PDF display functionality.
+     - `sidebar.py`: Provides sidebar controls for user interaction.
+     - `main.py`: The entry point for the Streamlit application.
+   - **`core/`**: Implements the core functionality of the application:
+     - `document.py`: Processes PDF documents.
+     - `embeddings.py`: Manages vector embeddings for document retrieval.
+     - `llm.py`: Sets up the language model.
+     - `rag.py`: Implements the RAG pipeline for enhanced document interaction.
+
+2. **Data Storage (`data/`)**:
+   - **`pdfs/`**: Directory for storing PDF files, including sample documents for testing and demonstration.
+   - **`vectors/`**: Storage for vector database files related to embeddings.
+
+3. **Notebooks (`notebooks/`)**:
+   - Contains Jupyter notebooks for experimentation with the RAG pipeline, allowing users to test and modify the code interactively.
+
+4. **Tests (`tests/`)**:
+   - Unit tests for various components of the application, ensuring code quality and functionality.
+
+5. **Documentation (`docs/`)**:
+   - Comprehensive user guides, API documentation, and development notes to assist users and contributors.
+
+### Tech Stack
+- **Programming Language**: Primarily Python, with Jupyter Notebooks for experimentation.
+- **Frameworks**:
+  - **Streamlit**: For building the web interface.
+  - **LangChain**: For implementing the RAG architecture.
+  - **Ollama**: For managing language models and embeddings.
+- **Libraries**:
+  - `pdfplumber`: For PDF processing.
+  - `chromadb`: For managing vector databases.
+
+### Architecture
+The project follows a modular architecture:
+- **Frontend**: Built using Streamlit, providing a user-friendly interface for interacting with PDFs and querying information.
+- **Backend**: The core logic is encapsulated in the `src/core/` directory, handling document processing, embeddings, and RAG functionality.
+- **Data Flow**: Users upload PDFs through the Streamlit interface, which are processed and stored in the `data/pdfs/` directory. The application retrieves relevant information using embeddings and the RAG pipeline, allowing users to chat with the content of the PDFs.
+
+### Summary
+Overall, the `ollama_pdf_rag` repository is structured to facilitate easy interaction with PDF documents through a local RAG pipeline, combining a clean user interface with robust backend processing capabilities. The use of modular components enhances maintainability and scalability, making it suitable for further development and experimentation.
+
+----- smartFileFilter -----
+[
+  "README.md",
+  "requirements.txt",
+  "src/app/main.py",
+  "src/core/document.py",
+  "src/core/embeddings.py",
+  "src/core/llm.py",
+  "src/core/rag.py",
+  "tests/test_document.py",
+  "tests/test_models.py",
+  "tests/test_rag.py",
+  "docs/getting-started/installation.md",
+  "docs/getting-started/quickstart.md"
+]
+
+----- analyzeCode - analysis -----
+The `README.md` file provides a comprehensive overview of the project, which is a local Retrieval Augmented Generation (RAG) application that allows users to interact with PDF documents through a chat interface. Below is a detailed analysis of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the project is to enable users to chat with PDF documents using a local setup that leverages the capabilities of Ollama and LangChain. This application allows for intelligent processing of PDF content, making it easier to extract information and interact with documents in a conversational manner. The project is designed to run entirely on the user's local machine, ensuring data privacy and security.
+
+### 2. Key Functions and Their Purposes
+- **Chat Interface**: The application provides a user-friendly chat interface through Streamlit, allowing users to ask questions about the content of the PDF documents they upload.
+- **PDF Processing**: The project includes functionality for processing PDF files, including intelligent chunking to manage large documents and facilitate retrieval.
+- **RAG Implementation**: The application employs an advanced RAG pipeline using LangChain, which enhances the context understanding of user queries by retrieving relevant information from the PDF.
+- **Experimentation with Jupyter Notebooks**: The inclusion of Jupyter notebooks allows developers and users to experiment with different models and techniques in a more interactive environment.
+
+### 3. Important Interactions with Other Parts of the System
+- **Source Code Structure**: The `src` directory contains the core functionality of the application, including modules for document processing (`document.py`), vector embeddings (`embeddings.py`), and the RAG pipeline (`rag.py`). The `app` directory holds the Streamlit application components, such as the chat interface and PDF viewer.
+- **Data Storage**: The `data` directory is used for storing PDF files and vector embeddings, which are crucial for the retrieval process. This separation of data and code enhances modularity.
+- **Testing Framework**: The project includes a `tests` directory with unit tests to ensure code quality and functionality. The README provides instructions for running these tests, indicating a focus on maintaining a robust codebase.
+- **Continuous Integration**: The project utilizes GitHub Actions for continuous integration, automatically running tests and verifying functionality on every push or pull request.
+
+### 4. Notable Features or Patterns
+- **Local Processing**: A significant feature is the emphasis on local processing, meaning that all data remains
+
+----- analyzeCode - metadata -----
+Based on the provided README.md content, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [
+    "streamlit",
+    "pdfplumber",
+    "langchain",
+    "langchain-core",
+    "langchain-ollama",
+    "chromadb"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "run",
+      "purpose": "Starts the Streamlit application.",
+      "input": "None",
+      "output": "Streamlit web interface"
+    },
+    {
+      "name": "upload_pdf",
+      "purpose": "Handles PDF uploads in the Streamlit interface.",
+      "input": "PDF file",
+      "output": "Processed PDF for interaction"
+    },
+    {
+      "name": "chat_with_pdf",
+      "purpose": "Facilitates conversation with the uploaded PDF.",
+      "input": "User queries",
+      "output": "Responses based on PDF content"
+    }
+  ],
+  "dependencies": [
+    "ollama==0.4.4",
+    "streamlit==1.40.0",
+    "pdfplumber==0.11.4",
+    "langchain==0.1.20",
+    "langchain-core==0.1.53",
+    "langchain-ollama==0.0.2",
+    "chromadb==0.4.22"
+  ],
+  "mainPurpose": "To provide a local RAG application for interacting with PDF documents using Ollama and LangChain.",
+  "type": "Web Application",
+  "finalReturnType(s)": "Responses to user queries based on PDF content"
+}
+```
+
+### Explanation:
+- **imports**: List of libraries that are likely imported based on the dependencies mentioned.
+- **exports**: No specific exports were mentioned in the README.
+- **functions**: Example functions that could be part of the application based on the described features.
+- **dependencies**: List of key dependencies required to run the application.
+- **mainPurpose**: A brief description of the main functionality of the project.
+- **type**: The type of application being developed.
+- **finalReturnType(s)**: Describes the output of the application when interacting with the PDF.
+
+----- analyzeCode - analysis -----
+The `installation.md` file serves as a comprehensive guide for users looking to set up the "Ollama PDF RAG" application on their systems. Here's a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `installation.md` file is to provide clear, step-by-step instructions for installing and configuring the Ollama PDF RAG application. It outlines the prerequisites, installation steps, and troubleshooting tips to ensure users can successfully set up the application and resolve common issues they might encounter during the installation process.
+
+### 2. Key Functions and Their Purposes
+- **Prerequisites Section**: This section lists the necessary software and tools that must be installed before proceeding with the installation. It ensures that users have the correct environment set up (Python version, pip, git, and Ollama).
+  
+- **Installing Ollama**: This part guides users on how to download and install the Ollama application, including how to pull the required models. It emphasizes the importance of having the correct models for the application to function properly.
+
+- **Installing Ollama PDF RAG**: This section provides detailed commands for cloning the repository, creating a virtual environment, and installing the necessary dependencies from the `requirements.txt` file. This is crucial for isolating the application’s dependencies and avoiding conflicts with other Python projects.
+
+- **Verifying Installation**: Instructions on how to start the application and access it via a web browser are provided here. This step is essential for confirming that the installation was successful and that the application is running as expected.
+
+- **Troubleshooting**: This section addresses common issues that users may face during installation, such as DLL errors and problems on CPU-only systems. It provides practical solutions, helping users to resolve these issues independently.
+
+### 3. Important Interactions with Other Parts of the System
+- **Dependencies**: The installation guide interacts with the `requirements.txt` file, which lists the Python packages required for the application to function. Installing these dependencies is a critical step in ensuring that the application has all the necessary libraries.
+
+- **Ollama Application**: The guide emphasizes the need to install the Ollama application and pull specific models. This indicates that the Ollama PDF RAG application relies on Ollama for its core functionalities, particularly in handling PDF processing and model inference.
+
+- **Next Steps**: The guide links to other documentation files, such as the Quick Start Guide and User Guide,
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information based on the provided installation guide for Ollama PDF RAG:
+
+```json
+{
+  "imports": [],
+  "exports": [],
+  "functions": [],
+  "dependencies": [
+    "Python 3.9 or higher",
+    "pip",
+    "git",
+    "Ollama",
+    "onnxruntime"
+  ],
+  "mainPurpose": "Guide to install and set up Ollama PDF RAG on a system.",
+  "type": "Installation Documentation",
+  "finalReturnType(s)": "N/A"
+}
+```
+
+### Explanation:
+- **imports**: No specific code imports are mentioned in the document.
+- **exports**: No specific code exports are mentioned in the document.
+- **functions**: The document does not define any functions; it is purely instructional.
+- **dependencies**: Lists the required software and libraries needed for installation.
+- **mainPurpose**: Summarizes the overall goal of the document.
+- **type**: Classifies the document as installation documentation.
+- **finalReturnType(s)**: Not applicable as there are no functions or code that return values.
+
+----- analyzeCode - analysis -----
+The `quickstart.md` file serves as a concise guide for users to quickly get up and running with the Ollama PDF RAG (Retrieval-Augmented Generation) application. Here’s a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of `quickstart.md` is to provide users with a straightforward, step-by-step guide to begin using the Ollama PDF RAG application. It outlines the necessary prerequisites, the process to start the application, and basic usage instructions. This document is particularly useful for new users who may not be familiar with the setup or functionality of the application.
+
+### 2. Key Functions and Their Purposes
+- **Prerequisites**: This section ensures that users have completed the necessary installation steps, started the Ollama service, and pulled the required models. It emphasizes the importance of these steps to ensure the application runs smoothly.
+  
+- **Starting the Application**: Instructions are provided for activating a virtual environment and starting the application using the command `python run.py`. This is crucial for setting up the environment in which the application will run.
+
+- **Basic Usage**: This section breaks down the core functionalities of the application:
+  - **Upload a PDF**: Users can upload their documents either through a file uploader or by using a sample PDF.
+  - **Select a Model**: Users can choose from locally available models, with `llama3.2` set as the default.
+  - **Ask Questions**: Users can interact with the application by typing questions related to the uploaded PDF, facilitating a conversational interface.
+  - **Adjust Display**: Users can modify the visibility of the PDF, enhancing the reading experience.
+  - **Clean Up**: Users are advised to clear the context when switching documents to avoid confusion.
+
+- **Example Usage**: This section provides a practical workflow example, illustrating how to interact with the application effectively.
+
+- **Tips**: Helpful suggestions are included to guide users on how to formulate questions and manage document context for better results.
+
+### 3. Important Interactions with Other Parts of the System
+- The guide references other documentation files, such as the installation guide and user guides for PDF processing, the RAG pipeline, and the chat interface. This interlinking indicates that `quickstart.md` is part of a broader documentation ecosystem, allowing users to delve deeper into specific functionalities as needed.
+
+- The instructions for pulling models (`ollama pull llama
+
+----- analyzeCode - metadata -----
+Based on the provided code file (docs/getting-started/quickstart.md), here is a JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [],
+  "exports": [],
+  "functions": [],
+  "dependencies": [
+    "Ollama service",
+    "llama3.2 model",
+    "nomic-embed-text model"
+  ],
+  "mainPurpose": "To provide a quick start guide for using the Ollama PDF RAG application.",
+  "type": "Documentation",
+  "finalReturnType(s)": "User instructions for using the application"
+}
+```
+
+### Explanation:
+- **imports**: There are no specific code imports mentioned in the document.
+- **exports**: There are no specific code exports mentioned in the document.
+- **functions**: The document does not define any functions in a programming sense, but it outlines steps and usage instructions.
+- **dependencies**: Lists the required services and models needed to run the application.
+- **mainPurpose**: Describes the overall goal of the document.
+- **type**: Indicates that this is a documentation file.
+- **finalReturnType(s)**: Describes what the user can expect to gain from following the instructions in the document.
+
+----- analyzeCode - analysis -----
+The provided code in `src/app/main.py` is a Streamlit application designed for Retrieval-Augmented Generation (RAG) using PDF documents. It integrates with the Ollama language model and the LangChain framework to allow users to upload PDF files, process their content, and interact with it through a chat interface. Here’s a detailed breakdown of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this application is to facilitate the retrieval and generation of information from PDF documents using a language model. Users can upload a PDF, which is then processed to create a vector database of its content. They can subsequently ask questions related to the document, and the application will generate responses based on the content of the PDF.
+
+### 2. Key Functions and Their Purposes
+- **extract_model_names(models_info: Any) -> Tuple[str, ...]**: This function extracts the names of available language models from the response received from the Ollama API. It handles different response formats and logs the extracted model names.
+
+- **create_vector_db(file_upload) -> Chroma**: This function takes an uploaded PDF file, processes it to create a vector database using the LangChain's Chroma vector store, and logs the process. It splits the document into manageable chunks and generates embeddings for them.
+
+- **process_question(question: str, vector_db: Chroma, selected_model: str) -> str**: This function processes a user’s question by querying the vector database and generating a response using the selected language model. It sets up a prompt template for generating alternative questions to improve retrieval accuracy.
+
+- **extract_all_pages_as_images(file_upload) -> List[Any]**: This function extracts all pages of the uploaded PDF as images, allowing for visual representation of the document within the application.
+
+- **delete_vector_db(vector_db: Optional[Chroma]) -> None**: This function deletes the vector database and clears the session state related to the uploaded PDF and its processed content.
+
+- **main()**: The main function that orchestrates the Streamlit application. It handles user interactions, manages the application state, and integrates all functionalities, including model selection, PDF upload, question processing, and displaying results.
+
+### 3. Important Interactions with Other Parts of the System
+- **Integration with LangChain**: The application utilizes various components from the LangChain framework, such as document loaders, text splitters, and vector stores, to handle PDF processing and
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information extracted from the provided code:
+
+```json
+{
+  "imports": [
+    "streamlit as st",
+    "logging",
+    "os",
+    "tempfile",
+    "shutil",
+    "pdfplumber",
+    "ollama",
+    "warnings",
+    "langchain_community.document_loaders.UnstructuredPDFLoader",
+    "langchain_ollama.OllamaEmbeddings",
+    "langchain_text_splitters.RecursiveCharacterTextSplitter",
+    "langchain_community.vectorstores.Chroma",
+    "langchain.prompts.ChatPromptTemplate",
+    "langchain.prompts.PromptTemplate",
+    "langchain_core.output_parsers.StrOutputParser",
+    "langchain_ollama.ChatOllama",
+    "langchain_core.runnables.RunnablePassthrough",
+    "langchain.retrievers.multi_query.MultiQueryRetriever",
+    "typing.List",
+    "typing.Tuple",
+    "typing.Dict",
+    "typing.Any",
+    "typing.Optional"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "extract_model_names",
+      "purpose": "Extract model names from the provided models information.",
+      "input": "models_info: Any",
+      "output": "Tuple[str, ...]"
+    },
+    {
+      "name": "create_vector_db",
+      "purpose": "Create a vector database from an uploaded PDF file.",
+      "input": "file_upload (st.UploadedFile)",
+      "output": "Chroma"
+    },
+    {
+      "name": "process_question",
+      "purpose": "Process a user question using the vector database and selected language model.",
+      "input": "question (str), vector_db (Chroma), selected_model (str)",
+      "output": "str"
+    },
+    {
+      "name": "extract_all_pages_as_images",
+      "purpose": "Extract all pages from a PDF file as images.",
+      "input": "file_upload (st.UploadedFile)",
+      "output": "List[Any]"
+    },
+    {
+      "name": "delete_vector_db",
+      "purpose": "Delete the vector database and clear related session state.",
+      "input": "vector_db (Optional[Chroma])",
+      "output": "None"
+    },
+    {
+      "name": "main",
+      "purpose": "Main function to run the Streamlit application.",
+     
+
+----- analyzeCode - analysis -----
+The `src/core/document.py` file is responsible for handling the loading and processing of PDF documents within the application. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `DocumentProcessor` class is to manage the loading of PDF documents and to split them into manageable chunks for further processing. This functionality is crucial for applications that need to analyze or manipulate large documents, as it allows for efficient handling of text data.
+
+### 2. Key Functions and Their Purposes
+- **`__init__` Method**: This is the constructor for the `DocumentProcessor` class. It initializes the object with two parameters:
+  - `chunk_size`: The maximum size of each text chunk extracted from the PDF.
+  - `chunk_overlap`: The number of characters that should overlap between consecutive chunks to maintain context.
+  - It also initializes a `RecursiveCharacterTextSplitter` instance, which is responsible for splitting the documents based on the specified chunk size and overlap.
+
+- **`load_pdf` Method**: This method is responsible for loading a PDF document from a specified file path. It uses the `UnstructuredPDFLoader` from the `langchain_community.document_loaders` module to read the PDF file. If successful, it returns the loaded document(s) as a list. If an error occurs during loading, it logs the error and raises an exception.
+
+- **`split_documents` Method**: This method takes a list of documents and splits them into smaller chunks using the `splitter` initialized in the constructor. It logs the process and handles any exceptions that may arise during the splitting process.
+
+### 3. Important Interactions with Other Parts of the System
+- **External Libraries**: The `DocumentProcessor` class interacts with external libraries:
+  - `UnstructuredPDFLoader`: This is used to load PDF files. It abstracts the complexity of reading and extracting content from PDF documents.
+  - `RecursiveCharacterTextSplitter`: This is used to split the loaded documents into smaller, manageable chunks based on the specified parameters.
+
+- **Logging**: The class uses Python's built-in logging module to log important events, such as the loading of PDFs and the splitting of documents. This is crucial for debugging and monitoring the application's behavior.
+
+### 4. Notable Features or Patterns
+- **Error Handling**: The class implements error handling in both the `load_pdf` and `split_documents` methods
+
+----- analyzeCode - metadata -----
+Based on the provided code, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [
+    "logging",
+    "Path from pathlib",
+    "List from typing",
+    "UnstructuredPDFLoader from langchain_community.document_loaders",
+    "RecursiveCharacterTextSplitter from langchain_text_splitters"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "load_pdf",
+      "purpose": "Load PDF document.",
+      "input": "file_path: Path",
+      "output": "List"
+    },
+    {
+      "name": "split_documents",
+      "purpose": "Split documents into chunks.",
+      "input": "documents: List",
+      "output": "List"
+    }
+  ],
+  "dependencies": [
+    "langchain_community.document_loaders",
+    "langchain_text_splitters"
+  ],
+  "mainPurpose": "Handles PDF document loading and processing.",
+  "type": "Class",
+  "finalReturnType(s)": "List"
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: Lists all the modules and classes imported in the code.
+- **exports**: Empty as there are no explicit exports in the code.
+- **functions**: Contains details about the methods defined in the `DocumentProcessor` class, including their names, purposes, inputs, and outputs.
+- **dependencies**: Lists external libraries that the code relies on.
+- **mainPurpose**: Describes the overall functionality of the `DocumentProcessor` class.
+- **type**: Indicates that the primary structure is a class.
+- **finalReturnType(s)**: Specifies the return type of the functions, which is a list in both cases.
+
+----- analyzeCode - analysis -----
+The `src/core/embeddings.py` file is a crucial component of a larger system that deals with vector embeddings and database functionality, particularly in the context of document processing and retrieval. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `embeddings.py` module is to manage vector embeddings and facilitate operations related to a vector database. This involves creating a vector database from a set of documents and providing functionality to delete that database when necessary. The use of embeddings allows the system to represent documents in a high-dimensional space, enabling efficient similarity searches and retrieval operations.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, embedding_model: str = "nomic-embed-text")`**: 
+  - This is the constructor for the `VectorStore` class. It initializes an instance of the class with a specified embedding model (defaulting to "nomic-embed-text"). It creates an instance of `OllamaEmbeddings`, which is presumably a class that handles the generation of embeddings for text documents.
+
+- **`create_vector_db(self, documents: List, collection_name: str = "local-rag") -> Chroma`**:
+  - This method is responsible for creating a vector database from a list of documents. It uses the `Chroma` class from the `langchain_community.vectorstores` module to create the database, which is populated with the embeddings generated from the provided documents. It logs the process and handles exceptions by logging errors and re-raising them.
+
+- **`delete_collection(self) -> None`**:
+  - This method deletes the vector database collection if it exists. It logs the deletion process and handles any exceptions that may occur during the deletion. If successful, it sets the `vector_db` attribute to `None`.
+
+### 3. Important Interactions with Other Parts of the System
+- **Embedding Model**: The `VectorStore` class interacts with the `OllamaEmbeddings` class to generate embeddings for the documents. This is a key interaction as it allows the system to convert textual data into a format suitable for vector storage and retrieval.
+
+- **Vector Database**: The `create_vector_db` method interacts with the `Chroma` class to create and manage the vector database. This interaction is essential for storing the embeddings in a structured way that allows for efficient querying and retrieval.
+
+- **Logging
+
+----- analyzeCode - metadata -----
+Here's the JSON structure containing essential technical information about the provided code file (`src/core/embeddings.py`):
+
+```json
+{
+  "imports": [
+    "logging",
+    "List from typing",
+    "Path from pathlib",
+    "OllamaEmbeddings from langchain_ollama",
+    "Chroma from langchain_community.vectorstores"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "__init__",
+      "purpose": "Initializes the VectorStore with a specified embedding model.",
+      "input": "embedding_model: str (default: 'nomic-embed-text')",
+      "output": "None"
+    },
+    {
+      "name": "create_vector_db",
+      "purpose": "Creates a vector database from the provided documents.",
+      "input": "documents: List, collection_name: str (default: 'local-rag')",
+      "output": "Chroma"
+    },
+    {
+      "name": "delete_collection",
+      "purpose": "Deletes the vector database collection if it exists.",
+      "input": "",
+      "output": "None"
+    }
+  ],
+  "dependencies": [
+    "langchain_ollama",
+    "langchain_community.vectorstores"
+  ],
+  "mainPurpose": "To manage vector embeddings and database operations.",
+  "type": "Class",
+  "finalReturnType(s)": "Chroma, None"
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: Lists all the modules and classes that are imported in the code.
+- **exports**: Currently empty as there are no explicit exports in the code.
+- **functions**: Contains an array of function objects, each detailing the function name, purpose, input parameters, and output type.
+- **dependencies**: Lists the external libraries that the code relies on.
+- **mainPurpose**: Describes the overall purpose of the class.
+- **type**: Indicates that the primary structure in the code is a class.
+- **finalReturnType(s)**: Specifies the return types of the functions, indicating that `create_vector_db` returns a `Chroma` object, while the other functions return `None`.
+
+----- analyzeCode - analysis -----
+The `src/core/llm.py` file is responsible for managing the configuration and setup of a Language Model (LLM) within the broader application. Here’s a detailed breakdown of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `LLMManager` class is to encapsulate the functionality related to the configuration and usage of a language model, specifically the `ChatOllama` model from the `langchain_ollama` library. This class is responsible for:
+- Initializing the language model with a specified model name.
+- Providing templates for generating prompts that can be used to interact with the language model for various tasks, such as querying and retrieval-augmented generation (RAG).
+
+### 2. Key Functions and Their Purposes
+The `LLMManager` class contains the following key functions:
+
+- **`__init__(self, model_name: str = "llama2")`**:
+  - This is the constructor method that initializes an instance of the `LLMManager`. It accepts a `model_name` parameter (defaulting to "llama2") and initializes the `ChatOllama` model with this name. This sets up the language model for use in subsequent operations.
+
+- **`get_query_prompt(self) -> PromptTemplate`**:
+  - This method returns a `PromptTemplate` designed for generating alternative versions of a user’s question. The purpose of this prompt is to enhance the effectiveness of document retrieval from a vector database by providing multiple perspectives on the original question. This can help mitigate limitations associated with similarity searches.
+
+- **`get_rag_prompt(self) -> ChatPromptTemplate`**:
+  - This method provides a `ChatPromptTemplate` specifically for RAG tasks. It constructs a prompt that instructs the language model to answer a question based solely on a given context. This is crucial for ensuring that the model's responses are grounded in the provided information, which is essential for accurate and relevant output.
+
+### 3. Important Interactions with Other Parts of the System
+The `LLMManager` class interacts with several components of the system:
+- **`ChatOllama`**: This is the core language model being utilized. The `LLMManager` initializes this model and uses it to generate responses based on the prompts defined in its methods.
+- **Prompt Templates**: The prompts generated by `get_query_prompt` and `get_rag
+
+----- analyzeCode - metadata -----
+Based on the provided code from `src/core/llm.py`, here is the JSON structure containing essential technical information:
+
+```json
+{
+  "imports": [
+    "logging",
+    "langchain_ollama.chat_models.ChatOllama",
+    "langchain.prompts.ChatPromptTemplate",
+    "langchain.prompts.PromptTemplate"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "__init__",
+      "purpose": "Initializes the LLMManager with a specified model name.",
+      "input": "model_name: str (default 'llama2')",
+      "output": "None"
+    },
+    {
+      "name": "get_query_prompt",
+      "purpose": "Generates a prompt template for query generation.",
+      "input": "None",
+      "output": "PromptTemplate"
+    },
+    {
+      "name": "get_rag_prompt",
+      "purpose": "Generates a prompt template for RAG (Retrieval-Augmented Generation).",
+      "input": "None",
+      "output": "ChatPromptTemplate"
+    }
+  ],
+  "dependencies": [
+    "logging",
+    "langchain_ollama",
+    "langchain"
+  ],
+  "mainPurpose": "To manage LLM configuration and generate various prompt templates for language model interactions.",
+  "type": "class",
+  "finalReturnType(s)": "PromptTemplate, ChatPromptTemplate"
+}
+``` 
+
+This JSON structure summarizes the essential components of the code, including imports, functions, and the overall purpose of the class.
+
+----- analyzeCode - analysis -----
+The `rag.py` file contains the implementation of a Retrieval Augmented Generation (RAG) pipeline, which is a system designed to enhance the generation of responses by retrieving relevant information from a database before generating a final output. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `RAGPipeline` class is to manage the RAG process, which combines retrieval of relevant documents or data from a vector database with the generation of responses using a language model (LLM). The class is responsible for setting up the necessary components for this pipeline, including the retriever and the generation chain, and for providing a method to get responses based on user queries.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, vector_db: Any, llm_manager: LLMManager)`**: This is the constructor method that initializes the RAG pipeline. It takes a vector database and an instance of `LLMManager` as arguments. It sets up the retriever and the generation chain by calling the respective setup methods.
+  
+- **`_setup_retriever(self) -> MultiQueryRetriever`**: This private method configures the multi-query retriever using the vector database and the language model. It creates an instance of `MultiQueryRetriever` that can handle multiple queries simultaneously. If there is an error during setup, it logs the error and raises an exception.
+
+- **`_setup_chain(self) -> Any`**: This private method establishes the RAG chain that combines the context from the retriever, the question input, and the language model. It uses a `RunnablePassthrough` for the question input and an output parser to format the final response. Similar to the retriever setup, it logs errors and raises exceptions if any issues occur.
+
+- **`get_response(self, question: str) -> str`**: This public method is the main interface for users of the RAG pipeline. It takes a question as input, retrieves relevant information using the configured retriever, and generates a response using the language model. It logs the question being processed and handles any exceptions that arise during the response generation.
+
+### 3. Important Interactions with Other Parts of the System
+- **Interaction with `LLMManager`**: The `RAGPipeline` class relies on the `LLMManager` for accessing the language model and the prompts necessary for
+
+----- analyzeCode - metadata -----
+Here is the requested JSON structure containing essential technical information about the provided code file `src/core/rag.py`:
+
+```json
+{
+  "imports": [
+    "logging",
+    "Any",
+    "Dict",
+    "RunnablePassthrough from langchain_core.runnables",
+    "StrOutputParser from langchain_core.output_parsers",
+    "MultiQueryRetriever from langchain.retrievers.multi_query",
+    "LLMManager from .llm"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "__init__",
+      "purpose": "Initializes the RAGPipeline with a vector database and LLM manager.",
+      "input": "vector_db: Any, llm_manager: LLMManager",
+      "output": "None"
+    },
+    {
+      "name": "_setup_retriever",
+      "purpose": "Sets up the multi-query retriever.",
+      "input": "None",
+      "output": "MultiQueryRetriever"
+    },
+    {
+      "name": "_setup_chain",
+      "purpose": "Sets up the RAG chain.",
+      "input": "None",
+      "output": "Any"
+    },
+    {
+      "name": "get_response",
+      "purpose": "Gets a response for a question using the RAG pipeline.",
+      "input": "question: str",
+      "output": "str"
+    }
+  ],
+  "dependencies": [
+    "langchain_core",
+    "langchain"
+  ],
+  "mainPurpose": "To manage the Retrieval Augmented Generation (RAG) pipeline.",
+  "type": "Class",
+  "finalReturnType(s)": "str (from get_response method)"
+}
+```
+
+### Explanation of the JSON Structure:
+- **imports**: Lists all the modules and classes that are imported in the code.
+- **exports**: Currently empty as there are no explicit exports in the code.
+- **functions**: Describes each function in the class, including its name, purpose, input parameters, and output type.
+- **dependencies**: Lists the external libraries or modules that the code relies on.
+- **mainPurpose**: Summarizes the overall purpose of the class.
+- **type**: Indicates that the primary structure is a class.
+- **finalReturnType(s)**: Specifies the return type of the main method that provides output, which is `str` from the `get_response`
+
+----- analyzeCode - analysis -----
+The `tests/test_document.py` file is a set of unit tests designed to validate the functionality of the `DocumentProcessor` class from the `src.core.document` module. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The main purpose of this test file is to ensure that the `DocumentProcessor` class behaves as expected when processing documents, particularly PDFs. It verifies various aspects of the document loading and splitting functionalities, including:
+- Initialization with default and custom parameters.
+- Loading of PDF files, both existing and non-existent.
+- Splitting documents into smaller chunks while preserving metadata.
+- Ensuring that the chunking mechanism works correctly, including handling overlaps between chunks.
+
+### 2. Key Functions and Their Purposes
+- **`test_init(processor)`**: Tests the default initialization of the `DocumentProcessor` to ensure it sets the correct default values for `chunk_size` and `chunk_overlap`.
+  
+- **`test_init_custom_params()`**: Tests the initialization of `DocumentProcessor` with custom parameters to ensure it correctly accepts and sets these values.
+
+- **`test_load_pdf_file_not_found(mock_load)`**: Tests the behavior of the `load_pdf` method when attempting to load a non-existent PDF file. It uses mocking to simulate a `FileNotFoundError`.
+
+- **`test_load_pdf_success(processor, test_pdf_path)`**: Tests the successful loading of an existing PDF file. It checks that the loaded documents are not empty and have the expected attributes.
+
+- **`test_split_documents(processor)`**: Tests the `split_documents` method to ensure it can split a large document into multiple chunks.
+
+- **`test_split_empty_document(processor)`**: Tests the behavior of the `split_documents` method when given an empty document, ensuring it handles this case gracefully.
+
+- **`test_split_large_document(processor)`**: Tests the splitting of a very large document and verifies that the resulting chunks do not exceed the specified `chunk_size`.
+
+- **`test_metadata_preservation(processor)`**: Ensures that the metadata associated with documents is preserved across all chunks after splitting.
+
+- **`test_chunk_overlap()`**: Tests that the chunk overlap functionality works as intended by checking for overlaps between consecutive chunks of text.
+
+### 3. Important Interactions with Other Parts of the System
+- The tests interact directly with the `DocumentProcessor` class, which is responsible for
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information about the provided code file `tests/test_document.py`:
+
+```json
+{
+  "imports": [
+    "pytest",
+    "Path from pathlib",
+    "Mock and patch from unittest.mock",
+    "DocumentProcessor from src.core.document",
+    "Document from langchain_core.documents"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "processor",
+      "purpose": "Create a DocumentProcessor instance.",
+      "input": "",
+      "output": "DocumentProcessor instance"
+    },
+    {
+      "name": "test_pdf_path",
+      "purpose": "Get the test PDF path.",
+      "input": "",
+      "output": "Path to the test PDF file"
+    },
+    {
+      "name": "test_init",
+      "purpose": "Test initialization of DocumentProcessor with default parameters.",
+      "input": "processor (DocumentProcessor instance)",
+      "output": "Assertions on chunk_size and chunk_overlap"
+    },
+    {
+      "name": "test_init_custom_params",
+      "purpose": "Test initialization of DocumentProcessor with custom parameters.",
+      "input": "",
+      "output": "Assertions on custom chunk_size and chunk_overlap"
+    },
+    {
+      "name": "test_load_pdf_file_not_found",
+      "purpose": "Test loading a non-existent PDF file.",
+      "input": "mock_load (mocked load method)",
+      "output": "Raises FileNotFoundError"
+    },
+    {
+      "name": "test_load_pdf_success",
+      "purpose": "Test loading an existing PDF file.",
+      "input": "processor (DocumentProcessor instance), test_pdf_path (Path)",
+      "output": "Assertions on loaded documents"
+    },
+    {
+      "name": "test_split_documents",
+      "purpose": "Test splitting of documents into chunks.",
+      "input": "processor (DocumentProcessor instance)",
+      "output": "Assertions on number of chunks"
+    },
+    {
+      "name": "test_split_empty_document",
+      "purpose": "Test splitting of an empty document.",
+      "input": "processor (DocumentProcessor instance)",
+      "output": "Assertions on number of chunks for empty document"
+    },
+    {
+      "name": "test_split_large_document",
+      "purpose": "Test splitting of a very large document.",
+      "input": "processor (DocumentProcessor instance)",
+      "output": "Assertions on
+
+----- analyzeCode - analysis -----
+The `tests/test_models.py` file is a set of unit tests designed to validate the functionality of the `extract_model_names` function from the `src.app.main` module. Here’s a breakdown of its key aspects:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this test file is to ensure that the `extract_model_names` function behaves correctly under various conditions. It verifies that the function can handle different types of input, including empty responses, successful extractions, invalid formats, and exceptional cases. By doing so, it helps maintain the reliability and robustness of the application.
+
+### 2. Key Functions and Their Purposes
+The file contains four test functions, each targeting a specific scenario:
+
+- **`test_extract_model_names_empty`**: This test checks the behavior of `extract_model_names` when provided with an empty response. It ensures that the function returns an empty tuple when there are no models to extract.
+
+- **`test_extract_model_names_success`**: This test simulates a successful extraction of model names. It creates mock model objects with specific names and verifies that the function correctly returns a tuple containing those names.
+
+- **`test_extract_model_names_invalid_format`**: This test evaluates how the function handles an input that does not conform to the expected format (in this case, a dictionary with an unexpected structure). It checks that the function returns an empty tuple when the input is invalid.
+
+- **`test_extract_model_names_exception`**: This test examines the function's robustness in the face of exceptions. It deliberately removes the `models` attribute from the mock object to trigger an `AttributeError` and confirms that the function handles this gracefully by returning an empty tuple.
+
+### 3. Important Interactions with Other Parts of the System
+The tests interact directly with the `extract_model_names` function, which is presumably responsible for extracting model names from a given input structure (likely a response from an API or a data source). The tests utilize the `Mock` class from the `unittest.mock` module to simulate various input scenarios without requiring actual model objects or responses. This allows for isolated testing of the function's logic.
+
+### 4. Notable Features or Patterns
+- **Use of Mocking**: The tests leverage mocking extensively to create controlled environments for testing. This is a common pattern in unit testing, allowing developers to simulate complex objects and focus on the functionality being tested.
+
+- **Assertions for Expected Outcomes**: Each
+
+----- analyzeCode - metadata -----
+Here is the JSON structure containing essential technical information about the provided code file `tests/test_models.py`:
+
+```json
+{
+  "imports": [
+    "pytest",
+    "Mock from unittest.mock",
+    "extract_model_names from src.app.main"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "test_extract_model_names_empty",
+      "purpose": "Test extracting model names from an empty response.",
+      "input": "models_info (Mock object with empty models list)",
+      "output": "tuple()"
+    },
+    {
+      "name": "test_extract_model_names_success",
+      "purpose": "Test successful model name extraction.",
+      "input": "models_info (Mock object with two model objects)",
+      "output": "(\"model1:latest\", \"model2:latest\")"
+    },
+    {
+      "name": "test_extract_model_names_invalid_format",
+      "purpose": "Test handling invalid response format.",
+      "input": "models_info (dictionary with invalid format)",
+      "output": "tuple()"
+    },
+    {
+      "name": "test_extract_model_names_exception",
+      "purpose": "Test handling exceptions during extraction.",
+      "input": "models_info (Mock object with missing models attribute)",
+      "output": "tuple()"
+    }
+  ],
+  "dependencies": [
+    "pytest",
+    "unittest.mock"
+  ],
+  "mainPurpose": "To test the functionality of the extract_model_names function.",
+  "type": "Unit Test",
+  "finalReturnType(s)": "tuple"
+}
+``` 
+
+This JSON structure summarizes the key components of the test file, including the functions defined, their purposes, inputs, outputs, and other relevant technical details.
+
+----- analyzeCode - analysis -----
+The `tests/test_rag.py` file is a unit test suite designed to validate the functionality of the `RAGPipeline` class from the `src.core.rag` module. This test suite uses the `unittest` framework and includes various test cases to ensure that the RAG (Retrieval-Augmented Generation) pipeline behaves as expected. Below is a detailed analysis of the file's key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `TestRAGPipeline` class is to test the functionality of the `RAGPipeline` class. It ensures that the pipeline correctly sets up its components, processes input queries, and handles various scenarios, including normal operations and error conditions. The tests verify that the pipeline can retrieve information and generate responses based on user queries.
+
+### 2. Key Functions and Their Purposes
+- **`setUp(self)`**: This method is executed before each test case. It initializes mock objects and patches necessary components to isolate the `RAGPipeline` from its dependencies. This includes mocking the vector database and language model manager, as well as setting up mock behavior for the retriever and chain components.
+
+- **`tearDown(self)`**: This method cleans up the patches after each test case to ensure that the mock objects do not interfere with subsequent tests.
+
+- **`test_setup_retriever(self)`**: Tests the `_setup_retriever` method of the `RAGPipeline` to ensure it correctly creates a retriever from the vector database.
+
+- **`test_setup_chain(self)`**: Tests the `_setup_chain` method to verify that it correctly sets up the processing chain using the language model manager.
+
+- **`test_get_response(self)`**: Tests the `get_response` method of the `RAGPipeline` to ensure it can generate a response to a given question. It checks that the response matches the expected output and that the chain's `invoke` method is called with the correct input.
+
+- **`test_get_response_empty_question(self)`**: Verifies that the pipeline correctly handles an empty question, returning an empty response.
+
+- **`test_get_response_long_question(self)`**: Tests the pipeline's ability to handle very long questions, ensuring it can still generate a valid response.
+
+- **`test_get_response_special_characters(self)`**: Ensures that the pipeline can handle questions containing special characters.
+
+- **`test_chain_error_handling(self)`
+
+----- analyzeCode - metadata -----
+Here's the JSON structure containing essential technical information extracted from the provided code file `tests/test_rag.py`:
+
+```json
+{
+  "imports": [
+    "unittest",
+    "unittest.mock.Mock",
+    "unittest.mock.patch",
+    "unittest.mock.MagicMock",
+    "src.core.rag.RAGPipeline",
+    "langchain_core.documents.Document",
+    "langchain.retrievers.multi_query.MultiQueryRetriever",
+    "langchain_core.output_parsers.StrOutputParser"
+  ],
+  "exports": [],
+  "functions": [
+    {
+      "name": "setUp",
+      "purpose": "Set up test cases and mock objects for testing.",
+      "input": "",
+      "output": ""
+    },
+    {
+      "name": "tearDown",
+      "purpose": "Clean up patches after tests.",
+      "input": "",
+      "output": ""
+    },
+    {
+      "name": "test_setup_retriever",
+      "purpose": "Test retriever setup.",
+      "input": "",
+      "output": "retriever"
+    },
+    {
+      "name": "test_setup_chain",
+      "purpose": "Test chain setup.",
+      "input": "",
+      "output": "chain"
+    },
+    {
+      "name": "test_get_response",
+      "purpose": "Test getting response from the RAG pipeline.",
+      "input": "question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_get_response_empty_question",
+      "purpose": "Test handling empty question.",
+      "input": "",
+      "output": ""
+    },
+    {
+      "name": "test_get_response_long_question",
+      "purpose": "Test handling very long question.",
+      "input": "long_question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_get_response_special_characters",
+      "purpose": "Test handling questions with special characters.",
+      "input": "special_question (str)",
+      "output": "response (str)"
+    },
+    {
+      "name": "test_chain_error_handling",
+      "purpose": "Test error handling in the chain.",
+      "input": "question (str)",
+      "output": "raises Exception"
+    },
+    {
+      "name": "test_retriever_error_handling",
+      "purpose": "Test error handling in the retriever setup
+
+----- analyzeCallHierarchy -----
+To analyze the `ollama_pdf_rag` project and create a call hierarchy, we will outline the main execution path starting from the entry point, detailing the flow of function calls between files, and highlighting the dependencies between modules. 
+
+### 1. Entry Point File
+The entry point for the application is:
+- **`src/app/main.py`**
+
+### 2. Main Execution Flow
+The main execution flow can be summarized as follows:
+
+1. **`main.py`**: This file initializes the Streamlit application and sets up the main interface. It likely imports components from the `app` directory and the `core` functionalities.
+
+2. **User Interaction**: Users interact with the Streamlit interface, which triggers various functions in the `chat.py`, `pdf_viewer.py`, and `sidebar.py` files.
+
+3. **PDF Processing**: When a PDF is uploaded, the application calls functions in `document.py` to process the PDF and extract relevant information.
+
+4. **Embedding Management**: The extracted information is then converted into vector embeddings using functions in `embeddings.py`.
+
+5. **RAG Pipeline**: The embeddings are processed through the RAG pipeline implemented in `rag.py`, which interacts with the language model set up in `llm.py`.
+
+6. **Response Generation**: The application generates responses based on user queries and the processed PDF content.
+
+### 3. Important Function Calls Between Files
+Here is a structured overview of the important function calls between files:
+
+- **`main.py`**
+  - Calls functions from:
+    - `chat.py` (to handle chat interactions)
+    - `pdf_viewer.py` (to display PDFs)
+    - `sidebar.py` (for sidebar controls)
+
+- **`chat.py`**
+  - Calls:
+    - `document.py` (to process uploaded PDFs)
+    - `embeddings.py` (to generate embeddings from processed documents)
+    - `rag.py` (to query the RAG pipeline)
+  
+- **`pdf_viewer.py`**
+  - Calls:
+    - `document.py` (to fetch and display PDF content)
+
+- **`document.py`**
+  - Calls:
+    - `embeddings.py` (to create embeddings from the document)
+  
+- **`embeddings.py`**
+  - Calls:
+    - `rag.py` (to retrieve relevant information using embeddings)
+  
+- **`rag.py`**
+  - Calls:
+    - `llm.py` (to utilize the language model for generating responses)
+
+### 4. Dependencies Between Modules
+The dependencies between modules can be summarized as follows:
+
+- **`main.py`** depends on:
+  - `chat.py`
+  - `pdf_viewer.py`
+  - `sidebar.py`
+
+- **`chat.py`** depends on:
+  - `document.py`
+  - `embeddings.py`
+  - `rag.py`
+
+- **`pdf_viewer.py`** depends on:
+  - `document.py`
+
+- **`document.py`** depends on:
+  - `embeddings.py`
+
+- **`embeddings.py`** depends on:
+  - `rag.py`
+
+- **`rag.py`** depends on:
+  - `llm.py`
+
+### 5. Visual Mapping of Function Calls
+Below is a simplified visual representation of the function call hierarchy:
+
+```
+main.py
+ ├── chat.py
+ │    ├── document.py
+ │    │    └── embeddings.py
+ │    ├── embeddings.py
+ │    └── rag.py
+ ├── pdf_viewer.py
+ │    └── document.py
+ └── sidebar.py
+
+rag.py
+ └── llm.py
+```
+
+### Summary
+The `ollama_pdf_rag` project is structured to allow seamless interaction with PDF documents through a modular architecture. The main execution path flows from the Streamlit entry point in `main.py`, through various components handling user interaction, PDF processing, embedding generation, and RAG pipeline execution. Each module is designed to encapsulate specific functionality, promoting maintainability and scalability.
+
+----- generateSummary -----
+### Project Summary: `ollama_pdf_rag`
+
+**Purpose and Functionality**:  
+The `ollama_pdf_rag` project is a demonstration of a Retrieval-Augmented Generation (RAG) pipeline that enables users to interact with PDF documents through a conversational interface. It allows users to upload PDFs and ask questions about their content, generating responses based on the information extracted from the documents.
+
+**Tech Stack and Architecture**:  
+The project is built using Jupyter Notebook and utilizes Streamlit for the user interface. It employs a modular architecture, separating concerns into different files and directories, which enhances maintainability and scalability.
+
+**Key Components and Their Interactions**:
+1. **Entry Point**: The application starts in `src/app/main.py`, which initializes the Streamlit interface.
+2. **User Interaction**: Users interact with the application through components in `chat.py`, `pdf_viewer.py`, and `sidebar.py`.
+3. **PDF Processing**: Uploaded PDFs are processed in `document.py`, where relevant information is extracted.
+4. **Embedding Generation**: The extracted data is converted into vector embeddings using `embeddings.py`.
+5. **RAG Pipeline**: The embeddings are processed through the RAG pipeline in `rag.py`, which queries a language model defined in `llm.py` to generate responses.
+
+**Notable Features**:
+- **PDF Upload and Processing**: Users can upload PDF files, and the application can extract and analyze their content.
+- **Conversational Interface**: The application allows users to ask questions about the PDF content, providing a dynamic interaction experience.
+- **Modular Design**: The separation of functionalities into distinct modules promotes easier updates and testing.
+
+**Code Organization and Structure**:  
+The project is organized into several key directories and files:
+- **`src/app/`**: Contains the main application logic and interface components.
+- **`src/core/`**: Houses core functionalities such as document processing, embeddings, and the RAG pipeline.
+- **`tests/`**: Includes unit tests for various components to ensure reliability.
+
+Overall, `ollama_pdf_rag` serves as a practical example of integrating document retrieval and natural language processing, making it easier for users to interact with and extract knowledge from PDF documents.
+
+----- analyzeProjectStructure -----
+The `ollama_pdf_rag` repository is a project designed to facilitate interaction with PDF documents using a local Retrieval Augmented Generation (RAG) pipeline, leveraging the capabilities of Ollama and LangChain. Below is a concise analysis of its file structure, main components, tech stack, and architecture:
+
+### Project Structure Overview
+
+1. **Source Code (`src/`)**:
+   - **`app/`**: Contains the Streamlit application components.
+     - **`components/`**: Houses individual UI components like chat interface (`chat.py`), PDF viewer (`pdf_viewer.py`), and sidebar controls (`sidebar.py`).
+     - **`main.py`**: The entry point for the Streamlit application.
+   - **`core/`**: Implements core functionalities.
+     - **`document.py`**: Handles PDF document processing.
+     - **`embeddings.py`**: Manages vector embeddings for document retrieval.
+     - **`llm.py`**: Sets up the language model (LLM).
+     - **`rag.py`**: Implements the RAG pipeline for enhanced query responses.
+
+2. **Data Storage (`data/`)**:
+   - **`pdfs/`**: Directory for storing PDF files, including sample PDFs for testing.
+   - **`vectors/`**: Intended for vector database storage, likely for embeddings.
+
+3. **Notebooks (`notebooks/`)**:
+   - Contains Jupyter notebooks for experimentation, allowing users to test and modify the RAG implementation interactively.
+
+4. **Tests (`tests/`)**:
+   - Includes unit tests for various components, ensuring code quality and functionality.
+
+5. **Documentation (`docs/`)**:
+   - Comprehensive documentation covering API details, user guides, installation instructions, and contribution guidelines.
+
+6. **Configuration and CI/CD**:
+   - **`.github/`**: Contains workflows for CI/CD (e.g., testing) and issue templates.
+   - **`.pre-commit-config.yaml`**: Configuration for pre-commit hooks to maintain code quality.
+
+### Tech Stack
+- **Languages**: Primarily Python, with Jupyter Notebooks for experimentation.
+- **Frameworks**: 
+  - **Streamlit**: For building the web interface.
+  - **LangChain**: For implementing the RAG functionality.
+- **Libraries**: 
+  - **Ollama**: For language model integration.
+  - **pdfplumber**: For PDF processing.
+  - **ChromaDB**: For managing vector databases.
+
+### Architecture
+The architecture follows a modular design:
+- **Frontend**: Built with Streamlit, providing a user-friendly interface for interacting with PDFs.
+- **Backend**: The core logic is encapsulated in the `src/core/` directory, allowing for easy modifications and enhancements.
+- **Data Handling**: PDF documents are processed locally, ensuring data privacy, and embeddings are stored for efficient retrieval.
+- **Testing and CI**: Automated testing and pre-commit hooks ensure code reliability and maintainability.
+
+### Conclusion
+Overall, the `ollama_pdf_rag` repository is structured to provide a robust framework for interacting with PDF documents using advanced AI techniques, with a clear separation of concerns across its components, making it easy to extend and maintain.
+
+----- smartFileFilter -----
+["README.md", "requirements.txt", "src/app/main.py", "src/core/document.py", "src/core/embeddings.py", "src/core/llm.py", "src/core/rag.py", "tests/test_document.py", "tests/test_models.py", "tests/test_rag.py", "docs/getting-started/installation.md", "docs/user-guide/chat-interface.md", "docs/user-guide/pdf-processing.md", "docs/user-guide/rag-pipeline.md"]
+
+----- analyzeCode - analysis -----
+The `README.md` file serves as the primary documentation for the project titled "Chat with PDF locally using Ollama + LangChain." It provides an overview of the project's purpose, structure, features, setup instructions, and more. Here’s a detailed breakdown of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The main purpose of this project is to create a local application that allows users to interact with PDF documents through a chat interface. It utilizes Retrieval Augmented Generation (RAG) techniques, leveraging the capabilities of the Ollama framework and LangChain library. The application is designed to process PDF files intelligently, enabling users to ask questions about the content and receive contextually relevant answers.
+
+### 2. Key Functions and Their Purposes
+- **Local RAG Application**: The core functionality revolves around enabling users to chat with their PDF documents. The application processes the PDFs and retrieves information based on user queries.
+- **Streamlit Interface**: A user-friendly web interface built with Streamlit allows users to upload PDFs, select models, and interact with the content easily.
+- **Jupyter Notebook**: The inclusion of Jupyter notebooks facilitates experimentation with the code, allowing developers and data scientists to test and modify functionalities in an interactive environment.
+- **PDF Processing**: The application intelligently chunks PDF content for better retrieval and understanding, enhancing the interaction quality.
+- **Multi-query Retrieval**: This feature allows the system to maintain context across multiple queries, improving the relevance of responses.
+
+### 3. Important Interactions with Other Parts of the System
+- **Source Code Structure**: The `src` directory contains the core functionality and the Streamlit application. The `app` subdirectory includes components for chat, PDF viewing, and sidebar controls, while the `core` subdirectory contains essential processing modules (e.g., document processing, embeddings, and RAG pipeline).
+- **Data Handling**: The `data` directory is designated for storing PDFs and vector embeddings, which are crucial for the retrieval process. The application interacts with these data files to provide responses to user queries.
+- **Testing and CI/CD**: The project integrates unit tests located in the `tests` directory and employs GitHub Actions for continuous integration. This ensures that the application is tested across different Python versions and that code quality is maintained through pre-commit hooks.
+
+### 4. Notable Features or Patterns
+- **Local Processing**: One of the standout features is that all processing occurs locally, ensuring user data privacy and security.
+- **User-Friendly Setup**: The README provides clear instructions for prerequisites, installation, and running the application, making it accessible for users with varying levels of technical expertise.
+- **Error Handling and Troubleshooting**: The document includes a section for common errors and troubleshooting tips, which is helpful for users who may encounter issues during setup or usage.
+- **Contribution Guidelines**: The README encourages community involvement by inviting users to open issues, submit pull requests, and provide feedback, fostering an open-source development environment.
+
+In summary, the `README.md` file effectively communicates the purpose, functionality, and structure of the project, making it an essential resource for users and developers alike. It highlights the project's capabilities while providing practical guidance for setup and usage.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `installation.md` file serves as a comprehensive guide for users to set up the "Ollama PDF RAG" application on their systems. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `installation.md` file is to provide clear and structured instructions for users to successfully install and configure the Ollama PDF RAG application. It outlines the prerequisites, installation steps, verification procedures, troubleshooting tips, and next steps for users. This ensures that users can get the application up and running with minimal confusion or errors.
+
+### 2. Key Functions and Their Purposes
+- **Prerequisites Section**: Lists the necessary software and tools that must be installed before proceeding with the installation. This includes Python, pip, git, and the Ollama application itself.
+  
+- **Installing Ollama**: Provides a step-by-step guide to download and install the Ollama application, including commands to pull required models. This is crucial as Ollama is a dependency for the main application.
+
+- **Installing Ollama PDF RAG**: Details the process of cloning the repository, creating a virtual environment, and installing dependencies. This section is vital for ensuring that the application runs in an isolated environment with the correct package versions.
+
+- **Verifying Installation**: Instructs users on how to start the application and access it via a web browser. This confirms that the installation was successful and the application is operational.
+
+- **Troubleshooting Section**: Addresses common issues that users may encounter during installation, such as DLL errors or problems on CPU-only systems. It provides actionable solutions, helping users resolve issues without needing extensive technical knowledge.
+
+- **Next Steps**: Guides users to further documentation, such as the Quick Start Guide and User Guide, encouraging them to explore the application’s features and contribute to its development.
+
+### 3. Important Interactions with Other Parts of the System
+- **Dependencies**: The installation process includes pulling models and installing dependencies listed in `requirements.txt`, which are essential for the application’s functionality. This establishes a direct interaction with the `requirements.txt` file in the project.
+
+- **Ollama Application**: The guide emphasizes the need for the Ollama application, indicating that it plays a crucial role in the overall architecture of the Ollama PDF RAG project.
+
+- **Documentation Links**: The installation guide references other documentation files, such as the Quick Start Guide and User Guide, indicating an interconnected documentation structure that supports user onboarding and application usage.
+
+### 4. Notable Features or Patterns
+- **Clear Structure**: The document is organized into sections with headings, making it easy to navigate. This is a common pattern in technical documentation that enhances user experience.
+
+- **Command-Line Instructions**: The use of code blocks for command-line instructions is a notable feature, allowing users to easily copy and paste commands into their terminal.
+
+- **Troubleshooting Guidance**: The inclusion of a troubleshooting section is a best practice in installation guides, as it anticipates potential user issues and provides solutions, thereby reducing frustration.
+
+- **Encouragement for Contribution**: The mention of a contributing guide at the end reflects an open-source ethos, inviting users to engage with the project beyond just usage.
+
+In summary, the `installation.md` file is a critical component of the Ollama PDF RAG project, providing users with the necessary steps and resources to install and run the application effectively. Its structured approach, detailed instructions, and troubleshooting tips contribute to a smoother user experience.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `docs/user-guide/chat-interface.md` file serves as a user manual for the chat interface of the Ollama PDF RAG application, which is built using Streamlit. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this document is to provide users with a comprehensive guide on how to effectively utilize the chat interface within the Ollama PDF RAG application. It outlines the interface's components, features, and operational instructions, enabling users to interact with the system efficiently. The guide ensures that users can navigate the interface, upload PDFs, select models, and engage in conversations with the system.
+
+### 2. Key Functions and Their Purposes
+- **PDF Upload**: This feature allows users to drag and drop PDF files into the application. It supports multiple file uploads and enforces file size limits, ensuring that users can easily integrate relevant documents for processing.
+  
+- **Model Selection**: Users can choose from various Ollama models available in the sidebar. This feature includes the ability to view the status of the selected model and switch between models as needed, providing flexibility in how the chat interface processes user queries.
+
+- **Chat Window**: The chat window facilitates real-time interaction between the user and the system. It maintains a history of messages, provides source citations for responses, and allows users to clear the conversation when necessary.
+
+- **PDF Viewer**: This component allows users to navigate through the uploaded PDF documents. It includes functionalities such as page navigation, zoom controls, and highlighting relevant sections, which enhances the user experience by making it easier to reference content during conversations.
+
+### 3. Important Interactions with Other Parts of the System
+The chat interface is closely integrated with several components of the application:
+- **PDF Processing**: The uploaded PDFs are processed by the backend, which likely involves extracting text and information to facilitate user queries. The chat window interacts with this processing to provide relevant responses based on the content of the PDFs.
+  
+- **Model Interaction**: The selected model plays a crucial role in generating responses to user queries. The chat interface communicates with the model to retrieve answers, and the model's performance can be influenced by the type of PDF uploaded and the specificity of the questions asked.
+
+- **User Input Management**: The interface allows users to manage their interactions, including clearing chat history and uploading new documents. This interaction is essential for maintaining an organized workflow and ensuring that users can focus on relevant topics.
+
+### 4. Notable Features or Patterns
+- **User-Centric Design**: The guide emphasizes ease of use with features like drag-and-drop for PDF uploads and real-time chat capabilities. This design pattern prioritizes user experience, making it accessible even for those who may not be technically inclined.
+
+- **Performance Tips**: The document includes practical tips for users to enhance their experience, such as asking specific questions and monitoring memory usage. This proactive approach helps users optimize their interactions with the system.
+
+- **Keyboard Shortcuts**: The inclusion of keyboard shortcuts streamlines user interactions, allowing for quicker navigation and message sending. This feature caters to users who prefer keyboard commands over mouse interactions, enhancing usability.
+
+In summary, the `docs/user-guide/chat-interface.md` file serves as a vital resource for users of the Ollama PDF RAG chat interface, detailing its functionalities, guiding users on effective usage, and promoting an efficient interaction model with the system.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `pdf-processing.md` file serves as a user guide for understanding how the PDF processing functionality works within the Ollama PDF RAG (Retrieval-Augmented Generation) application. Below is a detailed analysis of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this document is to provide users with a comprehensive overview of how the application handles PDF files. It outlines the steps involved in loading, processing, and managing PDF documents, ensuring users can effectively utilize the PDF processing features of the application. The document emphasizes the importance of document quality and configuration settings to optimize the processing pipeline.
+
+### 2. Key Functions and Their Purposes
+The document describes several key functions involved in the PDF processing pipeline:
+
+- **Document Loading**: This function involves uploading a PDF file through a Streamlit interface, which is then read and parsed into text. This is the initial step that allows the application to work with the content of the PDF.
+
+- **Chunking Strategy**: The document outlines how the text extracted from the PDF is split into manageable chunks. The parameters for chunk size (1000 characters) and chunk overlap (200 characters) are configurable, allowing users to tailor the chunking process based on their needs. This strategy ensures that the model receives appropriately sized inputs while maintaining sufficient context for understanding.
+
+- **Text Processing Pipeline**: This includes several stages:
+  - **Extraction**: Converting the PDF into raw text.
+  - **Cleaning**: Removing any artifacts or formatting issues from the extracted text.
+  - **Splitting**: Creating overlapping chunks to facilitate better context retention.
+  - **Indexing**: Preparing the processed text for vector storage, which is essential for efficient retrieval and further processing.
+
+### 3. Important Interactions with Other Parts of the System
+The PDF processing functionality interacts with several components of the Ollama PDF RAG system:
+
+- **LangChain's PDF Loader**: The document mentions that the application utilizes LangChain's PDF loader, indicating a reliance on this external library for the initial loading and parsing of PDF files.
+
+- **Streamlit Interface**: The user uploads PDFs through a Streamlit interface, highlighting the integration of user input with the backend processing logic.
+
+- **Model Interaction**: The chunking strategy and text processing are designed to prepare the data for interaction with machine learning models, ensuring that the input is structured in a way that maximizes the model's performance.
+
+### 4. Notable Features or Patterns
+Several notable features and patterns emerge from the document:
+
+- **Configurability**: The ability to adjust parameters like chunk size and overlap allows users to customize the processing according to their specific use cases, which is a significant feature for flexibility.
+
+- **Best Practices Section**: The inclusion of best practices provides users with guidance on how to optimize their document processing, emphasizing the importance of document quality and memory management.
+
+- **Structured Approach**: The document follows a clear and structured approach, breaking down the PDF processing into distinct stages (loading, chunking, processing) which aids in user comprehension.
+
+Overall, the `pdf-processing.md` file serves as an essential resource for users of the Ollama PDF RAG application, detailing the PDF processing workflow and providing practical advice for effective usage.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `rag-pipeline.md` file serves as a comprehensive guide to the Retrieval Augmented Generation (RAG) pipeline utilized in the Ollama PDF RAG project. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the document is to explain the architecture and functioning of the RAG pipeline, which integrates document retrieval with language model generation. This allows the system to provide accurate and contextually relevant responses to user queries. The document outlines the steps involved in the pipeline, the components that make it work, and best practices for optimizing its performance.
+
+### 2. Key Functions and Their Purposes
+The document breaks down the RAG pipeline into several key components and their respective functions:
+
+- **Embeddings**: This component utilizes Nomic's text embeddings to convert text chunks into vector representations. This transformation enables semantic search, allowing the system to understand and retrieve information based on meaning rather than just keyword matching.
+
+- **Vector Store**: The pipeline employs ChromaDB for storing these vectors. This allows for efficient similarity searches and persistent storage of documents, which is crucial for quickly retrieving relevant information.
+
+- **Retriever**: This part of the system is responsible for multi-query retrieval and managing the context window. It identifies and retrieves relevant document chunks based on the processed user query.
+
+- **Language Model**: The local Ollama models generate context-aware responses. This component is essential for producing answers that are not only accurate but also provide source attribution, enhancing the reliability of the information given to the user.
+
+### 3. Important Interactions with Other Parts of the System
+The RAG pipeline interacts with several other components of the system:
+
+- **User Query Processing**: The pipeline begins with receiving a user query, which is then processed to extract relevant information for retrieval.
+
+- **Document Retrieval**: After processing the query, the retriever interacts with the vector store to find similar document chunks that can provide context for generating a response.
+
+- **Response Generation**: The language model uses the retrieved context to generate a response. It also tracks the sources of the information used in the response, ensuring that users can verify the information provided.
+
+### 4. Notable Features or Patterns
+Several notable features and patterns are highlighted in the document:
+
+- **Performance Optimization**: The guide discusses various strategies for optimizing the performance of the RAG pipeline, such as tuning chunk sizes, improving embedding quality, selecting appropriate models, and managing memory effectively.
+
+- **Best Practices**: The document emphasizes best practices for users to follow when interacting with the system. This includes forming specific queries, selecting the right model for the task, and managing context effectively to ensure relevance and accuracy.
+
+- **Pipeline Flow**: The document outlines a clear flow of the pipeline, from receiving a user query to generating a response. This structured approach helps users understand how their input is processed and how the system arrives at its output.
+
+In summary, the `rag-pipeline.md` file serves as a foundational guide for understanding the RAG pipeline's architecture and functionality within the Ollama PDF RAG project. It provides insights into the components involved, their interactions, and best practices for optimizing the system's performance.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `src/app/main.py` file is a Streamlit application designed for PDF-based Retrieval-Augmented Generation (RAG) using the Ollama and LangChain frameworks. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this application is to allow users to upload PDF documents, process the content, and interact with it by asking questions using a selected language model. The application leverages RAG techniques to enhance the user's ability to retrieve relevant information from the uploaded PDFs. 
+
+### 2. Key Functions and Their Purposes
+- **`extract_model_names(models_info: Any) -> Tuple[str, ...]`**: Extracts and returns the names of available language models from the Ollama API response.
+  
+- **`create_vector_db(file_upload) -> Chroma`**: Takes an uploaded PDF file, processes it into chunks, and creates a vector database (Chroma) for efficient querying. It handles temporary file management and ensures the vector database is persistent.
+
+- **`process_question(question: str, vector_db: Chroma, selected_model: str) -> str`**: Processes a user question by querying the vector database using a selected language model. It generates alternative questions to improve retrieval accuracy and returns the model's response.
+
+- **`extract_all_pages_as_images(file_upload) -> List[Any]`**: Converts all pages of the uploaded PDF into images for display purposes.
+
+- **`delete_vector_db(vector_db: Optional[Chroma]) -> None`**: Deletes the vector database and clears related session states when requested by the user.
+
+- **`main() -> None`**: The main function that orchestrates the entire Streamlit application. It handles user interactions, manages the state, and coordinates the display of the UI components.
+
+### 3. Important Interactions with Other Parts of the System
+- **Integration with Ollama and LangChain**: The application uses the Ollama API to list available models and perform embeddings. It also utilizes LangChain components for document loading, text splitting, and querying.
+
+- **Session State Management**: The application maintains state using Streamlit's session state to keep track of uploaded files, vector databases, chat messages, and user selections. This allows for a seamless user experience as users interact with the application.
+
+- **PDF Processing**: The application uses `pdfplumber` to extract text and images from PDF files, enabling users to visualize the content they are querying.
+
+### 4. Notable Features or Patterns
+- **Logging**: The application employs logging throughout its functions to capture important events and errors, which is essential for debugging and monitoring the application's behavior.
+
+- **User Interface Components**: The application is designed with a user-friendly interface using Streamlit components like file uploaders, sliders, and buttons, making it easy for users to interact with the application.
+
+- **Dynamic Content Handling**: The application dynamically updates the content displayed to the user based on their interactions, such as switching between sample PDFs and uploaded files.
+
+- **Error Handling**: The application includes error handling mechanisms to provide feedback to users when something goes wrong, enhancing the overall user experience.
+
+- **Caching**: The use of `@st.cache_data` for the `extract_all_pages_as_images` function optimizes performance by caching the results of expensive operations.
+
+In summary, `src/app/main.py` serves as the core of a Streamlit application that facilitates PDF-based querying through RAG techniques, integrating various libraries and frameworks to provide a seamless and interactive user experience.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `document.py` file within the `src/core` directory is responsible for handling the loading and processing of PDF documents in the context of the larger application. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `DocumentProcessor` class is to manage the loading of PDF documents and to split these documents into manageable chunks for further processing. This functionality is crucial for applications that need to analyze or extract information from large documents, as it allows for efficient handling of text data.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, chunk_size: int = 7500, chunk_overlap: int = 100)`**: 
+  - This is the constructor method for the `DocumentProcessor` class. It initializes the instance with parameters for chunk size and overlap, which dictate how the text will be divided into smaller parts. The `RecursiveCharacterTextSplitter` is instantiated here, which will be used later to split the documents.
+
+- **`load_pdf(self, file_path: Path) -> List`**: 
+  - This method is responsible for loading a PDF document from the specified file path. It utilizes the `UnstructuredPDFLoader` from the `langchain_community.document_loaders` module to read the PDF file. If successful, it returns a list of documents (or text segments) extracted from the PDF. If an error occurs during loading, it logs the error and raises an exception.
+
+- **`split_documents(self, documents: List) -> List`**: 
+  - This method takes a list of documents (or text segments) and splits them into smaller chunks based on the previously defined chunk size and overlap. It uses the `split_documents` method of the `RecursiveCharacterTextSplitter` instance. Similar to `load_pdf`, it logs any errors that occur during the splitting process.
+
+### 3. Important Interactions with Other Parts of the System
+- **External Libraries**: The `DocumentProcessor` interacts with external libraries such as `langchain_community.document_loaders` and `langchain_text_splitters`. These libraries provide the functionality needed to load unstructured PDF content and split it into manageable text chunks, respectively.
+
+- **Logging**: The class uses Python's built-in logging module to log information and errors. This is important for debugging and monitoring the document processing workflow, as it provides insights into the operations being performed and any issues that arise.
+
+- **Integration with Other Components**: While this file focuses on document processing, it likely interacts with other components in the application that require processed text data, such as natural language processing (NLP) models or data storage systems. For example, the processed chunks could be fed into a language model for analysis or stored in a database for later retrieval.
+
+### 4. Notable Features or Patterns
+- **Error Handling**: The use of try-except blocks in both methods demonstrates a robust approach to error handling. This ensures that any issues encountered during PDF loading or document splitting are logged and raised, preventing silent failures.
+
+- **Configurability**: The constructor allows for customization of the chunk size and overlap, making the `DocumentProcessor` flexible and adaptable to different use cases or document types.
+
+- **Modular Design**: The separation of concerns is evident, as the `DocumentProcessor` class is focused solely on document loading and processing. This modularity enhances maintainability and allows for easier testing and extension of functionality in the future.
+
+In summary, the `src/core/document.py` file plays a critical role in the document processing pipeline of the application, providing essential functionality for loading and preparing PDF documents for further analysis or processing. Its design emphasizes error handling, configurability, and modularity, making it a robust component of the overall system.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `src/core/embeddings.py` file is a crucial component of the system, primarily focused on managing vector embeddings and database operations. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The main purpose of the `embeddings.py` file is to handle the creation and management of vector embeddings for documents, which are essential for tasks such as information retrieval, document similarity, and natural language processing. The `VectorStore` class encapsulates the functionality required to create a vector database from a set of documents and to manage that database, including the ability to delete collections when necessary.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, embedding_model: str = "nomic-embed-text")`**: This is the constructor for the `VectorStore` class. It initializes an instance of the class with a specified embedding model (defaulting to "nomic-embed-text"). It creates an instance of `OllamaEmbeddings`, which is responsible for generating embeddings based on the specified model.
+
+- **`create_vector_db(self, documents: List, collection_name: str = "local-rag") -> Chroma`**: This method is responsible for creating a vector database from a list of documents. It uses the `Chroma` class from `langchain_community.vectorstores` to create a vector database, which allows for efficient storage and retrieval of vector embeddings. If successful, it returns the created vector database; otherwise, it logs an error and raises an exception.
+
+- **`delete_collection(self) -> None`**: This method deletes the current vector database collection if it exists. It logs the deletion process and handles any exceptions that may arise during the deletion.
+
+### 3. Important Interactions with Other Parts of the System
+- **Integration with `OllamaEmbeddings`**: The `VectorStore` class relies on the `OllamaEmbeddings` class to generate embeddings for the documents. This integration is crucial as it allows the system to convert textual data into a numerical format that can be processed and stored in a vector database.
+
+- **Interaction with `Chroma`**: The `create_vector_db` method utilizes the `Chroma` class to manage the vector database. This interaction is significant as it provides the underlying functionality for storing and querying vector embeddings.
+
+- **Logging**: The use of the `logging` module allows the class to log important events and errors, which is essential for debugging and monitoring the application's behavior during runtime.
+
+### 4. Notable Features or Patterns
+- **Error Handling**: The methods include try-except blocks to catch and log exceptions, which is a good practice for maintaining robustness in the application. This ensures that any issues during the creation or deletion of the vector database are logged and can be addressed without crashing the application.
+
+- **Modular Design**: The `VectorStore` class encapsulates all vector-related functionalities, promoting a modular design. This makes it easier to maintain and extend the code in the future.
+
+- **Default Parameters**: The use of default parameters in the constructor and methods (e.g., `embedding_model` and `collection_name`) provides flexibility, allowing users to customize behavior while also providing sensible defaults.
+
+In summary, the `src/core/embeddings.py` file plays a vital role in managing vector embeddings and their storage, which is essential for the overall functionality of the application. Its design emphasizes error handling, modularity, and integration with other components, making it a robust part of the system.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `src/core/llm.py` file is responsible for managing the configuration and setup of a Language Model (LLM) within a broader application. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `LLMManager` class is to encapsulate the configuration and management of a language model, specifically one from the `langchain_ollama` library. This class is responsible for:
+- Initializing the language model with a specified name.
+- Providing templates for generating prompts that can be used to interact with the language model.
+- Facilitating the generation of alternative questions to improve the retrieval of relevant documents from a vector database.
+
+### 2. Key Functions and Their Purposes
+The `LLMManager` class includes the following key functions:
+
+- **`__init__(self, model_name: str = "llama2")`**: 
+  - This is the constructor method that initializes an instance of the `LLMManager`. It takes an optional `model_name` parameter (defaulting to "llama2") and creates an instance of `ChatOllama` using this model name. This sets up the language model for subsequent interactions.
+
+- **`get_query_prompt(self) -> PromptTemplate`**:
+  - This method returns a `PromptTemplate` designed for generating alternative versions of a user’s question. The purpose of this prompt is to help the language model create variations of the original question, which can enhance the effectiveness of document retrieval from a vector database. The prompt template specifies that the model should generate two different versions of the user's question.
+
+- **`get_rag_prompt(self) -> ChatPromptTemplate`**:
+  - This method returns a `ChatPromptTemplate` that is used for the Retrieval-Augmented Generation (RAG) process. It provides a structure for the model to answer a question based on a given context. The prompt emphasizes that the model should base its answer solely on the provided context, which is crucial for ensuring that responses are relevant and accurate.
+
+### 3. Important Interactions with Other Parts of the System
+The `LLMManager` class interacts with:
+- **`ChatOllama`**: This is the language model class from the `langchain_ollama` library. The `LLMManager` initializes an instance of this class, which is essential for generating responses based on prompts.
+- **Prompt Templates**: The methods `get_query_prompt` and `get_rag_prompt` return templates that are likely used in other parts of the application to interact with the language model. These templates define how questions and contexts are structured for the model, influencing the quality and relevance of the responses generated.
+
+### 4. Notable Features or Patterns
+- **Encapsulation**: The `LLMManager` class encapsulates all functionality related to LLM configuration and prompt generation, promoting a clean and organized code structure.
+- **Use of Templates**: The use of `PromptTemplate` and `ChatPromptTemplate` indicates a design pattern focused on reusability and clarity in how prompts are structured. This is particularly useful for maintaining consistency in how questions are posed to the model.
+- **Logging**: The inclusion of a logger (`logger = logging.getLogger(__name__)`) suggests that the class is designed to support logging, which can be helpful for debugging and monitoring the behavior of the language model interactions.
+
+Overall, the `src/core/llm.py` file plays a crucial role in managing the language model's configuration and providing structured prompts for effective interaction, which is essential for the application's functionality related to language processing and document retrieval.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `rag.py` file implements a Retrieval Augmented Generation (RAG) pipeline, which is a sophisticated approach that combines information retrieval with generative language models. Here’s a detailed breakdown of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `RAGPipeline` class is to manage the RAG process, which involves retrieving relevant information from a vector database and generating responses to user queries using a language model (LLM). The class encapsulates the setup and execution of this pipeline, ensuring that the necessary components (retriever and chain) are correctly initialized and can be used to answer questions effectively.
+
+### 2. Key Functions and Their Purposes
+- **`__init__(self, vector_db: Any, llm_manager: LLMManager)`**: This is the constructor for the `RAGPipeline` class. It initializes the pipeline with a vector database and a language model manager. It also sets up the retriever and the chain by calling the respective setup methods.
+  
+- **`_setup_retriever(self) -> MultiQueryRetriever`**: This private method configures a multi-query retriever using the vector database and the LLM manager. It creates an instance of `MultiQueryRetriever`, which is responsible for fetching relevant documents based on the input queries. If there’s an error during setup, it logs the error and raises an exception.
+
+- **`_setup_chain(self) -> Any`**: This method establishes the RAG chain, which combines the retriever, the LLM, and the output parser into a single runnable object. It uses a combination of context from the retriever and the generative capabilities of the LLM to formulate responses. Similar to the retriever setup, it logs any errors that occur during this process.
+
+- **`get_response(self, question: str) -> str`**: This public method is the main interface for users of the `RAGPipeline`. It takes a user question as input, invokes the RAG chain, and returns the generated response. It logs the question being processed and handles any exceptions that may arise during the response generation.
+
+### 3. Important Interactions with Other Parts of the System
+- **Interaction with `LLMManager`**: The `RAGPipeline` class relies heavily on the `LLMManager` class, which is responsible for managing the language model. The `llm_manager` provides the necessary LLM and the prompt used for querying, making it a critical component of the RAG pipeline.
+
+- **Integration with `MultiQueryRetriever`**: The pipeline uses the `MultiQueryRetriever` from the `langchain` library to fetch relevant documents from the vector database. This interaction allows the system to retrieve contextually relevant information that can be used to generate more accurate and informative responses.
+
+- **Logging**: The use of the `logging` module throughout the class provides insights into the internal state and any issues that may arise during setup and execution. This is crucial for debugging and maintaining the pipeline.
+
+### 4. Notable Features or Patterns
+- **Error Handling**: The implementation includes robust error handling, with try-except blocks around critical setup and execution steps. This ensures that any issues are logged appropriately, and exceptions are raised to inform users of the pipeline.
+
+- **Modular Design**: The separation of concerns is evident in the design of the class. The setup of the retriever and the chain is encapsulated in private methods, keeping the constructor clean and focused on initialization.
+
+- **Use of Type Hints**: The code employs type hints (e.g., `Any`, `Dict`) to improve code readability and provide hints about expected data types, which can aid in development and maintenance.
+
+In summary, the `rag.py` file is a central component of the RAG pipeline, responsible for managing the retrieval and generation of responses based on user queries. Its design emphasizes modularity, error handling, and integration with other system components, making it a robust solution for enhancing the capabilities of language models through retrieval-augmented techniques.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The provided code in `tests/test_document.py` is a set of unit tests designed to validate the functionality of the `DocumentProcessor` class from the `src.core.document` module. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this test file is to ensure that the `DocumentProcessor` class behaves as expected when processing PDF documents. The tests cover various aspects of the class, including initialization, loading PDFs, splitting documents into chunks, and preserving metadata during the splitting process. By doing so, the tests help maintain the reliability and correctness of the document processing functionality within the application.
+
+### 2. Key Functions and Their Purposes
+- **Fixtures**:
+  - `processor()`: Creates and returns a `DocumentProcessor` instance for use in tests.
+  - `test_pdf_path()`: Provides the path to a sample PDF file for testing.
+
+- **Tests**:
+  - `test_init(processor)`: Verifies the default initialization parameters (`chunk_size` and `chunk_overlap`) of the `DocumentProcessor`.
+  - `test_init_custom_params()`: Tests the initialization of `DocumentProcessor` with custom parameters to ensure they are set correctly.
+  - `test_load_pdf_file_not_found(mock_load)`: Tests the behavior of the `load_pdf` method when attempting to load a non-existent PDF file, expecting a `FileNotFoundError`.
+  - `test_load_pdf_success(processor, test_pdf_path)`: Tests the successful loading of an existing PDF file, asserting that documents are returned and contain the expected attributes.
+  - `test_split_documents(processor)`: Tests the splitting functionality of the `DocumentProcessor` by verifying that a long document is split into multiple chunks.
+  - `test_split_empty_document(processor)`: Tests the behavior of the `split_documents` method when given an empty document, checking that it returns zero or one empty chunk.
+  - `test_split_large_document(processor)`: Tests the splitting of a very large document and ensures that the chunk sizes do not exceed the specified `chunk_size`.
+  - `test_metadata_preservation(processor)`: Verifies that metadata is preserved in all chunks after splitting a document.
+  - `test_chunk_overlap()`: Tests that the chunk overlap functionality works correctly by checking for overlaps between consecutive chunks of text.
+
+### 3. Important Interactions with Other Parts of the System
+The tests interact primarily with the `DocumentProcessor` class, which is responsible for loading and processing documents. The tests utilize the `langchain_core.documents.Document` class to create document instances for testing. Additionally, the tests use mocking (via `unittest.mock.patch`) to simulate the behavior of the PDF loading function, allowing for controlled testing scenarios without requiring actual files.
+
+### 4. Notable Features or Patterns
+- **Use of Fixtures**: The code employs pytest fixtures to create reusable test setups, which helps keep the test functions clean and focused on their specific assertions.
+- **Mocking**: The use of mocking to simulate file loading behavior allows for testing edge cases (like file not found) without relying on the file system.
+- **Parameterized Tests**: The tests check various conditions, such as default and custom initialization parameters, handling of empty documents, and chunk overlap, demonstrating a comprehensive approach to testing the functionality of the `DocumentProcessor`.
+- **Assertions**: The tests include various assertions to validate not just the presence of returned documents but also their structure and content, ensuring that the `DocumentProcessor` behaves as expected under different scenarios.
+
+Overall, this test file plays a crucial role in ensuring the robustness of the document processing functionality within the application, providing confidence that the `DocumentProcessor` will perform correctly in production.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `tests/test_models.py` file is a unit test module designed to validate the functionality of the `extract_model_names` function from the `src.app.main` module. Here's a detailed breakdown of its key aspects:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this test module is to ensure that the `extract_model_names` function behaves correctly under various scenarios. It focuses on validating the extraction of model names from a given input structure, which is expected to contain model information. The tests cover different conditions, including empty responses, successful extractions, invalid formats, and exception handling.
+
+### 2. Key Functions and Their Purposes
+The module contains four key test functions, each targeting a specific aspect of the `extract_model_names` functionality:
+
+- **`test_extract_model_names_empty`**: 
+  - **Purpose**: Tests the function's behavior when provided with an empty list of models.
+  - **Expectation**: The function should return an empty tuple, indicating no model names were extracted.
+
+- **`test_extract_model_names_success`**: 
+  - **Purpose**: Tests the function's ability to successfully extract model names from a valid input.
+  - **Expectation**: The function should return a tuple containing the names of the models, in this case, `("model1:latest", "model2:latest")`.
+
+- **`test_extract_model_names_invalid_format`**: 
+  - **Purpose**: Tests how the function handles an input that does not conform to the expected structure (i.e., a dictionary instead of an object with a `models` attribute).
+  - **Expectation**: The function should return an empty tuple, indicating it could not extract any model names due to the invalid format.
+
+- **`test_extract_model_names_exception`**: 
+  - **Purpose**: Tests the function's resilience when an unexpected condition occurs, specifically when the `models` attribute is deleted from the mock object.
+  - **Expectation**: The function should handle the situation gracefully and return an empty tuple.
+
+### 3. Important Interactions with Other Parts of the System
+The test module interacts directly with the `extract_model_names` function, which is presumably responsible for extracting model names from a structured input. The tests utilize the `unittest.mock` library to create mock objects that simulate the expected behavior of the input data. This allows the tests to focus on the logic of `extract_model_names` without relying on actual data structures or external dependencies.
+
+### 4. Notable Features or Patterns
+- **Use of Mocks**: The tests extensively use the `Mock` class from the `unittest.mock` module to create mock objects that mimic the expected input structure. This is a common pattern in unit testing, allowing for isolation of the function being tested.
+  
+- **Assertions**: Each test function uses assertions to verify that the output of `extract_model_names` matches the expected results. This is a fundamental aspect of unit testing, ensuring that the function behaves as intended under various conditions.
+
+- **Clear Documentation**: Each test function includes a docstring that succinctly describes its purpose. This enhances the readability and maintainability of the test code, making it easier for other developers to understand the intent behind each test.
+
+In summary, `tests/test_models.py` serves as a crucial component of the testing suite for the application, ensuring that the model extraction functionality is robust, reliable, and handles edge cases appropriately.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCode - analysis -----
+The `tests/test_rag.py` file is a unit test suite designed to validate the functionality of the `RAGPipeline` class from the `src.core.rag` module. The tests ensure that the RAG (Retrieval-Augmented Generation) pipeline behaves as expected under various conditions. Below is a detailed analysis of its key functionality and role:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of this test file is to verify the behavior and reliability of the `RAGPipeline` class, which is likely responsible for combining retrieval and generation tasks in a natural language processing (NLP) context. The tests cover various scenarios, including the setup of components, response generation, error handling, and resource management.
+
+### 2. Key Functions and Their Purposes
+- **`setUp`**: This method is executed before each test case. It initializes mock objects and patches necessary components, such as the `MultiQueryRetriever` and `RunnablePassthrough`, to simulate the behavior of dependencies without invoking their actual implementations.
+  
+- **`tearDown`**: This method is called after each test case to stop the patches applied in `setUp`, ensuring that the mocks do not interfere with other tests.
+
+- **`test_setup_retriever`**: Tests the `_setup_retriever` method of the `RAGPipeline` to ensure that it correctly initializes the retriever from the vector database.
+
+- **`test_setup_chain`**: Tests the `_setup_chain` method to verify that it correctly sets up the chain using the LLM manager.
+
+- **`test_get_response`**: Validates the `get_response` method by checking if it correctly invokes the chain with a question and returns the expected response.
+
+- **`test_get_response_empty_question`**: Tests how the `get_response` method handles an empty question, ensuring it returns an empty string.
+
+- **`test_get_response_long_question`**: Checks the behavior of the `get_response` method when provided with a very long question, ensuring it can handle such input.
+
+- **`test_get_response_special_characters`**: Tests the `get_response` method with a question containing special characters to ensure it processes such input correctly.
+
+- **`test_chain_error_handling`**: Validates that the `get_response` method correctly raises an exception when the chain encounters an error during invocation.
+
+- **`test_retriever_error_handling`**: Tests the error handling during the retriever setup, ensuring that an exception is raised if the retriever cannot be created.
+
+- **`test_memory_cleanup`**: Ensures that resources are properly managed and cleaned up after operations, verifying that the retriever and chain are invoked as expected.
+
+### 3. Important Interactions with Other Parts of the System
+The tests interact with several components:
+- **`RAGPipeline`**: The main class under test, which combines retrieval and generation functionalities.
+- **`MultiQueryRetriever`**: A component that retrieves relevant documents based on queries; the tests mock its behavior to isolate the `RAGPipeline` functionality.
+- **`RunnablePassthrough`**: Another component that is patched to simulate its behavior without executing its actual logic.
+- **`MagicMock` and `Mock`**: These are used extensively to create mock objects that simulate the behavior of real components, allowing for controlled testing scenarios.
+
+### 4. Notable Features or Patterns
+- **Use of Mocks**: The test suite heavily relies on mocking to isolate the `RAGPipeline` from its dependencies, enabling focused testing of its logic without external side effects.
+- **Error Handling Tests**: The suite includes tests specifically designed to validate error handling, ensuring that the pipeline gracefully manages exceptions.
+- **Parameterized Testing**: While not explicitly shown in this code, the structure allows for easy addition of more tests for various input scenarios, such as different question formats or unexpected input types.
+- **Resource Management**: The tests include checks for proper resource management, indicating a focus on ensuring that the pipeline does not leak resources or leave components in an inconsistent state.
+
+In summary, `tests/test_rag.py` serves as a comprehensive test suite for the `RAGPipeline`, ensuring that it functions correctly across a variety of scenarios, handles errors gracefully, and interacts appropriately with its dependencies.
+
+----- analyzeCode - metadata -----
+[object Object]
+
+----- analyzeCallHierarchy -----
+To analyze the `ollama_pdf_rag` project and create a call hierarchy, we will focus on the main execution path starting from the entry point, which is `src/app/main.py`. We will outline the flow of execution through various files and functions, highlighting important function calls and dependencies between modules.
+
+### 1. Entry Point File
+- **File**: `src/app/main.py`
+- **Description**: This file serves as the entry point for the Streamlit application. It initializes the application and sets up the main interface.
+
+### 2. Main Execution Flow
+The main execution flow can be summarized as follows:
+
+1. **`main.py`**:
+   - Initializes the Streamlit app.
+   - Sets up the layout and components (e.g., chat interface, PDF viewer).
+   - Handles user interactions (e.g., uploading PDFs, sending queries).
+
+2. **User Interaction**:
+   - When a user uploads a PDF, the application calls functions from `document.py` to process the PDF.
+   - The processed document is then converted into embeddings using `embeddings.py`.
+
+3. **Query Handling**:
+   - When the user submits a query, the application interacts with the RAG pipeline implemented in `rag.py`.
+   - The RAG pipeline uses the language model set up in `llm.py` to generate responses based on the embeddings and the original document.
+
+### 3. Important Function Calls Between Files
+Here’s a breakdown of important function calls:
+
+#### `src/app/main.py`
+- **Functions**:
+  - `run_app()`: Initializes the Streamlit app.
+  - `upload_pdf()`: Handles PDF uploads and calls `process_pdf()` from `document.py`.
+  - `submit_query()`: Handles query submissions and calls `generate_response()` from `rag.py`.
+
+#### `src/core/document.py`
+- **Functions**:
+  - `process_pdf(pdf_file)`: Processes the uploaded PDF file.
+  - `extract_text(pdf)`: Extracts text from the PDF using `pdfplumber`.
+
+#### `src/core/embeddings.py`
+- **Functions**:
+  - `create_embeddings(text)`: Converts extracted text into vector embeddings.
+
+#### `src/core/llm.py`
+- **Functions**:
+  - `initialize_llm()`: Sets up the language model.
+  - `generate_response(query, context)`: Generates a response based on the query and context.
+
+#### `src/core/rag.py`
+- **Functions**:
+  - `run_rag_pipeline(query)`: Orchestrates the RAG process.
+  - `retrieve_documents(query)`: Retrieves relevant documents based on the query embeddings.
+
+### 4. Dependencies Between Modules
+- **`main.py`** depends on:
+  - `document.py` (for PDF processing)
+  - `embeddings.py` (for creating embeddings)
+  - `rag.py` (for handling queries)
+  - `llm.py` (for generating responses)
+
+- **`document.py`** depends on:
+  - `embeddings.py` (to create embeddings from processed text)
+
+- **`rag.py`** depends on:
+  - `llm.py` (to generate responses)
+
+### 5. Visual Mapping of Function Calls
+Below is a simplified representation of the call hierarchy and function calls:
+
+```
+main.py
+ ├── run_app()
+ │    ├── upload_pdf()
+ │    │    └── process_pdf(pdf_file) -> document.py
+ │    │         └── extract_text(pdf) 
+ │    │              └── create_embeddings(text) -> embeddings.py
+ │    └── submit_query()
+ │         └── run_rag_pipeline(query) -> rag.py
+ │              ├── retrieve_documents(query)
+ │              └── generate_response(query, context) -> llm.py
+ │                   └── initialize_llm()
+```
+
+### Summary
+The `ollama_pdf_rag` project is structured to facilitate interaction with PDF documents using a modular design. The main execution path flows from the entry point in `main.py`, through various components responsible for PDF processing, embedding creation, and query handling via the RAG pipeline. Each module has clear dependencies, ensuring a cohesive architecture that supports easy modifications and enhancements.
+
+----- generateSummary -----
+### Project Summary: ollama_pdf_rag
+
+**Purpose and Functionality**:  
+The `ollama_pdf_rag` project is designed to create an interactive chat interface that allows users to engage with PDF documents using a Retrieval Augmented Generation (RAG) pipeline. It enables users to upload PDFs, extract their content, and ask questions about the material, receiving contextually relevant responses.
+
+**Tech Stack and Architecture**:  
+This project is built using Jupyter Notebook and leverages Streamlit for the user interface. It employs a modular architecture with separate components for PDF processing, embedding creation, and query handling, ensuring maintainability and scalability.
+
+**Key Components and Their Interactions**:
+1. **Entry Point (`main.py`)**: Initializes the Streamlit application, setting up the layout and handling user interactions such as PDF uploads and query submissions.
+2. **PDF Processing (`document.py`)**: Processes uploaded PDFs and extracts text for further analysis.
+3. **Embedding Creation (`embeddings.py`)**: Converts the extracted text into vector embeddings, which are essential for the RAG pipeline.
+4. **RAG Pipeline (`rag.py`)**: Orchestrates the retrieval and generation of responses based on user queries, utilizing a language model defined in `llm.py`.
+5. **Language Model (`llm.py`)**: Manages the setup and response generation of the language model, ensuring that the system can provide relevant answers based on the context of the uploaded documents.
+
+**Notable Features**:
+- Interactive chat interface for engaging with PDF content.
+- Ability to process and analyze multiple PDFs.
+- Utilizes advanced techniques in natural language processing to provide accurate responses.
+
+**Code Organization and Structure**:  
+The project is organized into a clear directory structure:
+- **`src/app/main.py`**: Main application entry point.
+- **`src/core/`**: Contains core functionalities such as document processing, embeddings, language model interactions, and the RAG pipeline.
+- **`tests/`**: Includes unit tests for various components to ensure code reliability.
+
+Overall, `ollama_pdf_rag` provides a robust framework for interacting with PDFs in a conversational manner, making it a valuable tool for users needing to extract and query information from documents efficiently.
+
+----- analyzeProjectStructure -----
+The `ollama_pdf_rag` repository is designed to facilitate interaction with PDF documents through a local Retrieval Augmented Generation (RAG) application using Ollama and LangChain. Here’s a concise breakdown of its structure, main components, tech stack, and architecture:
+
+### Main Components
+1. **Source Code (`src/`)**:
+   - **App (`src/app/`)**: Contains the Streamlit application components, including:
+     - `chat.py`: Manages the chat interface.
+     - `pdf_viewer.py`: Displays PDF documents.
+     - `sidebar.py`: Handles sidebar controls for user interaction.
+     - `main.py`: Entry point for the Streamlit app.
+   - **Core Functionality (`src/core/`)**: Implements the core logic of the application:
+     - `document.py`: Handles document processing.
+     - `embeddings.py`: Manages vector embeddings for document representation.
+     - `llm.py`: Sets up the language model.
+     - `rag.py`: Implements the RAG pipeline for querying and retrieving information.
+
+2. **Data Storage (`data/`)**:
+   - Contains directories for storing PDFs and vector databases, allowing for organized data management.
+
+3. **Notebooks (`notebooks/`)**:
+   - Includes Jupyter notebooks for experimentation, providing a space for testing and developing new features or algorithms.
+
+4. **Tests (`tests/`)**:
+   - Contains unit tests for various components, ensuring code quality and functionality.
+
+5. **Documentation (`docs/`)**:
+   - Comprehensive documentation covering API references, user guides, and development instructions, structured for easy navigation.
+
+### Tech Stack
+- **Languages**: Primarily Python, utilizing Jupyter Notebooks for experimentation.
+- **Frameworks**:
+  - **Streamlit**: For creating the web interface.
+  - **LangChain**: For implementing the RAG functionality.
+  - **Ollama**: For leveraging language models and embeddings.
+- **Libraries**:
+  - `pdfplumber`: For PDF processing.
+  - `chromadb`: For managing vector databases.
+
+### Architecture
+- The application follows a modular architecture, separating concerns between the user interface (Streamlit) and core processing logic (in the `src/core/` directory).
+- The `run.py` file serves as the entry point to start the application, allowing users to choose between the Streamlit interface and Jupyter notebook for interaction.
+- The project employs GitHub Actions for continuous integration, ensuring that tests are run automatically on code changes.
+
+### Summary
+Overall, the `ollama_pdf_rag` project is a well-structured application that enables users to interact with PDF documents using advanced language models in a local environment. It combines a user-friendly interface with robust backend processing capabilities, making it suitable for both experimentation and practical use.
+
+----- smartFileFilter -----
+["README.md", "requirements.txt", "run.py", "src/app/main.py", "src/core/document.py", "src/core/embeddings.py", "src/core/llm.py", "src/core/rag.py", "tests/test_document.py", "tests/test_models.py", "tests/test_rag.py", "docs/index.md"]
+
+----- analyzeCode - analysis -----
+The `README.md` file serves as a comprehensive guide for the `ollama_pdf_rag` project, which is designed to facilitate interaction with PDF documents using a local Retrieval Augmented Generation (RAG) application. Below is a detailed analysis of its key functionalities and roles:
+
+### 1. Main Purpose and Responsibilities
+The primary purpose of the `ollama_pdf_rag` project is to enable users to chat with PDF documents locally using the Ollama and LangChain frameworks. The project allows for both experimentation through Jupyter notebooks and user interaction via a Streamlit web interface. This setup ensures that all processing is done locally, enhancing data privacy and security.
+
+### 2. Key Functions and Their Purposes
+- **Local RAG Application**: The application leverages Retrieval Augmented Generation to provide intelligent responses based on the content of PDF documents.
+- **PDF Processing**: The project includes functionalities for processing PDF files, including intelligent chunking, which breaks down documents into manageable pieces for better context understanding.
+- **Chat Interface**: A user-friendly chat interface is provided through Streamlit, allowing users to ask questions about the content of the PDFs.
+- **Jupyter Notebooks**: Experimental notebooks are included for users to explore and test different functionalities and models.
+- **Model Integration**: Users can select from various locally available Ollama models to enhance the interaction experience.
+
+### 3. Important Interactions with Other Parts of the System
+- **Source Code Structure**: The project is organized into several directories:
+  - `src/app`: Contains the Streamlit application and its components (e.g., chat interface, PDF viewer).
+  - `src/core`: Houses the core functionalities, such as document processing, embeddings, and RAG pipeline logic.
+  - `data`: Stores PDF files and vector databases.
+  - `notebooks`: Contains Jupyter notebooks for experimentation.
+  - `tests`: Includes unit tests to ensure code reliability.
+- **Dependencies**: The project relies on several key libraries, including Ollama, Streamlit, LangChain, and pdfplumber, which are specified in the `requirements.txt` file.
+- **Continuous Integration**: The project integrates with GitHub Actions for continuous integration, running tests automatically on code changes and ensuring code quality.
+
+### 4. Notable Features or Patterns
+- **Local Processing**: A standout feature is the emphasis on local data processing, ensuring that no data leaves the user's machine, which is crucial for privacy.
+- **User-Friendly Interface**: The use of Streamlit provides a clean and intuitive interface for users to interact with their PDFs, making it accessible even for those with limited technical expertise.
+- **Comprehensive Setup Instructions**: The README includes detailed instructions for setting up the environment, running the application, and troubleshooting common issues, which enhances user experience.
+- **Testing and Pre-commit Hooks**: The inclusion of unit tests and pre-commit hooks demonstrates a commitment to code quality and reliability, ensuring that the application remains robust as it evolves.
+
+Overall, the `README.md` file effectively communicates the purpose, functionality, and structure of the `ollama_pdf_rag` project, making it easier for users and developers to understand and contribute to the project.
+
+----- analyzeCode - metadata -----
+[object Object]
+
