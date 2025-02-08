@@ -29,7 +29,7 @@ const IMPORTANT_FILES = [
 
 // New helper to save API call content to a TXT file
 async function saveApiCallContent(functionName, content) {
-  const filePath = 'apiResponses.txt';
+  const filePath = 'apiResponsesLog.txt';
   const heading = `----- ${functionName} -----\n`;
   fs.appendFileSync(filePath, heading + content + '\n\n');
 }
@@ -93,6 +93,8 @@ export async function analyzeRepository(repoUrl) {
   const filesToAnalyze = await smartFileFilter(treeData.tree, projectUnderstanding);
   console.log(chalk.yellow(`\n📝 Analyzing ${filesToAnalyze.length} relevant files...`));
 
+  console.log('File names to analyze:\n' + filesToAnalyze.map(file => file.path).join('\n'));
+
   let totalTokens = 0;
   for (const [index, file] of filesToAnalyze.entries()) {
     console.log(chalk.yellow(`\n[${index + 1}/${filesToAnalyze.length}] Analyzing: ${file.path}`));
@@ -138,6 +140,7 @@ export async function analyzeRepository(repoUrl) {
 
 async function analyzeProjectStructure(openai, repoData, files, readmeContent) {
   const fileList = files.map(f => f.path).join('\n');
+  // console.log(chalk.green('File list:\n' + fileList));
   const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert.
 Provided Metadata:
 ${JSON.stringify(repoData)}
@@ -153,10 +156,10 @@ File structure:
 ${fileList}`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "o1-mini-2024-09-12",
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-    max_tokens: 2000
+    temperature: 1,
+    max_completion_tokens: 2000
   });
   await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
 
@@ -168,7 +171,7 @@ async function smartFileFilter(files, projectUnderstanding) {
   const filePaths = files.map(f => f.path);
 
   try {
-    const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the project structure and identify essential files needed to understand this codebase. Ignore .md files.
+    const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the project structure and identify all the essential files needed to understand this codebase, especially the logical flow of the project. Ignore .md files.
 Project Type Analysis:
 ${projectUnderstanding}
 
@@ -179,10 +182,10 @@ Respond with ONLY a JSON array of full file paths considered essential. Format: 
 DO NOT use Markdown formatting or any additional explanation.`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini-2024-07-18",
+      model: "o1-mini-2024-09-12",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
-      max_tokens: 2000
+      temperature: 1,
+      max_completion_tokens: 2000
     });
 
     await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
@@ -237,7 +240,7 @@ async function summarizeContent(openai, content, fileTree) {
     ${content}`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "chatgpt-4o-latest",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.3,
     max_tokens: 1000
@@ -266,7 +269,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     ${content}`;
 
   const analysisResponse = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "chatgpt-4o-latest",
     messages: [{ role: "user", content: analysisPrompt }],
     temperature: 0.3,
     max_tokens: 1000
@@ -301,7 +304,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     `;
 
   const metadataResponse = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "chatgpt-4o-latest",
     messages: [{ role: "user", content: metadataPrompt }],
     temperature: 0.3,
     max_tokens: 2000
@@ -341,10 +344,10 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
     5. A visual mapping of function calls`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "o1-mini-2024-09-12",
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-    max_tokens: 5000
+    temperature: 1,
+    max_completion_tokens: 5000
   });
   await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content); // Save API response
 
@@ -369,7 +372,7 @@ async function generateSummary(openai, analysis) {
     5. Code organization and structure`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini-2024-07-18",
+    model: "chatgpt-4o-latest",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.3,
     max_tokens: 5000

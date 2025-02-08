@@ -31,10 +31,10 @@ ${analysis.callHierarchy}
 
 ## File Analyses
 ${analysis.fileAnalysis.map(file => `
-### ${createGitHubLink(file.path)}
-${file.analysis}`).join('\n')}
+### File: ${createGitHubLink(file.path)}
+${file.analysis}`).join('\n---')}
 
-## Summary
+## Final Summary
 ${analysis.summary}`;
 
   await writeFile(filename, mdContent, 'utf8');
