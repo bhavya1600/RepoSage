@@ -75,21 +75,26 @@ app.post('/api/analyze', async (req, res) => {
             }
         };
 
-        // Run the analysis
-        const analysis = await analyzeRepository(repo);
-        
-        // Display results (this will be streamed to the client)
-        // displayResults(analysis);
-        
-        // Save results to file
-        await saveToFile('analysis_results.md', analysis);
-        
-        // Restore original console.log
-        console.log = originalConsoleLog;
-
-        // Signal completion to the client
-        res.write('\nLOG:Analysis complete. Click the Download button to get the results.\n');
-        res.end();
+        try {
+            // Run the analysis
+            console.log('Starting repository analysis...');
+            const analysis = await analyzeRepository(repo);
+            
+            // Save results to file
+            console.log('Saving analysis results...');
+            await saveToFile('analysis_results.md', analysis);
+            
+            // Signal that analysis is complete and file is ready
+            res.write('ANALYSIS_COMPLETE\n');
+            
+            // Restore original console.log
+            console.log = originalConsoleLog;
+            
+            // End the response
+            res.end();
+        } catch (analysisError) {
+            throw new Error(`Analysis failed: ${analysisError.message}`);
+        }
 
     } catch (error) {
         console.error('Error during analysis:', error);

@@ -55,9 +55,10 @@ function App() {
                 // This is a console log
                 const logMessage = trimmedLine.substring(4)
                 setLogs(prev => prev + logMessage + '\n')
-                if (logMessage.includes('Analysis complete')) {
-                  setAnalysisComplete(true)
-                }
+              } else if (trimmedLine === 'ANALYSIS_COMPLETE') {
+                // Analysis is complete and file is ready
+                setAnalysisComplete(true)
+                setLogs(prev => prev + "✅ Analysis complete! Click the Download button to get the results.\n")
               } else if (trimmedLine) {
                 // Any other non-empty line goes to logs
                 setLogs(prev => prev + trimmedLine + '\n')
@@ -184,12 +185,12 @@ function App() {
         </form>
 
         <div className="output-section">
-          <h2>Console Output</h2>
+          <h2>Progress</h2>
           <div className="console-output">
             {logs ? (
               <pre>{logs}</pre>
             ) : (
-              <div className="placeholder-text">Console output will appear here...</div>
+              <div className="placeholder-text">Progress will appear here...</div>
             )}
           </div>
         </div>
