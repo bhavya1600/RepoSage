@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Now you can resolve your config file relative to the project root.
-const configPath = resolve(__dirname, '../openaiConfigQA.json');
+const configPath = resolve(__dirname, '../openaiConfig.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 console.log("Loaded config from:", configPath);
@@ -39,7 +39,6 @@ if (fs.existsSync(filePath)) {
 }
 
 
-const MAX_TOKENS_PER_REQUEST = 128000;
 const SKIP_FILES = [
   '.css', '.scss', '.less',
   '.svg', '.png', '.jpg', '.jpeg', '.gif', '.ico',
@@ -171,7 +170,7 @@ export async function analyzeRepository(repoUrl) {
     const content = Buffer.from(fileContent.content, 'base64').toString();
     
     const estimatedTokens = content.length / 4;
-    if (totalTokens + estimatedTokens > MAX_TOKENS_PER_REQUEST) {
+    if (totalTokens + estimatedTokens > config.MAX_TOKENS_PER_REQUEST) {
       console.log(chalk.yellow('  ⚠️ Approaching token limit, summarizing content...'));
       const summary = await summarizeContent(openai, content, treeData.tree);
       totalTokens += summary.length / 4;
@@ -217,7 +216,7 @@ Keep the response concise.
 File structure:
 ${fileList}`;
 
-  const { model, modelType } = config.analyzeProjectStructure;
+  const { model, modelType } = config.configurations.find(c => c.name === 'analyzeProjectStructure');
   const response = await createChatCompletion(openai, model, modelType, prompt);
   // const response = await openai.chat.completions.create({
   //   model: "o1-mini-2024-09-12",
@@ -246,7 +245,7 @@ ${filePaths.join('\n')}
 Respond with ONLY a JSON array of full file paths considered essential. Format: ["path1", "path2", ...]
 DO NOT use Markdown formatting or any additional explanation.`;
 
-    const { model, modelType } = config.smartFileFilter;
+    const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
     const response = await createChatCompletion(openai, model, modelType, prompt);
 
     // const response = await openai.chat.completions.create({
@@ -307,7 +306,7 @@ async function summarizeContent(openai, content, fileTree) {
 
     ${content}`;
 
-    const { model, modelType } = config.summarizeContent;
+    const { model, modelType } = config.configurations.find(c => c.name === 'summarizeContent');
     const response = await createChatCompletion(openai, model, modelType, prompt);
   // const response = await openai.chat.completions.create({
   //   model: "chatgpt-4o-latest",
@@ -340,7 +339,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     Code:
     ${content}`;
 
-    const { model, modelType } = config.analyzeCode;
+    const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
     const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
 
   // const analysisResponse = await openai.chat.completions.create({
@@ -434,7 +433,7 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
 
 `;
     
-    const { model, modelType } = config.analyzeCallHierarchy;
+    const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
     const response = await createChatCompletion(openai, model, modelType, prompt);
   // const response = await openai.chat.completions.create({
   //   model: "o1-mini-2024-09-12",
@@ -470,7 +469,7 @@ async function generateSummary(openai, analysis) {
     
     Only answer in the format stated above, nothing else, no main header, no extra information before this. Only add a one liner statement at the end that starts with "Overall,..."`;
 
-    const { model, modelType } = config.generateSummary;
+    const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
     const response = await createChatCompletion(openai, model, modelType, prompt);
   // const response = await openai.chat.completions.create({
   //   model: "chatgpt-4o-latest",
