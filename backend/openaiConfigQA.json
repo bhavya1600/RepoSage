@@ -1,0 +1,27 @@
+{
+    "analyzeProjectStructure": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    },
+    "smartFileFilter": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    },
+    "summarizeContent": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    },
+    "analyzeCode": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    },
+    "analyzeCallHierarchy": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    },
+    "generateSummary": {
+      "model": "gpt-4o-mini",
+      "modelType": "Non Reasoning"
+    }
+  }
+  

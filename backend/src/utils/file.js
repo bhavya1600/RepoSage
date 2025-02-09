@@ -9,32 +9,54 @@ export async function saveToFile(filename, analysis) {
   const createGitHubLink = (filePath) => {
     const cleanPath = filePath.replace(/^root\/?/, '');
     const encodedPath = cleanPath.split('/').map(part => encodeURIComponent(part)).join('/');
-    return `[${cleanPath}](${repoUrl}/blob/${branch}/${encodedPath})`;
+    return `${repoUrl}/blob/${branch}/${encodedPath}`;
   };
 
   // Save the main markdown analysis with clean, human-readable format
-  const mdContent = `# Repository Analysis Results
+  const mdContent = 
+`# Repository Insights 📓🔍
 
-## Repository Information
-Name: ${analysis.repository.name}
-Description: ${analysis.repository.description}
-Primary Language: ${analysis.repository.language}
+## Project Details 📃
+- **Name:** ${analysis.repository.name}
+- **Description:** ${analysis.repository.description}
+- **Primary Language:** ${analysis.repository.language}
 
-## Project Understanding
-${analysis.projectUnderstanding}
+## Project Understanding 🤓
+<details>
+  <summary><strong>Peek Under the Hood 👀</strong></summary>
 
-## Project Structure
-${formatFileTree(analysis.fileTree, '', repoUrl, branch)}
+  ${analysis.projectUnderstanding}
 
-## Call Hierarchy
-${analysis.callHierarchy}
+</details>
 
-## File Analyses
+## Project Structure 🏯
+<details>
+  <summary><strong>File Tree🌲</strong></summary>
+
+  ${formatFileTree(analysis.fileTree, '', repoUrl, branch)}
+
+</details>
+
+## Call Hierarchy 📞
+<details>
+  <summary><strong>Detailed Function Call Hierarchy 🪜</strong></summary>
+
+  ${analysis.callHierarchy}
+
+</details>
+
+## File Analyses 📈 
 ${analysis.fileAnalysis.map(file => `
-### File: ${createGitHubLink(file.path)}
-${file.analysis}`).join('\n---')}
+<details>
+  <summary><strong>File: <a href="${createGitHubLink(file.path)}">${file.path}</a></strong></summary>
 
-## Final Summary
+  ${file.analysis}
+
+  ---
+</details>
+`).join('')}
+
+## Project Summary ✒️
 ${analysis.summary}`;
 
   await writeFile(filename, mdContent, 'utf8');

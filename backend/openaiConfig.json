@@ -1,0 +1,27 @@
+{
+    "analyzeProjectStructure": {
+      "model": "o1-mini-2024-09-12",
+      "modelType": "reasoning"
+    },
+    "smartFileFilter": {
+      "model": "o1-mini-2024-09-12",
+      "modelType": "reasoning"
+    },
+    "summarizeContent": {
+      "model": "chatgpt-4o-latest",
+      "modelType": "Non Reasoning"
+    },
+    "analyzeCode": {
+      "model": "chatgpt-4o-latest",
+      "modelType": "Non Reasoning"
+    },
+    "analyzeCallHierarchy": {
+      "model": "o1-mini-2024-09-12",
+      "modelType": "reasoning"
+    },
+    "generateSummary": {
+      "model": "chatgpt-4o-latest",
+      "modelType": "Non Reasoning"
+    }
+  }
+  
