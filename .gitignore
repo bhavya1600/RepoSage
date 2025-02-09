@@ -7,6 +7,8 @@ analysis_results.json
 .env
 
 # Ignore Node.js modules directory
+backend/node_modules/
+frontend/node_modules/
 node_modules/
 
 # Ignore .bolt file
