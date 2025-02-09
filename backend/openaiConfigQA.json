@@ -1,27 +1,36 @@
 {
-    "analyzeProjectStructure": {
+  "MAX_TOKENS_PER_REQUEST": 128000,
+  "configurations": [
+    {
+      "name": "analyzeProjectStructure",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     },
-    "smartFileFilter": {
+    {
+      "name": "smartFileFilter",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     },
-    "summarizeContent": {
+    {
+      "name": "summarizeContent",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     },
-    "analyzeCode": {
+    {
+      "name": "analyzeCode",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     },
-    "analyzeCallHierarchy": {
+    {
+      "name": "analyzeCallHierarchy",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     },
-    "generateSummary": {
+    {
+      "name": "generateSummary",
       "model": "gpt-4o-mini",
       "modelType": "Non Reasoning"
     }
-  }
+  ]
+}
   
