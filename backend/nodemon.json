@@ -1,0 +1,7 @@
+{
+  "ignore": [
+    "analysis_results.md",
+    "analysis_results.json",
+    "apiResponsesLog.txt"
+  ]
+} 

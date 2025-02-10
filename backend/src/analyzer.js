@@ -21,22 +21,22 @@ console.log("Loaded config from:", configPath);
 
 
 // Replace 'fileToDelete.txt' with the name of your file
-const fileName = 'apiResponsesLog.txt';
+// const fileName = 'apiResponsesLog.txt';
 
-const projectRoot = path.resolve(__dirname, '..');
-const filePath = path.join(projectRoot, fileName);
+// const projectRoot = path.resolve(__dirname, '..');
+// const filePath = path.join(projectRoot, fileName);
 
-if (fs.existsSync(filePath)) {
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      console.error(`Error deleting ${fileName}:`, err);
-    } else {
-      console.log(`${fileName} has been deleted successfully.`);
-    }
-  });
-} else {
-  console.log(`File ${fileName} does not exist in the project root.`);
-}
+// if (fs.existsSync(filePath)) {
+//   fs.unlink(filePath, (err) => {
+//     if (err) {
+//       console.error(`Error deleting ${fileName}:`, err);
+//     } else {
+//       console.log(`${fileName} has been deleted successfully.`);
+//     }
+//   });
+// } else {
+//   console.log(`File ${fileName} does not exist in the project root.`);
+// }
 
 
 const SKIP_FILES = [
