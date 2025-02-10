@@ -10,6 +10,9 @@ Take a quick look on a sample report [here](https://github.com/bhavya1600/RepoSa
 
 ---
 
+![RepoSage](https://github.com/bhavya1600/RepoSage/blob/main/assets/RepoSageSS.png)
+
+
 ## 📑 Table of Contents 
 
 - [Introduction](#introduction)
