@@ -14,14 +14,14 @@ export async function saveToFile(filename, analysis) {
 
   // Save the main markdown analysis with clean, human-readable format
   const mdContent = 
-`# Repository Insights 📓🔍
+`# 🔍 Repository Insights
 
-## Project Details 📃
+## 📃 Project Details 
 - **Name:** ${analysis.repository.name}
 - **Description:** ${analysis.repository.description}
 - **Primary Language:** ${analysis.repository.language}
 
-## Project Understanding 🤓
+## 🤓 Project Understanding 
 <details>
   <summary><strong>Peek Under the Hood 👀</strong></summary>
 
@@ -29,23 +29,23 @@ export async function saveToFile(filename, analysis) {
 
 </details>
 
-## Project Structure 🏯
+## 🌲 Project Structure 
 <details>
-  <summary><strong>File Tree🌲</strong></summary>
+  <summary><strong>File Tree</strong></summary>
 
   ${formatFileTree(analysis.fileTree, '', repoUrl, branch)}
 
 </details>
 
-## Call Hierarchy 📞
+## 📞 Call Hierarchy 
 <details>
-  <summary><strong>Detailed Function Call Hierarchy 🪜</strong></summary>
+  <summary><strong>Detailed Function Call Hierarchy</strong></summary>
 
   ${analysis.callHierarchy}
 
 </details>
 
-## File Analyses 📈 
+## 📈 File Analyses  
 ${analysis.fileAnalysis.map(file => `
 <details>
   <summary><strong>File: <a href="${createGitHubLink(file.path)}">${file.path}</a></strong></summary>
@@ -56,7 +56,7 @@ ${analysis.fileAnalysis.map(file => `
 </details>
 `).join('')}
 
-## Project Summary ✒️
+## ✒️ Project Summary 
 ${analysis.summary}`;
 
   await writeFile(filename, mdContent, 'utf8');

@@ -1,10 +1,10 @@
-# 🤖 GitHub Repository Analysis Bot 
+# 🤖 RepoSage AI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A powerful tool for deep analysis of GitHub repositories, providing file-by-file insights, call hierarchy visualization, and AI-powered summaries using OpenAI's API.
 
-The **GitHub Repo Bot** combines advanced reasoning models for multi-step, context-aware analysis of complex project structures with agile general models for fast, high-level summarization. This dual-model approach captures nuanced interdependencies and delivers more accurate, reliable insights than traditional one-shot methods.
+**RepoSage** combines advanced reasoning models for multi-step, context-aware analysis of complex project structures with agile general models for fast, high-level summarization. This dual-model approach captures nuanced interdependencies and delivers more accurate, reliable insights than traditional one-shot methods.
 
 ---
 
@@ -30,7 +30,7 @@ The **GitHub Repo Bot** combines advanced reasoning models for multi-step, conte
 
 ## 📝 Introduction
 
-The **GitHub Repo Bot** is a powerful tool for deep analysis of GitHub repositories, providing file-by-file insights, call hierarchy visualization, and AI-powered summaries using OpenAI's API.
+**RepoSage** is a powerful tool for deep analysis of GitHub repositories, providing file-by-file insights, call hierarchy visualization, and AI-powered summaries using OpenAI's API.
 
 The uniqueness of this project lies in its multi-step, AI-powered approach that goes far beyond traditional static or one-shot methods:
 
@@ -105,7 +105,7 @@ You can customize the following settings to optimize performance and cost:
 
     - The default model configuration is recommended for the best performance.
     - You can change the model used for each function call in **`backend/openaiConfig.json`** file.
-    - For a more cost-effective analysis, use the configuration specified in the **`backend/openaiConfigQA.json`** file.
+    - For a more cost-effective analysis, use the configuration specified in the **`backend/openaiConfigQA.json`** file. (You can change it in **`backend/src/analyzer.js`** file)
 &nbsp;
 - **Token Limits:**
     -  Adjust the **`MAX_TOKENS_PER_REQUEST`** setting to control the token usage per repository.
@@ -168,7 +168,7 @@ Each function call to OpenAI API is logged in `apiResponsesLog.txt` file in the 
 In seperate terminals run the following commands:
 ```bash
 cd backend
-npm run dev
+npm start
 ```
 
 ### Frontend
