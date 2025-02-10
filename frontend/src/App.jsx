@@ -3,8 +3,6 @@ import './App.css'
 
 function App() {
   const [repo, setRepo] = useState("")
-  const [githubToken, setGithubToken] = useState("")
-  const [openaiToken, setOpenaiToken] = useState("")
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -21,11 +19,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
-          repo,
-          githubToken: githubToken || undefined,
-          openaiToken: openaiToken || undefined
-        })
+        body: JSON.stringify({ repo })
       })
       
       if(response.ok && response.body) {
@@ -128,40 +122,6 @@ function App() {
               placeholder="https://github.com/owner/repo"
               required
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="github-token">
-              GitHub API Token
-              <span className="optional-text">(optional - uses default if not provided)</span>
-            </label>
-            <input
-              id="github-token"
-              type="password"
-              value={githubToken}
-              onChange={(e) => setGithubToken(e.target.value)}
-              placeholder="Your GitHub API Token"
-            />
-            <small className="helper-text">
-              Leave empty to use the default token
-            </small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="openai-token">
-              OpenAI API Token
-              <span className="optional-text">(optional - uses default if not provided)</span>
-            </label>
-            <input
-              id="openai-token"
-              type="password"
-              value={openaiToken}
-              onChange={(e) => setOpenaiToken(e.target.value)}
-              placeholder="Your OpenAI API Token"
-            />
-            <small className="helper-text">
-              Leave empty to use the default token
-            </small>
           </div>
 
           <div className="button-group">
