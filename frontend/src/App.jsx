@@ -112,7 +112,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>GitHub Repo Analyzer</h1>
+        <h1>RepoSage</h1>
         <p className="subtitle">Generate comprehensive analysis for any GitHub repository</p>
       </header>
 
