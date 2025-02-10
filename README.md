@@ -97,7 +97,7 @@ By combining these elements, the analyzer.js provides a context-aware, detailed,
 
 ### ⚠️ Important Notes Before Running the Project 
 
-This project utilizes the GitHub API and OpenAI API for repository analysis and summarization. To run the project, you will need:
+This project utilizes the [GitHub API](https://github.com/settings/tokens) and [OpenAI API](https://platform.openai.com/api-keys) for repository analysis and summarization. To run the project, you will need:
 
 - A GitHub token to access GitHub's API.
 - An OpenAI API key to interact with OpenAI's services.
