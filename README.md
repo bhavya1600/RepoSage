@@ -6,6 +6,8 @@ A powerful tool for deep analysis of GitHub repositories, providing file-by-file
 
 **RepoSage** combines advanced reasoning models for multi-step, context-aware analysis of complex project structures with agile general models for fast, high-level summarization. This dual-model approach captures nuanced interdependencies and delivers more accurate, reliable insights than traditional one-shot methods.
 
+Take a quick look on a sample report [here](https://github.com/bhavya1600/RepoSage/blob/main/backend/analysis_results.md).
+
 ---
 
 ## 📑 Table of Contents 
