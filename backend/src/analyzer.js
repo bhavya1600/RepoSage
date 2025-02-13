@@ -394,56 +394,68 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   // } catch (error) {
   //   jsonMetadata = { error: 'Failed to parse JSON metadata' };
   // }
-  await saveApiCallContent("analyzeCode - metadata", metadataResponse.choices[0].message.content); // Save API response
+  let jsonMetadata;
+  try {
+    let responseContent = metadataResponse.choices[0].message.content;
+    
+    // Find first { and last }
+    const startIndex = responseContent.indexOf('{');
+    const endIndex = responseContent.lastIndexOf('}');
+    
+    if (startIndex === -1 || endIndex === -1) {
+      throw new Error('No valid JSON object markers found');
+    }
+    
+    // Extract only the JSON portion
+    responseContent = responseContent.substring(startIndex, endIndex + 1);
+    
+    jsonMetadata = JSON.parse(responseContent);
+  } catch (error) {
+    console.error('Failed to parse JSON metadata:', error);
+    jsonMetadata = { 
+      error: 'Failed to parse JSON metadata',
+      rawResponse: metadataResponse.choices[0].message.content
+    };
+  }
+
+  await saveApiCallContent("analyzeCode - metadata", JSON.stringify(jsonMetadata, null, 2)); // Save API response
   
   return {
     textAnalysis: analysisResponse.choices[0].message.content,
-    jsonMetadata: metadataResponse.choices[0].message.content
+    jsonMetadata: JSON.stringify(jsonMetadata, null, 2)
   };
 }
 
 async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong) {
-  const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the following project understanding, file metadata and create a call hierarchy showing how the application flows from the entry point through various files and functions.
-    Focus on the main execution path and important function calls between files.
+  const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the following project understanding and file metadata to create a call hierarchy showing how the application flows from the entry point through various files and functions.
 
-    Project understanding:
-    ${projectUnderstandiong}
+Project understanding:
+${projectUnderstandiong}
 
-    File metadata:
-    ${JSON.stringify(fileMetadata, null, 2)}
+File metadata:
+${JSON.stringify(fileMetadata, null, 2)}
 
-    Provide the call hierarchy in a clear, structured format showing:
-    1. A visual mapping of function calls
-    2. Entry point file
-    3. Main execution flow
-    4. Important function calls between files
-    5. Dependencies between modules
-    
-    
-    The visual mapping should be something like this:
-    
-    📁 rootFunction(param1: Type) → ReturnType [src/rootFile.js]
-    ├─ 🔷 childFunction1(arg1: Type) → ReturnType [src/childFile1.js]
-    │   ├─ 🟣 subFunction1(a: Type) → ReturnType [src/subFile1.js]
-    │   └️─ 🟠 subFunction2() → ReturnType [src/subFile2.js]
-    └─ 🔶 childFunction2(data: Type) → ReturnType [src/childFile2.js]
-      ├─ 🟢 subFunction3(config: Type) → ReturnType [src/subFile3.js]
-      ├─ 🔴 subFunction4(option1: Type) → ReturnType [src/subFile4.js]
-      └─ 🟣 subFunction5(info: Type) → ReturnType [src/subFile5.js]
+Create a visual call hierarchy that shows:
+1. Entry point of the application
+2. Main execution flow
+3. Important function calls between files
+4. Dependencies between modules
 
-`;
-    
-    const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
-    const response = await createChatCompletion(openai, model, modelType, prompt);
-  // const response = await openai.chat.completions.create({
-  //   model: "o1-mini-2024-09-12",
-  //   messages: [{ role: "user", content: prompt }],
-  //   temperature: 1,
-  //   max_completion_tokens: 5000
-  // });
+Use this exact format for the visual mapping:
+📁 rootFunction(param1: Type) → ReturnType [src/rootFile.js]
+├─ 🔷 childFunction1(arg1: Type) → ReturnType [src/childFile1.js]
+│  ├─ 🟣 subFunction1(a: Type) → ReturnType [src/subFile1.js]
+│  └─ 🟠 subFunction2() → ReturnType [src/subFile2.js]
+└─ 🔶 childFunction2(data: Type) → ReturnType [src/childFile2.js]
+   ├─ 🟢 subFunction3(config: Type) → ReturnType [src/subFile3.js]
+   └─ 🔴 subFunction4(option1: Type) → ReturnType [src/subFile4.js]
 
-  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content); // Save API response
+DO NOT include any explanatory text before or after the hierarchy. Only output the visual tree structure.`;
 
+  const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
+  const response = await createChatCompletion(openai, model, modelType, prompt);
+  console.log("Call Hierarchy: ", response.choices[0].message.content);
+  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
   return response.choices[0].message.content;
 }
 
