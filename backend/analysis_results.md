@@ -9,43 +9,42 @@
 <details>
   <summary><strong>Peek Under the Hood 👀</strong></summary>
 
-  The **RepoSage** project is structured to facilitate deep analysis of GitHub repositories using a combination of a backend and a frontend. Here's a brief overview of its components, tech stack, and architecture based on the provided file structure:
+  The **RepoSage** project is structured to facilitate in-depth analysis of GitHub repositories, leveraging both a backend and a frontend component. Here's a concise breakdown of its file structure, main components, tech stack, and architecture:
 
 ### Main Components
+
 1. **Backend**:
-   - **Core Analysis Logic**: Located in `backend/src/analyzer.js`, this file likely contains the primary functionality for analyzing repositories, including the integration with OpenAI's API for generating insights.
-   - **Configuration Files**: 
-     - `openaiConfig.json` and `openaiConfigQA.json` define settings for interacting with the OpenAI API, including model selection and token management.
-   - **Utilities**: The `utils` directory contains helper functions for various tasks, such as handling files (`file.js`), interacting with the GitHub API (`github.js`), and managing file trees (`fileTree.js`).
-   - **Results Storage**: `analysis_results.json` and `analysis_results.md` store the output of the analysis, providing both structured data and human-readable reports.
+   - **Core Logic**: Located in `backend/src/analyzer.js`, this file contains the main analysis logic that interacts with the OpenAI API and GitHub API.
+   - **Configuration**: The `backend/openaiConfig.json` and `backend/openaiConfigQA.json` files manage API settings and model configurations.
+   - **Utilities**: Various utility files in `backend/src/utils` (like `display.js`, `file.js`, `fileTree.js`, and `github.js`) support specific functionalities such as file handling and GitHub interactions.
+   - **Results Storage**: Analysis results are stored in `backend/analysis_results.md` and `backend/analysis_results.json`.
 
 2. **Frontend**:
-   - **User Interface**: Built with React, the frontend files are located in the `frontend/src` directory. The main entry point is `main.jsx`, which initializes the application.
-   - **Styling**: CSS files (`App.css`, `index.css`) are used for styling the application, ensuring a responsive and modern interface.
-   - **Build Configuration**: `vite.config.js` is used for configuring Vite, the build tool that optimizes the frontend assets.
+   - **User Interface**: The main UI is built with React, as indicated by the presence of `frontend/src/App.jsx` and `frontend/src/main.jsx`.
+   - **Styling**: CSS files for styling the application are located in `frontend/src/App.css` and `frontend/src/index.css`.
+   - **Build Tool**: The project uses Vite for the frontend build process, as indicated by `frontend/vite.config.js`.
 
 3. **Assets**:
-   - The `assets` directory contains images and other static resources, such as `RepoSageSS.png`, which is likely used for branding or UI elements.
+   - Contains images and other static files, such as `assets/RepoSageSS.png` and `frontend/public/vite.svg`.
 
 ### Tech Stack
+
 - **Backend**:
   - **Language**: JavaScript (Node.js)
-  - **Framework**: Express.js (assumed based on common practices)
-  - **APIs**: OpenAI API for analysis and summarization
-  - **Utilities**: Custom scripts for file handling and GitHub API interactions
+  - **Framework**: Express.js (assumed)
+  - **APIs**: OpenAI API for AI-powered analysis and GitHub API for repository data.
 
 - **Frontend**:
-  - **Library**: React for building the user interface
-  - **Build Tool**: Vite for fast and modern frontend development
-  - **Styling**: CSS for styling components
+  - **Library**: React for building the user interface.
+  - **Build Tool**: Vite for fast and modern frontend development.
 
 ### Architecture
-The architecture follows a modular design, separating the backend and frontend components:
-- The **backend** handles data processing, API interactions, and analysis logic, while the **frontend** provides a user-friendly interface for input and output.
-- Communication between the frontend and backend is likely facilitated through API calls, allowing users to input a GitHub repository URL and receive analysis results in real-time.
-- The project employs a hybrid AI strategy, leveraging both reasoning models for in-depth analysis and general models for summarization, enhancing the overall effectiveness of the tool.
 
-This structure supports a clear separation of concerns, making the project maintainable and scalable while providing a comprehensive tool for GitHub repository analysis.
+- **Modular Design**: The project follows a modular architecture, separating backend and frontend concerns. The backend handles data processing and API interactions, while the frontend manages user interactions and displays results.
+- **AI Integration**: The use of OpenAI's API for generating insights and summaries indicates a sophisticated approach to data analysis, allowing for both detailed and high-level views of repository structures.
+- **Configuration Management**: The presence of configuration files allows for easy adjustment of API settings and performance tuning, catering to different user needs and cost considerations.
+
+Overall, **RepoSage** is designed to provide a comprehensive and user-friendly tool for analyzing GitHub repositories, utilizing modern web technologies and AI capabilities.
 
 </details>
 
@@ -103,19 +102,65 @@ This structure supports a clear separation of concerns, making the project maint
 <details>
   <summary><strong>Detailed Function Call Hierarchy</strong></summary>
 
-  ```
-📁 analyzeRepository(repoUrl: string) → Promise<object> [backend/src/analyzer.js]
-├─ 🔷 parseGitHubUrl(url: string) → object [backend/src/utils/github.js]
-├─ 🔷 buildFileTree(files: array) → object [backend/src/utils/fileTree.js]
-│  ├─ 🟣 sortFileTree(node: object) → object [backend/src/utils/fileTree.js]
-│  └─ 🟠 formatFileTree(node: object, indent: string, repoUrl: string, branch: string, parentPath: string) → string [backend/src/utils/file.js]
-├─ 🔷 analyzeProjectStructure(openai: OpenAI, repoData: object, files: array, readmeContent: string) → Promise<string> [backend/src/analyzer.js]
-├─ 🔷 smartFileFilter(files: array, projectUnderstanding: string) → Promise<array> [backend/src/analyzer.js]
-├─ 🔷 summarizeContent(openai: OpenAI, content: string, fileTree: array) → Promise<string> [backend/src/analyzer.js]
-├─ 🔷 analyzeCode(openai: OpenAI, filePath: string, content: string, fileTree: array) → Promise<object> [backend/src/analyzer.js]
-├─ 🔷 createChatCompletion(openai: OpenAI, model: string, modelType: string, analysisPrompt: string) → Promise<object> [backend/src/analyzer.js]
-└─ 🔶 saveToFile(filename: string, analysis: object) → Promise<void> [backend/src/utils/file.js]
-```
+  Here's the call hierarchy for the **RepoSage** project, illustrating the main execution flow and important function calls between files:
+
+### Call Hierarchy
+
+📁 **analyzeRepository(repoUrl: string) → Promise<object>** [backend/src/analyzer.js]
+├─ 🔷 **parseGitHubUrl(url: string) → { owner: string, repo: string }** [backend/src/utils/github.js]
+├─ 🔷 **buildFileTree(files: array) → object** [backend/src/utils/fileTree.js]
+├─ 🔷 **createChatCompletion(openai: OpenAI, model: string, modelType: string, analysisPrompt: string) → Promise<object>** [backend/src/analyzer.js]
+│   └─ 🟣 **summarizeContent(openai: OpenAI, content: string, fileTree: array) → Promise<string>** [backend/src/analyzer.js]
+│       └─ 🟠 **analyzeCode(openai: OpenAI, filePath: string, content: string, fileTree: array) → Promise<object>** [backend/src/analyzer.js]
+├─ 🔷 **analyzeProjectStructure(openai: OpenAI, repoData: object, files: array, readmeContent: string) → Promise<string>** [backend/src/analyzer.js]
+├─ 🔷 **smartFileFilter(files: array, projectUnderstanding: string) → Promise<array>** [backend/src/analyzer.js]
+├─ 🔷 **saveApiCallContent(functionName: string, content: string) → undefined** [backend/src/analyzer.js]
+└─ 🔷 **saveToFile(filename: string, analysis: object) → Promise<void>** [backend/src/utils/file.js]
+
+📁 **displayResults(analysis: object) → undefined** [backend/src/utils/display.js]
+└─ 🔷 **displayFileTree(node: object, indent: string) → undefined** [backend/src/utils/display.js]
+
+📁 **handleSubmit(event: Event) → undefined** [frontend/src/App.jsx]
+└─ 🔷 **analyzeRepository(repoUrl: string) → Promise<object>** [backend/src/analyzer.js]
+
+📁 **main() → React element** [frontend/src/main.jsx]
+└─ 🔷 **App() → JSX element** [frontend/src/App.jsx]
+
+### Main Execution Flow
+
+1. **Entry Point**: The application starts in `frontend/src/main.jsx` where the `main()` function renders the `App` component.
+2. **User Interaction**: The user interacts with the UI in `frontend/src/App.jsx`, triggering the `handleSubmit` function upon form submission.
+3. **Repository Analysis**: The `handleSubmit` function calls `analyzeRepository(repoUrl)` from the backend to analyze the specified GitHub repository.
+4. **Data Fetching and Processing**: 
+   - `analyzeRepository` fetches metadata and file structure using `parseGitHubUrl`, `buildFileTree`, and other helper functions.
+   - It generates insights using the OpenAI API through `createChatCompletion`, which may call `summarizeContent` and `analyzeCode` for detailed analysis.
+5. **Results Display**: The results of the analysis are formatted and displayed using `displayResults` and `displayFileTree` from `backend/src/utils/display.js`.
+6. **File Saving**: The analysis results are saved to files using `saveToFile` in `backend/src/utils/file.js`.
+
+### Important Function Calls Between Files
+
+- **`analyzeRepository`** calls:
+  - **`parseGitHubUrl`** from `github.js` to extract repo details.
+  - **`buildFileTree`** from `fileTree.js` to construct the file structure.
+  - **`createChatCompletion`** for generating insights using OpenAI.
+  - **`saveToFile`** to persist analysis results.
+
+- **`displayResults`** calls:
+  - **`displayFileTree`** to output the file structure in a readable format.
+
+- **`handleSubmit`** in the frontend directly calls `analyzeRepository` in the backend to initiate the analysis process.
+
+### Dependencies Between Modules
+
+- **Backend Dependencies**:
+  - `analyzer.js` depends on utilities from `github.js`, `fileTree.js`, `file.js`, and `display.js`.
+  - Uses external libraries: `octokit`, `openai`, `chalk`, `fs`, and `path`.
+
+- **Frontend Dependencies**:
+  - `App.jsx` relies on React and CSS for styling.
+  - `main.jsx` serves as the entry point, importing `App.jsx` and CSS.
+
+This structured representation provides a clear understanding of how the **RepoSage** application flows from the entry point through various files and functions, highlighting the main execution path and important function calls.
 
 </details>
 
@@ -124,32 +169,43 @@ This structure supports a clear separation of concerns, making the project maint
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/analyzer.js">backend/src/analyzer.js</a></strong></summary>
 
-  **Description**: The `analyzer.js` file is responsible for analyzing a GitHub repository's structure and content using the OpenAI API and Octokit to extract meaningful insights and summaries.
-
-**1. Main purpose and responsibilities**: 
-The main purpose of this file is to analyze a specified GitHub repository by fetching its metadata and file structure, then utilizing OpenAI's capabilities to generate insights, summaries, and call hierarchies based on the repository's content.
+  **1. Main purpose and responsibilities**: The `analyzer.js` file is responsible for analyzing a GitHub repository by fetching its metadata, file structure, and content, and then utilizing OpenAI's API to generate insights, summaries, and analyses of the repository's code and structure.
 
 **2. Key functions and their purposes**: 
-- `createChatCompletion(openai, model, modelType, analysisPrompt)`: This function expects `openai` (OpenAI instance), `model` (string), `modelType` (string), and `analysisPrompt` (string). It processes the prompt by calling OpenAI's chat completion API and returns the response data (object).
-- `saveApiCallContent(functionName, content)`: This function expects `functionName` (string) and `content` (string). It processes the inputs by appending the content to a log file named `apiResponsesLog.txt` and does not return any data.
-- `analyzeRepository(repoUrl)`: This function expects `repoUrl` (string). It processes the repository URL to fetch metadata and file tree, analyzes the project structure, and returns an analysis object (object).
-- `analyzeProjectStructure(openai, repoData, files, readmeContent)`: This function expects `openai` (OpenAI instance), `repoData` (object), `files` (array), and `readmeContent` (string). It processes these inputs to generate a project understanding summary and returns this summary (string).
-- `smartFileFilter(files, projectUnderstanding)`: This function expects `files` (array) and `projectUnderstanding` (string). It processes the inputs to filter and return an array of essential files (array).
-- `summarizeContent(openai, content, fileTree)`: This function expects `openai` (OpenAI instance), `content` (string), and `fileTree` (array). It processes these inputs to generate a summary of the content and returns this summary (string).
-- `analyzeCode(openai, filePath, content, fileTree)`: This function expects `openai` (OpenAI instance), `filePath` (string), `content` (string), and `fileTree` (array). It processes these inputs to generate a human-readable analysis and metadata of the code and returns an object containing both (object).
-- `analyzeCallHierarchy(openai, fileMetadata, projectUnderstanding)`: This function expects `openai` (OpenAI instance), `fileMetadata` (array), and `projectUnderstanding` (string). It processes these inputs to create a call hierarchy and returns this hierarchy (string).
-- `generateSummary(openai, analysis)`: This function expects `openai` (OpenAI instance) and `analysis` (object). It processes these inputs to generate a project summary and returns this summary (string).
+- `createChatCompletion(openai, model, modelType, analysisPrompt)`: This function expects `openai` (OpenAI client), `model` (string), `modelType` (string), and `analysisPrompt` (string). It processes the input by sending a request to the OpenAI API to create a chat completion based on the provided prompt and returns the response data.
+- `saveApiCallContent(functionName, content)`: This function expects `functionName` (string) and `content` (string). It saves the API call content to a text file, appending the function name as a heading, and returns nothing.
+- `analyzeRepository(repoUrl)`: This function expects `repoUrl` (string). It processes the input by analyzing the specified GitHub repository, fetching its metadata and file structure, and generating analyses and summaries, returning an `analysis` object.
+- `analyzeProjectStructure(openai, repoData, files, readmeContent)`: This function expects `openai` (OpenAI client), `repoData` (object), `files` (array), and `readmeContent` (string). It processes the input by generating a prompt to analyze the project structure and returns a brief understanding of the project.
+- `smartFileFilter(files, projectUnderstanding)`: This function expects `files` (array) and `projectUnderstanding` (string). It processes the input by filtering the files based on their relevance to the project understanding and returns an array of essential files.
+- `summarizeContent(openai, content, fileTree)`: This function expects `openai` (OpenAI client), `content` (string), and `fileTree` (array). It processes the input by summarizing the key aspects of the provided code content and returns the summary.
+- `analyzeCode(openai, filePath, content, fileTree)`: This function expects `openai` (OpenAI client), `filePath` (string), `content` (string), and `fileTree` (array). It processes the input by analyzing the code file and returns both a human-readable analysis and a JSON structure containing essential technical information.
+- `analyzeCallHierarchy(openai, fileMetadata, projectUnderstanding)`: This function expects `openai` (OpenAI client), `fileMetadata` (array), and `projectUnderstanding` (string). It processes the input by creating a visual call hierarchy of the application flow and returns the hierarchy as a string.
+- `generateSummary(openai, analysis)`: This function expects `openai` (OpenAI client) and `analysis` (object). It processes the input by generating a summary of the project based on the provided analysis data and returns the summary.
 
-**3. Important interactions with other parts of the system**: 
-The file interacts with the OpenAI API to generate insights and summaries based on the repository's content. It also uses Octokit to fetch metadata and file trees from GitHub. Additionally, it utilizes utility functions from the `utils/github.js` and `utils/fileTree.js` files for parsing URLs and building file trees.
+**3. Important interactions with other parts of the system**: The `analyzer.js` file interacts with the GitHub API through the Octokit library to fetch repository data and file content. It also communicates with the OpenAI API to generate analyses, summaries, and metadata about the code. Additionally, it utilizes utility functions from the `utils/github.js` and `utils/fileTree.js` files for parsing GitHub URLs and building file trees.
 
-**4. Notable features or patterns**: 
-- The use of asynchronous functions to handle API calls and file operations.
-- The implementation of error handling for API responses and file operations.
-- The modular approach with helper functions to separate concerns, such as filtering files and generating summaries.
-- The integration of logging for API responses to a text file for later reference.
+**4. Notable features or patterns**: The file employs asynchronous programming with `async/await` for handling API calls, ensuring non-blocking execution. It also includes error handling for API responses and file operations. The use of configuration files for managing API keys and model settings is a notable design pattern, allowing for flexibility and scalability in the analysis process.
 
-Overall, this file serves as a comprehensive tool for analyzing GitHub repositories, leveraging AI to provide detailed insights into project structure and functionality.
+Overall, `analyzer.js` serves as a comprehensive tool for analyzing GitHub repositories, leveraging external APIs to provide detailed insights into project structures and code functionality.
+
+  ---
+</details>
+
+<details>
+  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/display.js">backend/src/utils/display.js</a></strong></summary>
+
+  Give a one or two liner description of the code file.
+**1. Main purpose and responsibilities**: This code file is responsible for displaying the results of an analysis on a repository, including its information, summary, project structure, call hierarchy, and file analyses in a formatted manner.
+
+**2. Key functions and their purposes**: 
+- `displayResults(analysis)`: This function expects an input `analysis` of type `Object`, processes various properties of the analysis (like repository info, summary, file tree, etc.), and outputs formatted results to the console.
+- `displayFileTree(node, indent)`: This function expects an input `node` of type `Object` (representing a file or directory) and a string `indent`, processes the node to display its name and structure recursively, and outputs the formatted file tree to the console.
+
+**3. Important interactions with other parts of the system**: The `displayResults` function interacts with the `analysis` object, which is likely generated by other parts of the backend analysis process, and it formats and outputs this data to the console for user visibility.
+
+**4. Notable features or patterns**: The code utilizes the `chalk` library for styling console output, enhancing readability with colors and bold text. It also employs recursion in `displayFileTree` to handle nested file structures effectively.
+
+Overall, this file plays a crucial role in presenting analysis results in a user-friendly format, making it easier for developers to understand the insights derived from the repository analysis.
 
   ---
 </details>
@@ -157,25 +213,24 @@ Overall, this file serves as a comprehensive tool for analyzing GitHub repositor
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/file.js">backend/src/utils/file.js</a></strong></summary>
 
-  This code file provides functionality for saving analysis results of a GitHub repository into markdown and JSON formats.
+  This code file is responsible for saving analysis results of a GitHub repository to both a markdown and a JSON file.
 
 **1. Main purpose and responsibilities**: 
-The primary purpose of this file is to generate and save a detailed analysis report of a GitHub repository, including project details, file structure, and function call hierarchy, in both markdown and JSON formats.
+The main purpose of this file is to generate and save a structured markdown report and corresponding JSON metadata for a repository analysis, including project details, file structure, and call hierarchy.
 
 **2. Key functions and their purposes**: 
-- `saveToFile(filename: string, analysis: object)`: This function expects a filename (string) and an analysis object (object). It processes the analysis data to create a markdown report and a JSON file containing repository metadata and file analysis, then writes both files to the filesystem.
-  
-- `formatFileTree(node: object, indent: string, repoUrl: string, branch: string, parentPath: string)`: This function expects a file tree node (object), an indentation string (string), a repository URL (string), a branch name (string), and a parent path (string). It processes the file tree structure recursively to format it into a human-readable string representation, including links to files in the GitHub repository.
-
-- `getFullPath(node: object)`: This function expects a node (object) and processes it to return the full path of the file or directory as a string, reconstructing it if necessary.
+- `saveToFile(filename: string, analysis: object): Promise<void>`: This function expects a filename (string) to save the report and an analysis object (object) containing repository details. It processes this data to create a markdown report and a JSON file, then writes both to the filesystem.
+- `createGitHubLink(filePath: string): string`: This function takes a file path (string), cleans it by removing leading "root/", encodes it for URL compatibility, and returns the full GitHub link (string) to the file.
+- `formatFileTree(node: object, indent: string, repoUrl: string, branch: string, parentPath: string = ''): string`: This function expects a file tree node (object), an indentation string (string), a repository URL (string), a branch name (string), and an optional parent path (string). It recursively formats the file tree into a human-readable string representation, returning this formatted string.
+- `getFullPath(node: object): string`: This function takes a node (object) and returns its full path (string) by reconstructing it from parent references, while removing any leading "root/".
 
 **3. Important interactions with other parts of the system**: 
-The `saveToFile` function interacts with the filesystem to save the generated markdown and JSON files. It also utilizes the `formatFileTree` function to create a structured representation of the file tree from the analysis data, and it constructs GitHub links using the repository information provided in the analysis object.
+The `saveToFile` function interacts with the filesystem using the `writeFile` function from the 'fs/promises' module to save the generated markdown and JSON files. It also relies on the structure of the `analysis` object, which is expected to contain specific properties related to the repository, such as `repository`, `fileTree`, and `fileAnalysis`.
 
 **4. Notable features or patterns**: 
-The code employs asynchronous file operations using `fs/promises` for writing files, ensuring non-blocking behavior. It also utilizes template literals for constructing markdown content dynamically, and it includes a recursive approach for formatting the file tree, which helps in maintaining a clear structure in the output.
+The code employs asynchronous programming with `async/await` for file writing, ensuring non-blocking operations. It uses template literals for constructing markdown content, and recursive functions for formatting the file tree structure, demonstrating a clear separation of concerns and modular design.
 
-Overall, this file is crucial for generating and saving comprehensive insights into a GitHub repository's structure and functionality, facilitating better understanding and documentation of the project.
+Overall, this file plays a crucial role in generating a comprehensive report of the analysis performed on a GitHub repository, providing both a human-readable format and structured data for further processing or review.
 
   ---
 </details>
@@ -183,22 +238,22 @@ Overall, this file is crucial for generating and saving comprehensive insights i
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/fileTree.js">backend/src/utils/fileTree.js</a></strong></summary>
 
-  This code file is responsible for constructing a hierarchical representation of a file system tree from a flat list of file paths.
+  This code file is responsible for constructing a hierarchical representation of a file tree structure from a flat list of file paths.
 
 **1. Main purpose and responsibilities**: 
-The main purpose of `fileTree.js` is to build a structured file tree representation from an array of file objects, categorizing them into directories and files.
+The main purpose of this file is to build a structured file tree from an array of file objects, categorizing them into directories and files while maintaining a clear hierarchy.
 
 **2. Key functions and their purposes**: 
-- `buildFileTree(files)`: This function expects an array of file objects (each with a `path` and `type`), processes this data to create a nested directory structure, and returns an object representing the file tree.
-- `sortFileTree(node)`: This function expects a node of the file tree (an object), processes its children to sort them first by type (directories before files) and then alphabetically, and returns the sorted node.
+- **buildFileTree(files)**: This function expects an array of file objects (each containing a `path` and `type`), processes this array to create a nested directory structure, and returns the constructed file tree as an object.
+- **sortFileTree(node)**: This function expects a node object representing a directory, processes its children to sort them by type (directories first) and then alphabetically, and returns the sorted node.
 
 **3. Important interactions with other parts of the system**: 
-The `buildFileTree` function is likely called by other components in the backend that need to display or analyze the file structure. The output of this function can be used in various contexts, such as generating a visual representation of the file system or performing further analysis on the files.
+The `buildFileTree` function interacts with the input data structure (an array of file objects) and outputs a structured file tree, which can be utilized by other components of the backend or frontend for displaying file hierarchies or performing file-related operations.
 
 **4. Notable features or patterns**: 
-The code employs a recursive approach to build and sort the file tree, ensuring that directories are prioritized over files in the sorting process. It also handles the case where a file may be mistakenly identified as a directory by updating the type accordingly.
+The code employs a recursive approach for sorting the file tree, ensuring that directories are prioritized over files in the sorting process. It also includes logic to handle cases where a file path may represent a directory that was previously identified as a file, allowing for dynamic adjustments to the tree structure.
 
-Overall, `fileTree.js` plays a crucial role in organizing file data into a user-friendly structure, facilitating easier navigation and management of files within the application.
+Overall, this file is crucial for transforming a flat list of files into a more navigable and organized tree structure, facilitating better file management and representation within the application.
 
   ---
 </details>
@@ -206,22 +261,21 @@ Overall, `fileTree.js` plays a crucial role in organizing file data into a user-
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/github.js">backend/src/utils/github.js</a></strong></summary>
 
-  Give a one or two liner description of the code file.
-This code file provides utility functions for handling GitHub URLs, specifically for parsing repository information.
+  This code file (backend/src/utils/github.js) provides utility functions for handling GitHub repository URLs.
 
-**1. Main purpose and responsibilities**: 
+**1. Main purpose and responsibilities**:  
 The main purpose of this file is to parse GitHub repository URLs and extract the owner and repository name from them.
 
-**2. Key functions and their purposes**: 
-- `parseGitHubUrl(url: string)`: This function expects a string input representing a GitHub repository URL, processes it to extract the owner and repository name, and returns an object containing these values as strings.
+**2. Key functions and their purposes**:  
+- `parseGitHubUrl(url: string)`: This function expects a URL of type string, processes it to extract the owner and repository name from the GitHub URL, and returns an object containing `owner` (string) and `repo` (string) without the '.git' suffix.
 
-**3. Important interactions with other parts of the system**: 
-This function can be used by other modules in the backend to validate and extract repository information from user-provided URLs, facilitating interactions with GitHub APIs or other functionalities that require repository details.
+**3. Important interactions with other parts of the system**:  
+This function can be utilized by other modules that require GitHub repository information, such as analysis or data retrieval components, ensuring that the input URLs are correctly formatted before further processing.
 
-**4. Notable features or patterns**: 
-The function employs error handling to manage invalid URLs and uses the URL API for robust parsing, ensuring that only correctly formatted GitHub URLs are processed.
+**4. Notable features or patterns**:  
+The function employs error handling using try-catch blocks to manage invalid URL formats, ensuring robustness in parsing operations.
 
-Overall, this code file is essential for ensuring that GitHub URLs are correctly interpreted, providing a reliable way to extract necessary repository information for further operations within the application.
+Overall, this utility function is essential for ensuring that GitHub URLs are correctly interpreted, facilitating seamless interactions with GitHub-related functionalities in the application.
 
   ---
 </details>
@@ -229,22 +283,23 @@ Overall, this code file is essential for ensuring that GitHub URLs are correctly
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/App.jsx">frontend/src/App.jsx</a></strong></summary>
 
-  This code file is the main component of a React application that allows users to analyze GitHub repositories and download the analysis results.
+  Give a one or two liner description of the code file.
+This file defines a React component that allows users to analyze a GitHub repository and download the analysis results.
 
 **1. Main purpose and responsibilities**: 
-The App component manages the state and functionality for submitting a GitHub repository URL for analysis and displaying logs of the analysis process, as well as providing a download option for the results.
+The main purpose of the `App` component is to provide a user interface for inputting a GitHub repository URL, triggering an analysis on that repository, displaying logs of the analysis process, and allowing users to download the results once the analysis is complete.
 
 **2. Key functions and their purposes**: 
-- `handleSubmit`: This function expects an event object (`e`) as input, prevents the default form submission behavior, sets loading states, and sends a POST request to the backend API with the repository URL. It processes the streaming response to update logs and indicates when the analysis is complete. It returns nothing (void).
-- `handleDownload`: This function expects no inputs, fetches the analysis results from the backend, creates a downloadable link for the results file, and triggers the download. It returns nothing (void).
+- `handleSubmit`: This function expects an event object (`e`) as input, prevents the default form submission behavior, sets loading states, and sends a POST request to analyze the repository. It processes the response stream, updates logs based on the analysis progress, and handles errors. It does not return any data.
+- `handleDownload`: This function expects no inputs, fetches the analysis results from the server, creates a downloadable link for the results file, and triggers the download. It does not return any data.
 
 **3. Important interactions with other parts of the system**: 
-The component interacts with the backend API at `http://localhost:5000/api/analyze` for submitting the repository URL and `http://localhost:5000/api/download-analysis` for downloading the analysis results. It updates the UI based on the responses received from these API calls.
+The component interacts with a backend API at `http://localhost:5000/api/analyze` for submitting the repository URL and `http://localhost:5000/api/download-analysis` for downloading the analysis results. It also manages local state for logs, loading status, and analysis completion.
 
 **4. Notable features or patterns**: 
-The component uses React hooks (`useState`) for state management, handles asynchronous operations with `async/await`, and processes streaming responses using the `ReadableStream` API. It also implements error handling and conditional rendering based on the loading state and analysis completion status.
+The component uses React hooks (`useState`) for state management, handles asynchronous operations with `async/await`, and processes streaming responses from the server. It includes error handling and conditional rendering based on loading states and analysis completion.
 
-Overall, the App component serves as the user interface for the analysis tool, facilitating user input, displaying real-time logs, and enabling the download of results, effectively integrating frontend and backend functionalities.
+Overall, the `App.jsx` file serves as the core interface for users to interact with the analysis functionality, providing feedback and control throughout the process.
 
   ---
 </details>
@@ -253,17 +308,22 @@ Overall, the App component serves as the user interface for the analysis tool, f
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/main.jsx">frontend/src/main.jsx</a></strong></summary>
 
   Give a one or two liner description of the code file.
-**1. Main purpose and responsibilities**: This file serves as the entry point for the React application, initializing the app and rendering it to the DOM.
+This code file serves as the entry point for the React application, initializing the app and rendering it into the DOM.
 
-**2. Key functions and their purposes**: 
-- `createRoot(container: HTMLElement)`: This function expects a DOM element (container) where the React app will be rendered. It initializes a root for the React application.
-- `render(element: ReactNode)`: This function expects a React element (in this case, `<App />`) and renders it within the specified root. It processes the component tree and outputs the rendered UI to the DOM.
+**1. Main purpose and responsibilities**:  
+The main purpose of this file is to set up and render the React application within the root DOM element, ensuring that the app runs in strict mode for better error handling and debugging.
 
-**3. Important interactions with other parts of the system**: The file imports the main application component (`App`) and a CSS file for styling, ensuring that the app has the necessary structure and styles when rendered.
+**2. Key functions and their purposes**:  
+- `createRoot(element: HTMLElement)`: This function expects an HTML element as input, specifically the root element where the React app will be rendered. It processes this element to create a root for the React application and returns a root object.
+- `render(children: ReactNode)`: This method expects a React node (in this case, the `<App />` component) as input, processes it, and renders it into the DOM at the specified root element.
 
-**4. Notable features or patterns**: The use of `StrictMode` is notable as it helps identify potential problems in the application during development by activating additional checks and warnings.
+**3. Important interactions with other parts of the system**:  
+The file imports the `App` component from `./App.jsx`, which contains the main application logic and UI. It also imports a CSS file for styling, ensuring that the application is styled correctly upon rendering.
 
-Overall, this file is crucial for bootstrapping the React application, ensuring that it is properly rendered and styled in the browser while adhering to best practices with the use of `StrictMode`.
+**4. Notable features or patterns**:  
+The use of `StrictMode` is notable as it helps identify potential problems in the application by activating additional checks and warnings for its descendants. The file follows a modular approach by importing components and styles, promoting better organization and maintainability.
+
+Overall, this file is crucial for bootstrapping the React application, ensuring it is rendered correctly and adheres to best practices through the use of strict mode.
 
   ---
 </details>
@@ -271,39 +331,37 @@ Overall, this file is crucial for bootstrapping the React application, ensuring 
 <details>
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/vite.config.js">frontend/vite.config.js</a></strong></summary>
 
-  Give a one or two liner description of the code file.  
-This file configures Vite, a build tool, for a React application, enabling the use of React features and optimizations.
+  This code file (frontend/vite.config.js) is a configuration file for Vite, a build tool that is optimized for modern web development, particularly with React.
 
 **1. Main purpose and responsibilities**:  
-The main purpose of this file is to define the configuration settings for Vite, specifically to integrate React support into the application.
+The main purpose of this file is to configure Vite for a React application, enabling the use of React-specific features and optimizations during development and build processes.
 
 **2. Key functions and their purposes**:  
-- `defineConfig`: This function expects an object as input (of type `Object`), processes the provided configuration settings, and returns a configuration object (of type `Object`) that Vite uses to build and serve the application.
+- `defineConfig`: This function expects a single input, an object (of type `Object`), which contains configuration settings for Vite. It processes this configuration to set up the development environment and build process, then returns a configuration object (of type `Object`) that Vite uses to run the application.
 
 **3. Important interactions with other parts of the system**:  
-This configuration interacts with the Vite build tool and the React plugin, allowing the frontend application to utilize React features and optimizations during development and production builds.
+This configuration file interacts with the Vite build tool and the React plugin (`@vitejs/plugin-react`), allowing for features like JSX support and fast refresh during development. It also integrates with the overall frontend structure, ensuring that the React application can be built and served correctly.
 
 **4. Notable features or patterns**:  
-The use of the `defineConfig` function is a notable pattern that helps in providing type inference and autocompletion for the configuration object, enhancing developer experience.
+The use of `defineConfig` is a notable pattern as it provides type inference and better IDE support for Vite configurations. The inclusion of the React plugin signifies a focus on React development, streamlining the setup process for developers.
 
-Overall...  
-This file is essential for setting up the development environment for a React application using Vite, ensuring that the application can leverage modern JavaScript features and React's capabilities efficiently.
+Overall, this file serves as a crucial setup point for the frontend development environment, ensuring that Vite is properly configured to handle a React application efficiently.
 
   ---
 </details>
 
 
 ## ✒️ Project Summary 
-This project is a tool designed to analyze GitHub repositories, providing insights file by file, along with a call hierarchy and project summary.
+This project is a tool designed to help users understand GitHub repositories by providing detailed analysis and insights on a file-by-file basis.
 
-1. **Main purpose and functionality**: The main purpose of RepoSage is to help users understand GitHub repositories by analyzing their structure and content using OpenAI's API. It generates insights, summaries, and call hierarchies based on the repository's files.
+1. **Main purpose and functionality**: The main purpose of RepoSage is to analyze GitHub repositories, fetching metadata and file structures, and generating insights using the OpenAI API. It allows users to visualize call hierarchies and summaries of projects.
 
-2. **Tech stack and architecture**: The project is built using JavaScript with a Node.js backend and a React frontend. It employs Express.js for backend services and Vite for frontend build processes, ensuring a modern and efficient development experience.
+2. **Tech stack and architecture**: The project utilizes a modular architecture with a backend built in JavaScript (Node.js) using Express.js and a frontend developed with React. It employs Vite as the build tool for the frontend and integrates OpenAI and GitHub APIs for data processing.
 
-3. **Key components and their interactions**: The backend contains the core analysis logic, utilities for file handling and GitHub API interactions, and configuration files for OpenAI integration. The frontend provides a user interface that communicates with the backend via API calls, allowing users to input repository URLs and receive analysis results.
+3. **Key components and their interactions**: The backend consists of core analysis logic in `analyzer.js`, utility functions for file handling and GitHub interactions, and configuration files for API settings. The frontend provides a user interface for submitting repository URLs and displaying analysis results. The main interaction occurs when the frontend submits a repository URL, triggering the backend to analyze the repository and return results.
 
-4. **Notable features**: RepoSage features deep analysis of repository metadata, file structures, and content summaries. It also includes functionality for generating call hierarchies and saving analysis results in both JSON and markdown formats.
+4. **Notable features**: RepoSage features AI-powered analysis through the OpenAI API, allowing for detailed summaries and insights about repository structures. It also includes functionalities for saving analysis results in markdown and JSON formats.
 
-5. **Code organization and structure**: The code is organized into a modular structure with separate directories for backend and frontend components. The backend consists of analysis logic, utility functions, and configuration files, while the frontend contains React components and styling files.
+5. **Code organization and structure**: The project is organized into a `backend` directory containing the analysis logic and utilities, and a `frontend` directory for the user interface. Each component is further divided into specific files for clarity and maintainability.
 
-Overall, RepoSage serves as a comprehensive tool for developers seeking to gain insights into GitHub repositories.
+Overall, RepoSage provides a comprehensive and user-friendly tool for analyzing GitHub repositories, leveraging modern web technologies and AI capabilities.
