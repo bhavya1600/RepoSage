@@ -14,30 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Now you can resolve your config file relative to the project root.
-const configPath = resolve(__dirname, '../openaiConfigQA.json');
+const configPath = resolve(__dirname, '../openaiConfig.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 console.log("Loaded config from:", configPath);
-
-
-// Replace 'fileToDelete.txt' with the name of your file
-// const fileName = 'apiResponsesLog.txt';
-
-// const projectRoot = path.resolve(__dirname, '..');
-// const filePath = path.join(projectRoot, fileName);
-
-// if (fs.existsSync(filePath)) {
-//   fs.unlink(filePath, (err) => {
-//     if (err) {
-//       console.error(`Error deleting ${fileName}:`, err);
-//     } else {
-//       console.log(`${fileName} has been deleted successfully.`);
-//     }
-//   });
-// } else {
-//   console.log(`File ${fileName} does not exist in the project root.`);
-// }
-
 
 const SKIP_FILES = [
   '.css', '.scss', '.less',
@@ -200,6 +180,18 @@ export async function analyzeRepository(repoUrl) {
 }
 
 async function analyzeProjectStructure(openai, repoData, files, readmeContent) {
+
+  // Delete the API responses log file if it exists
+  const apiLogPath = path.resolve(dirname(fileURLToPath(import.meta.url)), '../apiResponsesLog.txt');
+  try {
+    if (fs.existsSync(apiLogPath)) {
+      fs.unlinkSync(apiLogPath);
+      console.log(chalk.green('✓ API responses log file deleted'));
+    }
+  } catch (error) {
+    console.error(chalk.red('Error deleting API responses log file:', error));
+  }
+
   const fileList = files.map(f => f.path).join('\n');
   // console.log(chalk.green('File list:\n' + fileList));
   const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert.
@@ -218,12 +210,6 @@ ${fileList}`;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeProjectStructure');
   const response = await createChatCompletion(openai, model, modelType, prompt);
-  // const response = await openai.chat.completions.create({
-  //   model: "o1-mini-2024-09-12",
-  //   messages: [{ role: "user", content: prompt }],
-  //   temperature: 1,
-  //   max_completion_tokens: 2000
-  // });
 
   await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
 
@@ -247,13 +233,6 @@ DO NOT use Markdown formatting or any additional explanation.`;
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
     const response = await createChatCompletion(openai, model, modelType, prompt);
-
-    // const response = await openai.chat.completions.create({
-    //   model: "o1-mini-2024-09-12",
-    //   messages: [{ role: "user", content: prompt }],
-    //   temperature: 1,
-    //   max_completion_tokens: 2000
-    // });
 
     await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
     
@@ -308,12 +287,7 @@ async function summarizeContent(openai, content, fileTree) {
 
     const { model, modelType } = config.configurations.find(c => c.name === 'summarizeContent');
     const response = await createChatCompletion(openai, model, modelType, prompt);
-  // const response = await openai.chat.completions.create({
-  //   model: "chatgpt-4o-latest",
-  //   messages: [{ role: "user", content: prompt }],
-  //   temperature: 0.3,
-  //   max_tokens: 1000
-  // });
+
   await saveApiCallContent("summarizeContent", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
@@ -342,13 +316,6 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
     const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
 
-  // const analysisResponse = await openai.chat.completions.create({
-  //   model: "chatgpt-4o-latest",
-  //   messages: [{ role: "user", content: analysisPrompt }],
-  //   temperature: 0.3,
-  //   max_tokens: 1000
-  // });
-
   await saveApiCallContent("analyzeCode - analysis", analysisResponse.choices[0].message.content); // Save API response
 
   // Second prompt for JSON metadata
@@ -358,7 +325,9 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   File tree:
   ${fileList}
   
-  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. Format template:
+  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. 
+  
+  Format template:
     {
       "name": "",
       "path": "",
@@ -374,76 +343,91 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     Code:
     ${content}
     
-    Reply only with JSON data so we can read it using (given metadataResponse is your response.): jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content)
-    DO NOT use Markdown formatting or any additional explanation.
+    Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
+    Output only the JSON data, nothing else. 
+
+    Output Example:
+    {
+      'JSON DATA'
+    }
+
+    Bad Output Example:
+    \`\`\`json
+    {
+      'JSON DATA'
+    }
+    \`\`\`
     `;
 
-   const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
-  // const metadataResponse = await openai.chat.completions.create({
-  //   model: "chatgpt-4o-latest",
-  //   messages: [{ role: "user", content: metadataPrompt }],
-  //   temperature: 0.3,
-  //   max_tokens: 2000
-  // });
+    const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
+ 
+    let jsonMetadata;
+    try {
+      let responseContent = metadataResponse.choices[0].message.content;
+      
+      // Find first { and last }
+      const startIndex = responseContent.indexOf('{');
+      const endIndex = responseContent.lastIndexOf('}');
+      
+      if (startIndex === -1 || endIndex === -1) {
+        throw new Error('No valid JSON object markers found');
+      }
+      
+    // Extract only the JSON portion
+    responseContent = responseContent.substring(startIndex, endIndex + 1);
+    
+    jsonMetadata = JSON.parse(responseContent);
+  } catch (error) {
+    console.error('Failed to parse JSON metadata:', error);
+    jsonMetadata = { 
+      error: 'Failed to parse JSON metadata',
+      rawResponse: metadataResponse.choices[0].message.content
+    };
+  }
 
-  // console.log(metadataResponse.choices[0].message.content);
-
-  // let jsonMetadata;
-  // try {
-  //   jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content);
-  // } catch (error) {
-  //   jsonMetadata = { error: 'Failed to parse JSON metadata' };
-  // }
-  await saveApiCallContent("analyzeCode - metadata", metadataResponse.choices[0].message.content); // Save API response
+  await saveApiCallContent("analyzeCode - metadata", JSON.stringify(jsonMetadata, null, 2)); // Save API response
   
   return {
     textAnalysis: analysisResponse.choices[0].message.content,
-    jsonMetadata: metadataResponse.choices[0].message.content
+    jsonMetadata: jsonMetadata
   };
 }
 
 async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong) {
   const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the following project understanding, file metadata and create a call hierarchy showing how the application flows from the entry point through various files and functions.
-    Focus on the main execution path and important function calls between files.
+  Focus on the main execution path and important function calls between files.
 
-    Project understanding:
-    ${projectUnderstandiong}
+  Project understanding:
+  ${projectUnderstandiong}
 
-    File metadata:
-    ${JSON.stringify(fileMetadata, null, 2)}
+  File metadata:
+  ${JSON.stringify(fileMetadata, null, 2)}
 
-    Provide the call hierarchy in a clear, structured format showing:
-    1. A visual mapping of function calls
-    2. Entry point file
-    3. Main execution flow
-    4. Important function calls between files
-    5. Dependencies between modules
-    
-    
-    The visual mapping should be something like this:
-    
-    📁 rootFunction(param1: Type) → ReturnType [src/rootFile.js]
-    ├─ 🔷 childFunction1(arg1: Type) → ReturnType [src/childFile1.js]
-    │   ├─ 🟣 subFunction1(a: Type) → ReturnType [src/subFile1.js]
-    │   └️─ 🟠 subFunction2() → ReturnType [src/subFile2.js]
-    └─ 🔶 childFunction2(data: Type) → ReturnType [src/childFile2.js]
-      ├─ 🟢 subFunction3(config: Type) → ReturnType [src/subFile3.js]
-      ├─ 🔴 subFunction4(option1: Type) → ReturnType [src/subFile4.js]
-      └─ 🟣 subFunction5(info: Type) → ReturnType [src/subFile5.js]
+  Provide the call hierarchy in a clear, structured format showing:
+  1. A visual mapping of function calls
+  2. Entry point file
+  3. Main execution flow
+  4. Important function calls between files
+  5. Dependencies between modules
+  
+  
+  The visual mapping should be something like this:
+  
+  📁 rootFunction(param1: Type) → ReturnType [src/rootFile.js]
+  ├─ 🔷 childFunction1(arg1: Type) → ReturnType [src/childFile1.js]
+  │   ├─ 🟣 subFunction1(a: Type) → ReturnType [src/subFile1.js]
+  │   └️─ 🟠 subFunction2() → ReturnType [src/subFile2.js]
+  └─ 🔶 childFunction2(data: Type) → ReturnType [src/childFile2.js]
+    ├─ 🟢 subFunction3(config: Type) → ReturnType [src/subFile3.js]
+    ├─ 🔴 subFunction4(option1: Type) → ReturnType [src/subFile4.js]
+    └─ 🟣 subFunction5(info: Type) → ReturnType [src/subFile5.js]
 
 `;
-    
-    const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
-    const response = await createChatCompletion(openai, model, modelType, prompt);
-  // const response = await openai.chat.completions.create({
-  //   model: "o1-mini-2024-09-12",
-  //   messages: [{ role: "user", content: prompt }],
-  //   temperature: 1,
-  //   max_completion_tokens: 5000
-  // });
 
-  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content); // Save API response
-
+  const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
+  const response = await createChatCompletion(openai, model, modelType, prompt);
+  console.log("Call Hierarchy: ", response.choices[0].message.content);
+  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
   return response.choices[0].message.content;
 }
 
@@ -471,12 +455,6 @@ async function generateSummary(openai, analysis) {
 
     const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
     const response = await createChatCompletion(openai, model, modelType, prompt);
-  // const response = await openai.chat.completions.create({
-  //   model: "chatgpt-4o-latest",
-  //   messages: [{ role: "user", content: prompt }],
-  //   temperature: 0.3,
-  //   max_tokens: 5000
-  // });
 
   await saveApiCallContent("generateSummary", response.choices[0].message.content); // Save API response
 

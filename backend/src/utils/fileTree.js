@@ -1,4 +1,6 @@
 export function buildFileTree(files) {
+
+  
   const tree = {
     name: 'root',
     type: 'directory',

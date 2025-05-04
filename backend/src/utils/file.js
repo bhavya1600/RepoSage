@@ -69,8 +69,15 @@ ${analysis.summary}`;
       description: analysis.repository.description,
       language: analysis.repository.language
     },
+    projectUnderstanding: analysis.projectUnderstanding,
+    fileTree: analysis.fileTree,
     fileMetadata: analysis.fileMetadata,
-    callHierarchy: analysis.callHierarchy
+    callHierarchy: analysis.callHierarchy,
+    fileAnalysis: analysis.fileAnalysis.map(file => ({
+      path: file.path,
+      analysis: file.analysis
+    })),
+    summary: analysis.summary
   };
 
   await writeFile(jsonFilename, JSON.stringify(jsonContent, null, 2), 'utf8');

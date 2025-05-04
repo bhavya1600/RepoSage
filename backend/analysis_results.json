@@ -4,31 +4,233 @@
     "description": "Running local Language Language Models (LLM) to perform Retrieval-Augmented Generation (RAG)",
     "language": "Python"
   },
+  "projectUnderstanding": "The **RepoSage** project is structured to facilitate in-depth analysis of GitHub repositories, leveraging both a backend and a frontend component. Here's a concise breakdown of its file structure, main components, tech stack, and architecture:\n\n### Main Components\n\n1. **Backend**:\n   - **Core Logic**: Located in `backend/src/analyzer.js`, this file contains the main analysis logic that interacts with the OpenAI API and GitHub API.\n   - **Configuration**: The `backend/openaiConfig.json` and `backend/openaiConfigQA.json` files manage API settings and model configurations.\n   - **Utilities**: Various utility files in `backend/src/utils` (like `display.js`, `file.js`, `fileTree.js`, and `github.js`) support specific functionalities such as file handling and GitHub interactions.\n   - **Results Storage**: Analysis results are stored in `backend/analysis_results.md` and `backend/analysis_results.json`.\n\n2. **Frontend**:\n   - **User Interface**: The main UI is built with React, as indicated by the presence of `frontend/src/App.jsx` and `frontend/src/main.jsx`.\n   - **Styling**: CSS files for styling the application are located in `frontend/src/App.css` and `frontend/src/index.css`.\n   - **Build Tool**: The project uses Vite for the frontend build process, as indicated by `frontend/vite.config.js`.\n\n3. **Assets**:\n   - Contains images and other static files, such as `assets/RepoSageSS.png` and `frontend/public/vite.svg`.\n\n### Tech Stack\n\n- **Backend**:\n  - **Language**: JavaScript (Node.js)\n  - **Framework**: Express.js (assumed)\n  - **APIs**: OpenAI API for AI-powered analysis and GitHub API for repository data.\n\n- **Frontend**:\n  - **Library**: React for building the user interface.\n  - **Build Tool**: Vite for fast and modern frontend development.\n\n### Architecture\n\n- **Modular Design**: The project follows a modular architecture, separating backend and frontend concerns. The backend handles data processing and API interactions, while the frontend manages user interactions and displays results.\n- **AI Integration**: The use of OpenAI's API for generating insights and summaries indicates a sophisticated approach to data analysis, allowing for both detailed and high-level views of repository structures.\n- **Configuration Management**: The presence of configuration files allows for easy adjustment of API settings and performance tuning, catering to different user needs and cost considerations.\n\nOverall, **RepoSage** is designed to provide a comprehensive and user-friendly tool for analyzing GitHub repositories, utilizing modern web technologies and AI capabilities.",
+  "fileTree": {
+    "name": "root",
+    "type": "directory",
+    "children": {
+      ".vscode": {
+        "name": ".vscode",
+        "type": "directory",
+        "children": {
+          "extensions.json": {
+            "name": "extensions.json",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      "assets": {
+        "name": "assets",
+        "type": "directory",
+        "children": {
+          "RepoSageSS.png": {
+            "name": "RepoSageSS.png",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      "backend": {
+        "name": "backend",
+        "type": "directory",
+        "children": {
+          "src": {
+            "name": "src",
+            "type": "directory",
+            "children": {
+              "utils": {
+                "name": "utils",
+                "type": "directory",
+                "children": {
+                  "display.js": {
+                    "name": "display.js",
+                    "type": "blob",
+                    "children": {}
+                  },
+                  "file.js": {
+                    "name": "file.js",
+                    "type": "blob",
+                    "children": {}
+                  },
+                  "fileTree.js": {
+                    "name": "fileTree.js",
+                    "type": "blob",
+                    "children": {}
+                  },
+                  "github.js": {
+                    "name": "github.js",
+                    "type": "blob",
+                    "children": {}
+                  }
+                }
+              },
+              "analyzer.js": {
+                "name": "analyzer.js",
+                "type": "blob",
+                "children": {}
+              },
+              "index.css": {
+                "name": "index.css",
+                "type": "blob",
+                "children": {}
+              },
+              "index.js": {
+                "name": "index.js",
+                "type": "blob",
+                "children": {}
+              }
+            }
+          },
+          "analysis_results.json": {
+            "name": "analysis_results.json",
+            "type": "blob",
+            "children": {}
+          },
+          "analysis_results.md": {
+            "name": "analysis_results.md",
+            "type": "blob",
+            "children": {}
+          },
+          "nodemon.json": {
+            "name": "nodemon.json",
+            "type": "blob",
+            "children": {}
+          },
+          "openaiConfig.json": {
+            "name": "openaiConfig.json",
+            "type": "blob",
+            "children": {}
+          },
+          "openaiConfigQA.json": {
+            "name": "openaiConfigQA.json",
+            "type": "blob",
+            "children": {}
+          },
+          "package-lock.json": {
+            "name": "package-lock.json",
+            "type": "blob",
+            "children": {}
+          },
+          "package.json": {
+            "name": "package.json",
+            "type": "blob",
+            "children": {}
+          },
+          "postcss.config.js": {
+            "name": "postcss.config.js",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      "frontend": {
+        "name": "frontend",
+        "type": "directory",
+        "children": {
+          "public": {
+            "name": "public",
+            "type": "directory",
+            "children": {
+              "vite.svg": {
+                "name": "vite.svg",
+                "type": "blob",
+                "children": {}
+              }
+            }
+          },
+          "src": {
+            "name": "src",
+            "type": "directory",
+            "children": {
+              "assets": {
+                "name": "assets",
+                "type": "directory",
+                "children": {
+                  "react.svg": {
+                    "name": "react.svg",
+                    "type": "blob",
+                    "children": {}
+                  }
+                }
+              },
+              "App.css": {
+                "name": "App.css",
+                "type": "blob",
+                "children": {}
+              },
+              "App.jsx": {
+                "name": "App.jsx",
+                "type": "blob",
+                "children": {}
+              },
+              "index.css": {
+                "name": "index.css",
+                "type": "blob",
+                "children": {}
+              },
+              "main.jsx": {
+                "name": "main.jsx",
+                "type": "blob",
+                "children": {}
+              }
+            }
+          },
+          ".gitignore": {
+            "name": ".gitignore",
+            "type": "blob",
+            "children": {}
+          },
+          "eslint.config.js": {
+            "name": "eslint.config.js",
+            "type": "blob",
+            "children": {}
+          },
+          "index.html": {
+            "name": "index.html",
+            "type": "blob",
+            "children": {}
+          },
+          "package-lock.json": {
+            "name": "package-lock.json",
+            "type": "blob",
+            "children": {}
+          },
+          "package.json": {
+            "name": "package.json",
+            "type": "blob",
+            "children": {}
+          },
+          "README.md": {
+            "name": "README.md",
+            "type": "blob",
+            "children": {}
+          },
+          "vite.config.js": {
+            "name": "vite.config.js",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      ".gitignore": {
+        "name": ".gitignore",
+        "type": "blob",
+        "children": {}
+      },
+      "LICENSE": {
+        "name": "LICENSE",
+        "type": "blob",
+        "children": {}
+      },
+      "README.md": {
+        "name": "README.md",
+        "type": "blob",
+        "children": {}
+      }
+    }
+  },
   "fileMetadata": [
     {
-      "path": "app.py",
-      "metadata": "{\n  \"name\": \"app.py\",\n  \"path\": \"app.py\",\n  \"imports\": [\n    \"from langchain_ollama import ChatOllama\",\n    \"from models import check_if_model_is_available\",\n    \"from document_loader import load_documents_into_database\",\n    \"import argparse\",\n    \"import sys\",\n    \"from llm import getChatChain\"\n  ],\n  \"mainPurpose\": \"To run a local LLM with Retrieval-Augmented Generation (RAG) using Ollama.\",\n  \"type\": \"Python script\",\n  \"functions\": [\n    {\n      \"name\": \"main\",\n      \"purpose\": \"Main function to check model availability, load documents, and handle user interaction.\",\n      \"input\": \"llm_model_name (str), embedding_model_name (str), documents_path (str)\",\n      \"output\": \"None\"\n    },\n    {\n      \"name\": \"parse_arguments\",\n      \"purpose\": \"Parse command line arguments for model names and document path.\",\n      \"input\": \"None\",\n      \"output\": \"argparse.Namespace\"\n    }\n  ],\n  \"exports\": [],\n  \"dependencies\": [\n    \"langchain_ollama\",\n    \"models\",\n    \"document_loader\",\n    \"argparse\",\n    \"sys\",\n    \"llm\"\n  ],\n  \"finalReturnType(s)\": \"None\"\n}"
-    },
-    {
-      "path": "document_loader.py",
-      "metadata": "{\n  \"name\": \"document_loader.py\",\n  \"path\": \"document_loader.py\",\n  \"imports\": [\n    \"from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, TextLoader\",\n    \"import os\",\n    \"from typing import List\",\n    \"from langchain_core.documents import Document\",\n    \"from langchain_ollama import OllamaEmbeddings\",\n    \"from langchain_community.vectorstores import Chroma\",\n    \"from langchain.text_splitter import RecursiveCharacterTextSplitter\"\n  ],\n  \"mainPurpose\": \"To load documents from a specified directory into a Chroma database after splitting the text into chunks.\",\n  \"type\": \"module\",\n  \"functions\": [\n    {\n      \"name\": \"load_documents_into_database\",\n      \"purpose\": \"Loads documents from the specified directory into the Chroma database after splitting the text into chunks.\",\n      \"input\": \"model_name (str), documents_path (str), reload (bool)\",\n      \"output\": \"Chroma\"\n    },\n    {\n      \"name\": \"load_documents\",\n      \"purpose\": \"Loads documents from the specified directory path, supporting PDF and Markdown file types.\",\n      \"input\": \"path (str)\",\n      \"output\": \"List[Document]\"\n    }\n  ],\n  \"exports\": [],\n  \"dependencies\": [\n    \"langchain_community.document_loaders\",\n    \"os\",\n    \"typing\",\n    \"langchain_core.documents\",\n    \"langchain_ollama\",\n    \"langchain_community.vectorstores\",\n    \"langchain.text_splitter\"\n  ],\n  \"finalReturnType(s)\": \"Chroma, List[Document]\"\n}"
-    },
-    {
-      "path": "llm.py",
-      "metadata": "{\n  \"name\": \"llm.py\",\n  \"path\": \"llm.py\",\n  \"imports\": [\n    \"itemgetter from operator\",\n    \"StreamingStdOutCallbackHandler from langchain.callbacks.streaming_stdout\",\n    \"ConversationBufferMemory from langchain.memory\",\n    \"ChatPromptTemplate from langchain_core.prompts\",\n    \"RunnableLambda, RunnablePassthrough from langchain_core.runnables\",\n    \"get_buffer_string from langchain_core.messages\",\n    \"format_document from langchain_core.prompts\",\n    \"PromptTemplate from langchain.prompts.prompt\"\n  ],\n  \"mainPurpose\": \"To define functions for generating responses based on user questions and conversation history using a language model.\",\n  \"type\": \"Python module\",\n  \"functions\": [\n    {\n      \"name\": \"_combine_documents\",\n      \"purpose\": \"Combines multiple documents into a single string using a specified format.\",\n      \"input\": \"docs (list), document_prompt (PromptTemplate), document_separator (str)\",\n      \"output\": \"str\"\n    },\n    {\n      \"name\": \"getStreamingChain\",\n      \"purpose\": \"Creates a streaming chain for processing questions and retrieving answers from a database.\",\n      \"input\": \"question (str), memory, llm, db\",\n      \"output\": \"streaming chain\"\n    },\n    {\n      \"name\": \"getChatChain\",\n      \"purpose\": \"Creates a chat chain for processing questions and retrieving answers from a database.\",\n      \"input\": \"llm, db\",\n      \"output\": \"chat function\"\n    },\n    {\n      \"name\": \"chat\",\n      \"purpose\": \"Handles the chat interaction by invoking the final chain and saving the context.\",\n      \"input\": \"question (str)\",\n      \"output\": \"None\"\n    }\n  ],\n  \"exports\": [],\n  \"dependencies\": [\n    \"langchain\",\n    \"langchain_core\"\n  ],\n  \"finalReturnType(s)\": \"streaming chain, chat function\"\n}"
-    },
-    {
-      "path": "models.py",
-      "metadata": "{\n  \"name\": \"models.py\",\n  \"path\": \"models.py\",\n  \"imports\": [\n    \"ollama\",\n    \"tqdm\"\n  ],\n  \"mainPurpose\": \"To manage and check the availability of machine learning models from the Ollama repository.\",\n  \"type\": \"Python module\",\n  \"functions\": [\n    {\n      \"name\": \"__pull_model\",\n      \"purpose\": \"Pulls a model from the Ollama repository and displays progress.\",\n      \"input\": \"name: str\",\n      \"output\": \"None\"\n    },\n    {\n      \"name\": \"__is_model_available_locally\",\n      \"purpose\": \"Checks if a specified model is available locally.\",\n      \"input\": \"model_name: str\",\n      \"output\": \"bool\"\n    },\n    {\n      \"name\": \"get_list_of_models\",\n      \"purpose\": \"Retrieves a list of available models from the Ollama repository.\",\n      \"input\": \"\",\n      \"output\": \"list[str]\"\n    },\n    {\n      \"name\": \"check_if_model_is_available\",\n      \"purpose\": \"Checks if a model is available locally and pulls it if not.\",\n      \"input\": \"model_name: str\",\n      \"output\": \"None\"\n    }\n  ],\n  \"exports\": [],\n  \"dependencies\": [\n    \"ollama\",\n    \"tqdm\"\n  ],\n  \"finalReturnType(s)\": \"None, bool, list[str]\"\n}"
-    },
-    {
-      "path": "pyproject.toml",
-      "metadata": "{\n  \"name\": \"local-llm-with-rag\",\n  \"path\": \"pyproject.toml\",\n  \"imports\": [],\n  \"mainPurpose\": \"Defines project metadata and dependencies for a Python project.\",\n  \"type\": \"configuration\",\n  \"functions\": [],\n  \"exports\": [],\n  \"dependencies\": [\n    \"chromadb==0.6.3\",\n    \"langchain==0.3.18\",\n    \"langchain-community==0.3.17\",\n    \"langchain-ollama>=0.2.3\",\n    \"ollama==0.4.7\",\n    \"pypdf==5.3.0\",\n    \"streamlit==1.42.0\",\n    \"tqdm==4.67.1\",\n    \"watchdog==6.0.0\"\n  ],\n  \"finalReturnType(s)\": \"\"\n}"
-    },
-    {
-      "path": "ui.py",
-      "metadata": "{\n  \"name\": \"ui.py\",\n  \"path\": \"ui.py\",\n  \"imports\": [\n    \"streamlit as st\",\n    \"os\",\n    \"langchain_ollama.ChatOllama\",\n    \"document_loader.load_documents_into_database\",\n    \"models.get_list_of_models\",\n    \"llm.getStreamingChain\"\n  ],\n  \"mainPurpose\": \"To create a Streamlit user interface for interacting with a local LLM and managing document indexing.\",\n  \"type\": \"Python script\",\n  \"functions\": [\n    {\n      \"name\": \"main\",\n      \"purpose\": \"Main function to run the Streamlit app and handle user interactions.\",\n      \"input\": \"User selections and inputs through the Streamlit interface.\",\n      \"output\": \"User interface for document indexing and querying.\"\n    }\n  ],\n  \"exports\": [],\n  \"dependencies\": [\n    \"streamlit\",\n    \"langchain_ollama\",\n    \"os\"\n  ],\n  \"finalReturnType(s)\": \"None\"\n}"
-    }
-  ],
-  "callHierarchy": "Here's a structured call hierarchy for the **local-LLM-with-RAG** project, illustrating the main execution flow and important function calls between files:\n\n### Call Hierarchy\n\n```\n📁 main() → None [app.py]\n├─ 🔷 parse_arguments() → argparse.Namespace [app.py]\n│   └─ (parses command line arguments: llm_model_name, embedding_model_name, documents_path)\n├─ 🔷 check_if_model_is_available(model_name: str) → None [models.py]\n│   ├─ 🔶 __is_model_available_locally(model_name: str) → bool [models.py]\n│   └─ 🔶 __pull_model(name: str) → None [models.py]\n├─ 🔷 load_documents_into_database(model_name: str, documents_path: str, reload: bool) → Chroma [document_loader.py]\n│   ├─ 🔶 load_documents(path: str) → List[Document] [document_loader.py]\n│   └─ 🔶 RecursiveCharacterTextSplitter() → (splits documents into chunks)\n├─ 🔷 getChatChain(llm, db) → chat function [llm.py]\n│   └─ 🔶 chat(question: str) → None [llm.py]\n│       └─ 🔷 _combine_documents(docs: list, document_prompt: PromptTemplate, document_separator: str) → str [llm.py]\n└─ 🔷 main() → None [ui.py]\n    ├─ 🔶 load_documents_into_database() → Chroma [document_loader.py]\n    ├─ 🔶 getStreamingChain(question: str, memory, llm, db) → streaming chain [llm.py]\n    └─ 🔶 get_list_of_models() → list[str] [models.py]\n```\n\n### Explanation of the Call Hierarchy\n\n1. **Entry Point File**: \n   - The entry point for the application is `app.py`, where the `main()` function is defined.\n\n2. **Main Execution Flow**:\n   - The `main()` function in `app.py` is responsible for orchestrating the execution of the RAG system. It starts by parsing command-line arguments using `parse_arguments()`.\n   - It then checks the availability of the specified model using `check_if_model_is_available()`, which internally calls `__is_model_available_locally()` and `__pull_model()`.\n   - After confirming model availability, it loads documents into the Chroma database using `load_documents_into_database()`, which calls `load_documents()` to read and process the documents.\n   - Finally, it sets up the chat functionality using `getChatChain()` from `llm.py`, which includes the `chat()` function for handling user queries.\n\n3. **Important Function Calls Between Files**:\n   - `app.py` calls functions from `models.py`, `document_loader.py`, and `llm.py` to perform its tasks.\n   - The UI file `ui.py` also has a `main()` function that runs the Streamlit application, allowing users to interact with the system. It calls `load_documents_into_database()`, `getStreamingChain()`, and `get_list_of_models()`.\n\n4. **Dependencies Between Modules**:\n   - **app.py** depends on:\n     - `models.py` for model availability checks.\n     - `document_loader.py` for loading documents.\n     - `llm.py` for generating chat responses.\n   - **document_loader.py** depends on:\n     - Various classes and functions from the `langchain` library for document processing.\n   - **llm.py** depends on:\n     - Functions from the `langchain` library for LLM interactions.\n   - **ui.py** depends on:\n     - `document_loader.py`, `models.py`, and `llm.py` for managing documents and LLM interactions.\n\nThis hierarchy provides a clear overview of how the application flows from the entry point through various files and functions, highlighting the relationships and dependencies between different components of the project."
+
 }

@@ -6,21 +6,32 @@ A powerful tool for deep analysis of GitHub repositories, providing file-by-file
 
 **RepoSage** combines advanced reasoning models for multi-step, context-aware analysis of complex project structures with agile general models for fast, high-level summarization. This dual-model approach captures nuanced interdependencies and delivers more accurate, reliable insights than traditional one-shot methods.
 
+Take a quick look on a sample report [here](https://github.com/bhavya1600/RepoSage/blob/main/backend/analysis_results.md).
+
 ---
 
+![RepoSage](https://github.com/bhavya1600/RepoSage/blob/main/assets/RepoSageSS.png)
+
+---
 ## 📑 Table of Contents 
 
+- [Introduction](#introduction)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Call Hierarchy Overview](#call-hierarchy-overview)
-- [Setup and Installation](#setup-and-installation)
+- [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Important Notes Before Running the Project](#important-notes-before-running-the-project)
+        - [Cost Considerations](#cost-considerations)
+        - [Configuration Options](#configuration-options)
+- [Local Setup](#local-setup)
+    - [Cloning the Repository](#cloning-the-repository)
+    - [Backend Setup](#backend-setup)
+    - [Create .env file in backend folder](#create-env-file-in-backend-folder)
+    - [Frontend Setup](#frontend-setup)
 
-  - [Prerequisites](#prerequisites)
-  - [Cloning the Repository](#cloning-the-repository)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
 - [Usage](#usage)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
@@ -86,7 +97,7 @@ By combining these elements, the analyzer.js provides a context-aware, detailed,
 
 ### ⚠️ Important Notes Before Running the Project 
 
-This project utilizes the GitHub API and OpenAI API for repository analysis and summarization. To run the project, you will need:
+This project utilizes the [GitHub API](https://github.com/settings/tokens) and [OpenAI API](https://platform.openai.com/api-keys) for repository analysis and summarization. To run the project, you will need:
 
 - A GitHub token to access GitHub's API.
 - An OpenAI API key to interact with OpenAI's services.
