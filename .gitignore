@@ -9,5 +9,8 @@ backend/node_modules/
 frontend/node_modules/
 node_modules/
 
+analysis_results.json
+analysis_results.md
+
 # Ignore .bolt file
 .bolt
