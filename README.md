@@ -157,6 +157,8 @@ Each function call to OpenAI API is logged in `apiResponsesLog.txt` file in the 
 4. **Configuration**
 
    Update OpenAI settings in backend/openaiConfig.json
+   Default file is backend/openaiConfigQA.json (It costs significantly less to run as it does not use reasoning models)
+   To use openaiConfig.json, change the configPath variable in backend/src/analyzer.js 
 
     Modify server port in backend/index.js if needed
 
