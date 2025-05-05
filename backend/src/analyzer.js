@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Now you can resolve your config file relative to the project root.
-const configPath = resolve(__dirname, '../openaiConfig.json');
+const configPath = resolve(__dirname, '../openaiConfigQA.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 console.log("Loaded config from:", configPath);
