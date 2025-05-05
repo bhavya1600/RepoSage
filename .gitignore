@@ -12,6 +12,8 @@ node_modules/
 backend/analysis_results.json
 backend/analysis_results.md
 
+analysis_results.json
+analysis_results.md
 
 # Ignore .bolt file
 .bolt
