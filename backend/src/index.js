@@ -15,7 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 5000;
 
 // Function to strip ANSI color codes
 const stripAnsiCodes = (str) => {
