@@ -9,10 +9,15 @@
 <details>
   <summary><strong>Peek Under the Hood 👀</strong></summary>
 
+<<<<<<< HEAD
   The **RepoSage** project is structured to facilitate in-depth analysis of GitHub repositories, leveraging both a backend and a frontend component. Here's a concise breakdown of its file structure, main components, tech stack, and architecture:
+=======
+
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 ### Main Components
 
+<<<<<<< HEAD
 1. **Backend**:
    - **Core Logic**: Located in `backend/src/analyzer.js`, this file contains the main analysis logic that interacts with the OpenAI API and GitHub API.
    - **Configuration**: The `backend/openaiConfig.json` and `backend/openaiConfigQA.json` files manage API settings and model configurations.
@@ -23,17 +28,24 @@
    - **User Interface**: The main UI is built with React, as indicated by the presence of `frontend/src/App.jsx` and `frontend/src/main.jsx`.
    - **Styling**: CSS files for styling the application are located in `frontend/src/App.css` and `frontend/src/index.css`.
    - **Build Tool**: The project uses Vite for the frontend build process, as indicated by `frontend/vite.config.js`.
+=======
+
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 3. **Assets**:
    - Contains images and other static files, such as `assets/RepoSageSS.png` and `frontend/public/vite.svg`.
 
+<<<<<<< HEAD
 ### Tech Stack
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 - **Backend**:
   - **Language**: JavaScript (Node.js)
   - **Framework**: Express.js (assumed)
   - **APIs**: OpenAI API for AI-powered analysis and GitHub API for repository data.
 
+<<<<<<< HEAD
 - **Frontend**:
   - **Library**: React for building the user interface.
   - **Build Tool**: Vite for fast and modern frontend development.
@@ -45,6 +57,8 @@
 - **Configuration Management**: The presence of configuration files allows for easy adjustment of API settings and performance tuning, catering to different user needs and cost considerations.
 
 Overall, **RepoSage** is designed to provide a comprehensive and user-friendly tool for analyzing GitHub repositories, utilizing modern web technologies and AI capabilities.
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 </details>
 
@@ -52,6 +66,7 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
 <details>
   <summary><strong>File Tree</strong></summary>
 
+<<<<<<< HEAD
   📁 .vscode/
 &nbsp;&nbsp;&nbsp;&nbsp;📄 [extensions.json](https://github.com/bhavya1600/RepoSage/blob/main/.vscode/extensions.json)
 📁 assets/
@@ -94,6 +109,8 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
 📄 [.gitignore](https://github.com/bhavya1600/RepoSage/blob/main/.gitignore)
 📄 [LICENSE](https://github.com/bhavya1600/RepoSage/blob/main/LICENSE)
 📄 [README.md](https://github.com/bhavya1600/RepoSage/blob/main/README.md)
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 
 </details>
@@ -102,6 +119,7 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
 <details>
   <summary><strong>Detailed Function Call Hierarchy</strong></summary>
 
+<<<<<<< HEAD
   Here's the call hierarchy for the **RepoSage** project, illustrating the main execution flow and important function calls between files:
 
 ### Call Hierarchy
@@ -161,12 +179,15 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
   - `main.jsx` serves as the entry point, importing `App.jsx` and CSS.
 
 This structured representation provides a clear understanding of how the **RepoSage** application flows from the entry point through various files and functions, highlighting the main execution path and important function calls.
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
 </details>
 
 ## 📈 File Analyses  
 
 <details>
+<<<<<<< HEAD
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/analyzer.js">backend/src/analyzer.js</a></strong></summary>
 
   **1. Main purpose and responsibilities**: The `analyzer.js` file is responsible for analyzing a GitHub repository by fetching its metadata, file structure, and content, and then utilizing OpenAI's API to generate insights, summaries, and analyses of the repository's code and structure.
@@ -187,11 +208,38 @@ This structured representation provides a clear understanding of how the **RepoS
 **4. Notable features or patterns**: The file employs asynchronous programming with `async/await` for handling API calls, ensuring non-blocking execution. It also includes error handling for API responses and file operations. The use of configuration files for managing API keys and model settings is a notable design pattern, allowing for flexibility and scalability in the analysis process.
 
 Overall, `analyzer.js` serves as a comprehensive tool for analyzing GitHub repositories, leveraging external APIs to provide detailed insights into project structures and code functionality.
+=======
+
 
   ---
 </details>
 
 <details>
+
+
+  ---
+</details>
+
+<details>
+
+
+  ---
+</details>
+
+<details>
+
+  ---
+</details>
+
+<details>
+
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+
+  ---
+</details>
+
+<details>
+<<<<<<< HEAD
   <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/display.js">backend/src/utils/display.js</a></strong></summary>
 
   Give a one or two liner description of the code file.
@@ -346,12 +394,15 @@ This configuration file interacts with the Vite build tool and the React plugin 
 The use of `defineConfig` is a notable pattern as it provides type inference and better IDE support for Vite configurations. The inclusion of the React plugin signifies a focus on React development, streamlining the setup process for developers.
 
 Overall, this file serves as a crucial setup point for the frontend development environment, ensuring that Vite is properly configured to handle a React application efficiently.
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
 
   ---
 </details>
 
 
 ## ✒️ Project Summary 
+<<<<<<< HEAD
 This project is a tool designed to help users understand GitHub repositories by providing detailed analysis and insights on a file-by-file basis.
 
 1. **Main purpose and functionality**: The main purpose of RepoSage is to analyze GitHub repositories, fetching metadata and file structures, and generating insights using the OpenAI API. It allows users to visualize call hierarchies and summaries of projects.
@@ -365,3 +416,5 @@ This project is a tool designed to help users understand GitHub repositories by 
 5. **Code organization and structure**: The project is organized into a `backend` directory containing the analysis logic and utilities, and a `frontend` directory for the user interface. Each component is further divided into specific files for clarity and maintainability.
 
 Overall, RepoSage provides a comprehensive and user-friendly tool for analyzing GitHub repositories, leveraging modern web technologies and AI capabilities.
+=======
+>>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
