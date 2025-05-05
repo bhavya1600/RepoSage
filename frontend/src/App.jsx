@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
@@ -6,6 +6,21 @@ function App() {
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [port, setPort] = useState("")
+  const [backendUrl, setBackendUrl] = useState("")
+
+  useEffect(() => {
+    // Try to load PORT from .env if available, otherwise default to 5000
+    const defaultPort = "5000"
+    setPort(defaultPort)
+    setBackendUrl(`http://localhost:${defaultPort}`)
+  }, [])
+
+  const handlePortChange = (e) => {
+    const newPort = e.target.value
+    setPort(newPort)
+    setBackendUrl(`http://localhost:${newPort}`)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -14,7 +29,7 @@ function App() {
     setLogs("")
 
     try {
-      const response = await fetch('http://localhost:5000/api/analyze', {
+      const response = await fetch(`${backendUrl}/api/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -83,7 +98,7 @@ function App() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/download-analysis')
+      const response = await fetch(`${backendUrl}/api/download-analysis`)
       if (!response.ok) {
         throw new Error('Failed to download analysis file')
       }
@@ -123,6 +138,17 @@ function App() {
               required
             />
           </div>
+
+          {/* <div className="form-group">
+            <label htmlFor="port">API Server Port</label>
+            <input
+              id="port"
+              type="text"
+              value={port}
+              onChange={handlePortChange}
+              placeholder="5000"
+            />
+          </div> */}
 
           <div className="button-group">
             <button 
