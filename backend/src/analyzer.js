@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Now you can resolve your config file relative to the project root.
-const configPath = resolve(__dirname, '../openaiConfig.json');
+const configPath = resolve(__dirname, '../openaiConfigDev.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 console.log("Loaded config from:", configPath);
@@ -44,22 +44,29 @@ const IMPORTANT_FILES = [
 async function createChatCompletion(openai, model, modelType, analysisPrompt) {
   // Check model name based on modelType.
   if (modelType === "reasoning") {
-    if (!model.startsWith("o")) {
-      throw new Error("For reasoning models, the model name must start with 'o'.");
-    }
     return await openai.chat.completions.create({
       model: model,
-      messages: [{ role: "user", content: analysisPrompt }],
+      messages: [
+        { 
+          role: "system", 
+          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+        },
+        { role: "user", content: analysisPrompt }
+      ],
       temperature: 1,
-      max_completion_tokens: 2000
+      // show_thought_process: false,
+      max_completion_tokens: 4000
     });
   } else {
-    if (model.startsWith("o")) {
-      throw new Error("For non reasoning models, the model name must not start with 'o'.");
-    }
     return await openai.chat.completions.create({
       model: model,
-      messages: [{ role: "user", content: analysisPrompt }],
+      messages: [
+        { 
+          role: "system", 
+          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+        },
+        { role: "user", content: analysisPrompt }
+      ],
       temperature: 0.3,
       max_tokens: 4000
     });
@@ -78,7 +85,7 @@ async function saveApiCallContent(functionName, content) {
 export async function analyzeRepository(repoUrl) {
   console.log(chalk.blue('\n📡 Initializing API clients...'));
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const openai = new OpenAI({ baseURL: 'https://openrouter.ai/api/v1', apiKey: process.env.OPENROUTER_API_KEY });
 
   const { owner, repo } = parseGitHubUrl(repoUrl);
   console.log(chalk.blue(`\n🔍 Analyzing repository: ${owner}/${repo}`));
@@ -194,19 +201,28 @@ async function analyzeProjectStructure(openai, repoData, files, readmeContent) {
 
   const fileList = files.map(f => f.path).join('\n');
   // console.log(chalk.green('File list:\n' + fileList));
-  const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert.
-Provided Metadata:
+  const prompt = `
+  Analyze this repository's file structure and provide a brief understanding of the project.
+Focus on identifying the main components, tech stack, and architecture based on the file names and structure.
+Keep the response concise.
+
+Please structure your response in the following format:
+1. **Project Overview**: Brief description of what the project does (1-2 sentences)
+2. **Main Components**: List the key components/modules and their purposes
+3. **Tech Stack**: Identify frameworks, libraries, and languages used
+4. **Architecture**: Describe the high-level architecture pattern (if identifiable)
+5. **Key Limitations/Constraints**: Note any obvious limitations or constraints
+
+Context:
+  Provided Metadata:
 ${JSON.stringify(repoData)}
 
   Provided README:
 ${readmeContent}
 
-Analyze this repository's file structure and provide a brief understanding of the project.
-Focus on identifying the main components, tech stack, and architecture based on the file names and structure.
-Keep the response concise.
-
-File structure:
-${fileList}`;
+  Provided File structure:
+${fileList}
+`;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeProjectStructure');
   const response = await createChatCompletion(openai, model, modelType, prompt);
@@ -217,11 +233,29 @@ ${fileList}`;
 }
 
 async function smartFileFilter(files, projectUnderstanding) {
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const openai = new OpenAI({ baseURL: 'https://openrouter.ai/api/v1', apiKey: process.env.OPENROUTER_API_KEY });
   const filePaths = files.map(f => f.path);
 
   try {
-    const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the project structure and identify all the essential files needed to understand this codebase, especially the logical flow of the project. Ignore .md files.
+    const prompt = `Analyze the project structure and identify the MOST CRITICAL files for understanding the core functionality and execution flow of this codebase.
+
+Focus on:
+1. Entry points (main files that start the application)
+2. Core business logic files
+3. Key utility/helper files that are frequently imported
+4. Configuration files that define the application structure
+5. Files that connect different parts of the application
+
+EXCLUDE:
+- Documentation files (.md)
+- Test files
+- Asset files (images, fonts, etc.)
+- Build configuration files
+- Files with minimal code or boilerplate
+
+Prioritize files that reveal how data flows through the system and how components interact.
+
+Context:
 Project Type Analysis:
 ${projectUnderstanding}
 
@@ -276,7 +310,7 @@ DO NOT use Markdown formatting or any additional explanation.`;
 
 async function summarizeContent(openai, content, fileTree) {
   const fileList = fileTree.map(f => f.path).join('\n');
-  const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Given the file tree of the project this code belongs to:
+  const prompt = `Given the file tree of the project this code belongs to:
   
   File tree:
   ${fileList}
@@ -296,22 +330,36 @@ async function summarizeContent(openai, content, fileTree) {
 async function analyzeCode(openai, filePath, content, fileTree) {
   const fileList = fileTree.map(f => f.path).join('\n');
   // First prompt for human-readable analysis
-  const analysisPrompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. 
-  Given the project filestructure this code belongs to (for more context):
+  const analysisPrompt = `
+  Given the project filestructure this code belongs to (for more context), analyze this code file (${filePath}) and provide a clear, human-readable explanation of its key functionality and role. Format your response as follows:
 
-  File tree:
-  ${fileList}
+  ### 1. Main purpose and responsibilities
+  [Provide a concise explanation of the file's primary purpose and responsibilities within the system]
 
-  Analyze this code file (${filePath}) and provide a clear, human-readable explanation of its key functionality and role. Only respond in the following format, no texts more or less than this scope:
-    Give a one or two liner description of the code file.
-    **1. Main purpose and responsibilities**: 
-    **2. Key functions and their purposes**: (Format: This function expects these inputs, their datatypes, does this processing and then returns/ outputs this data and its datatype)
-    **3. Important interactions with other parts of the system**: 
-    **4. Notable features or patterns**: 
-    Overall...
+  ### 2. Key functions and their purposes (Ignore the \ (backslashes))
+  - **\`functionName(param1: type, param2: type) -> returnType\`**:
+    - **Inputs**: 
+      - \`param1\` (type): Description of parameter.
+      - \`param2\` (type): Description of parameter.
+    - **Processing**: Description of what the function does internally.
+    - **Output**: Description of what the function returns and its type.
 
-    Code:
-    ${content}`;
+  ### 3. Important interactions with other parts of the system
+  [Describe how this file interacts with other modules, libraries, or components]
+
+  ### 4. Notable features or patterns
+  [Highlight any design patterns, architectural approaches, or notable implementation details]
+
+  ### Overall
+  [Provide a brief summary that ties everything together]
+
+    Context:
+      File tree:
+      ${fileList}
+
+      Code:
+      ${content}
+      `;
 
     const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
     const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
@@ -319,7 +367,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   await saveApiCallContent("analyzeCode - analysis", analysisResponse.choices[0].message.content); // Save API response
 
   // Second prompt for JSON metadata
-  const metadataPrompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. 
+  const metadataPrompt = `
   Given the project filestructure this code belongs to (for more context):
 
   File tree:
@@ -394,7 +442,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
 }
 
 async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong) {
-  const prompt = `You are a senior developer with knowledge of almost all programming languages, frameworks, project types, Github Expert. Analyze the following project understanding, file metadata and create a call hierarchy showing how the application flows from the entry point through various files and functions.
+  const prompt = `Analyze the following project understanding, file metadata and create a call hierarchy showing how the application flows from the entry point through various files and functions.
   Focus on the main execution path and important function calls between files.
 
   Project understanding:
@@ -404,24 +452,29 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
   ${JSON.stringify(fileMetadata, null, 2)}
 
   Provide the call hierarchy in a clear, structured format showing:
-  1. A visual mapping of function calls
-  2. Entry point file
-  3. Main execution flow
-  4. Important function calls between files
-  5. Dependencies between modules
+  1. **Visual Mapping**: Create a hierarchical diagram showing function calls across the codebase
+  2. **Entry Point**: Identify and highlight the main entry point file in the diagram
+  3. **Execution Flow**: Trace the primary execution path through the application
+  4. **Cross-File Calls**: Document significant function calls between different files
+  5. **Module Dependencies**: Show how different modules depend on each other
   
   
-  The visual mapping should be something like this:
-  
-  📁 rootFunction(param1: Type) → ReturnType [src/rootFile.js]
-  ├─ 🔷 childFunction1(arg1: Type) → ReturnType [src/childFile1.js]
-  │   ├─ 🟣 subFunction1(a: Type) → ReturnType [src/subFile1.js]
-  │   └️─ 🟠 subFunction2() → ReturnType [src/subFile2.js]
-  └─ 🔶 childFunction2(data: Type) → ReturnType [src/childFile2.js]
-    ├─ 🟢 subFunction3(config: Type) → ReturnType [src/subFile3.js]
-    ├─ 🔴 subFunction4(option1: Type) → ReturnType [src/subFile4.js]
-    └─ 🟣 subFunction5(info: Type) → ReturnType [src/subFile5.js]
+  The visual mapping should be something like this (Example):
 
+ \`\`\`
+  🚀 app.js (ENTRY POINT)
+  ┣━━ 📂 initializeApp() → Configures application [app.js]
+  ┃   ┣━━ 🔧 loadConfig() → Config object [config.js]
+  ┃   ┗━━ 🔌 setupDatabase() → Connection [database.js]
+  ┃       ┗━━ 💾 createTables() → Success boolean [database.js]
+  ┣━━ 🌐 startServer(port: Number) → Server instance [server.js]
+  ┃   ┣━━ 🛡️ setupMiddleware() → Express app [middleware.js]
+  ┃   ┗━━ 🔄 registerRoutes() → Router [routes.js]
+  ┗━━ 📊 handleRequest(req: Request, res: Response) → Response [handlers.js]
+      ┣━━ 🔍 validateInput(data: Object) → Validation result [validation.js]
+      ┣━━ 📝 processData(data: Object) → Processed data [processor.js]
+      ┗━━ 📤 sendResponse(result: Object) → HTTP response [response.js]
+  \`\`\`
 `;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');

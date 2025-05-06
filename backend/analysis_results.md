@@ -1,64 +1,46 @@
 # 🔍 Repository Insights
 
 ## 📃 Project Details 
-- **Name:** RepoSage
-- **Description:** A tool to help understand Github repositories, file by file with Call Hierarchy and Summary of the project.
-- **Primary Language:** JavaScript
+- **Name:** local-LLM-with-RAG
+- **Description:** Running local Language Language Models (LLM) to perform Retrieval-Augmented Generation (RAG)
+- **Primary Language:** Python
 
 ## 🤓 Project Understanding 
 <details>
   <summary><strong>Peek Under the Hood 👀</strong></summary>
 
-<<<<<<< HEAD
-  The **RepoSage** project is structured to facilitate in-depth analysis of GitHub repositories, leveraging both a backend and a frontend component. Here's a concise breakdown of its file structure, main components, tech stack, and architecture:
-=======
+  1. **Project Overview**:  
+This project implements a local Retrieval-Augmented Generation (RAG) system using Large Language Models (LLMs) via Ollama. It allows users to query PDF/Markdown documents using a command-line interface or an interactive Streamlit web UI.
 
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+2. **Main Components**:  
+- `app.py`: Core RAG pipeline orchestrator (loads documents, generates embeddings, handles queries)  
+- `document_loader.py`: Handles PDF/Markdown file parsing and preprocessing  
+- `llm.py`: Manages LLM interactions with Ollama  
+- `models.py`: Defines model configuration and embedding logic  
+- `ui.py`: Streamlit web interface for user interaction  
+- `Research/`: Directory containing sample PDF documents for RAG  
+- `Chroma`: Vector database for storing/retrieving embeddings  
 
-### Main Components
+3. **Tech Stack**:  
+- **Languages**: Python  
+- **LLM Frameworks**: Ollama (Mistral/nomic-embed-text models), LangChain  
+- **Vector DB**: Chroma  
+- **Web Framework**: Streamlit  
+- **Utilities**: PyPDF2, UV (Python package manager)  
 
-<<<<<<< HEAD
-1. **Backend**:
-   - **Core Logic**: Located in `backend/src/analyzer.js`, this file contains the main analysis logic that interacts with the OpenAI API and GitHub API.
-   - **Configuration**: The `backend/openaiConfig.json` and `backend/openaiConfigQA.json` files manage API settings and model configurations.
-   - **Utilities**: Various utility files in `backend/src/utils` (like `display.js`, `file.js`, `fileTree.js`, and `github.js`) support specific functionalities such as file handling and GitHub interactions.
-   - **Results Storage**: Analysis results are stored in `backend/analysis_results.md` and `backend/analysis_results.json`.
+4. **Architecture**:  
+Modular monolithic architecture with:  
+- Document ingestion layer (`document_loader.py`)  
+- Embedding generation/storage layer (Ollama + Chroma)  
+- LLM query processing layer (`llm.py`)  
+- Dual interfaces (CLI via `app.py`, web via Streamlit)  
 
-2. **Frontend**:
-   - **User Interface**: The main UI is built with React, as indicated by the presence of `frontend/src/App.jsx` and `frontend/src/main.jsx`.
-   - **Styling**: CSS files for styling the application are located in `frontend/src/App.css` and `frontend/src/index.css`.
-   - **Build Tool**: The project uses Vite for the frontend build process, as indicated by `frontend/vite.config.js`.
-=======
-
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
-
-3. **Assets**:
-   - Contains images and other static files, such as `assets/RepoSageSS.png` and `frontend/public/vite.svg`.
-
-<<<<<<< HEAD
-### Tech Stack
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
-
-- **Backend**:
-  - **Language**: JavaScript (Node.js)
-  - **Framework**: Express.js (assumed)
-  - **APIs**: OpenAI API for AI-powered analysis and GitHub API for repository data.
-
-<<<<<<< HEAD
-- **Frontend**:
-  - **Library**: React for building the user interface.
-  - **Build Tool**: Vite for fast and modern frontend development.
-
-### Architecture
-
-- **Modular Design**: The project follows a modular architecture, separating backend and frontend concerns. The backend handles data processing and API interactions, while the frontend manages user interactions and displays results.
-- **AI Integration**: The use of OpenAI's API for generating insights and summaries indicates a sophisticated approach to data analysis, allowing for both detailed and high-level views of repository structures.
-- **Configuration Management**: The presence of configuration files allows for easy adjustment of API settings and performance tuning, catering to different user needs and cost considerations.
-
-Overall, **RepoSage** is designed to provide a comprehensive and user-friendly tool for analyzing GitHub repositories, utilizing modern web technologies and AI capabilities.
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+5. **Key Limitations/Constraints**:  
+- Embeddings are regenerated on each run (inefficient for large datasets)  
+- Local model execution requires significant memory/CPU resources  
+- Streamlit UI lacks persistent state management between sessions  
+- No authentication/authorization in the web interface  
+- Limited to Ollama-supported models for embeddings/LLM
 
 </details>
 
@@ -66,51 +48,25 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
 <details>
   <summary><strong>File Tree</strong></summary>
 
-<<<<<<< HEAD
-  📁 .vscode/
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [extensions.json](https://github.com/bhavya1600/RepoSage/blob/main/.vscode/extensions.json)
-📁 assets/
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [RepoSageSS.png](https://github.com/bhavya1600/RepoSage/blob/main/assets/RepoSageSS.png)
-📁 backend/
-&nbsp;&nbsp;&nbsp;&nbsp;📁 src/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 utils/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [display.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/display.js)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [file.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/file.js)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [fileTree.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/fileTree.js)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [github.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/github.js)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [analyzer.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/analyzer.js)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [index.css](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/index.css)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [index.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/src/index.js)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [analysis_results.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/analysis_results.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [analysis_results.md](https://github.com/bhavya1600/RepoSage/blob/main/backend/analysis_results.md)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [nodemon.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/nodemon.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [openaiConfig.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/openaiConfig.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [openaiConfigQA.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/openaiConfigQA.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [package-lock.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/package-lock.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [package.json](https://github.com/bhavya1600/RepoSage/blob/main/backend/package.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [postcss.config.js](https://github.com/bhavya1600/RepoSage/blob/main/backend/postcss.config.js)
-📁 frontend/
-&nbsp;&nbsp;&nbsp;&nbsp;📁 public/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [vite.svg](https://github.com/bhavya1600/RepoSage/blob/main/frontend/public/vite.svg)
-&nbsp;&nbsp;&nbsp;&nbsp;📁 src/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 assets/
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [react.svg](https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/assets/react.svg)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [App.css](https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/App.css)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [App.jsx](https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/App.jsx)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [index.css](https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/index.css)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📄 [main.jsx](https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/main.jsx)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [.gitignore](https://github.com/bhavya1600/RepoSage/blob/main/frontend/.gitignore)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [eslint.config.js](https://github.com/bhavya1600/RepoSage/blob/main/frontend/eslint.config.js)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [index.html](https://github.com/bhavya1600/RepoSage/blob/main/frontend/index.html)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [package-lock.json](https://github.com/bhavya1600/RepoSage/blob/main/frontend/package-lock.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [package.json](https://github.com/bhavya1600/RepoSage/blob/main/frontend/package.json)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [README.md](https://github.com/bhavya1600/RepoSage/blob/main/frontend/README.md)
-&nbsp;&nbsp;&nbsp;&nbsp;📄 [vite.config.js](https://github.com/bhavya1600/RepoSage/blob/main/frontend/vite.config.js)
-📄 [.gitignore](https://github.com/bhavya1600/RepoSage/blob/main/.gitignore)
-📄 [LICENSE](https://github.com/bhavya1600/RepoSage/blob/main/LICENSE)
-📄 [README.md](https://github.com/bhavya1600/RepoSage/blob/main/README.md)
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+  📁 images/
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [streamlit_ui.png](https://github.com/amscotti/local-LLM-with-RAG/blob/main/images/streamlit_ui.png)
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [wizard_experimenting.jpg](https://github.com/amscotti/local-LLM-with-RAG/blob/main/images/wizard_experimenting.jpg)
+📁 Research/
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [2304.03442v1.pdf](https://github.com/amscotti/local-LLM-with-RAG/blob/main/Research/2304.03442v1.pdf)
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [2305.14325.pdf](https://github.com/amscotti/local-LLM-with-RAG/blob/main/Research/2305.14325.pdf)
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [2308.10848.pdf](https://github.com/amscotti/local-LLM-with-RAG/blob/main/Research/2308.10848.pdf)
+&nbsp;&nbsp;&nbsp;&nbsp;📄 [2309.14391.pdf](https://github.com/amscotti/local-LLM-with-RAG/blob/main/Research/2309.14391.pdf)
+📄 [.gitignore](https://github.com/amscotti/local-LLM-with-RAG/blob/main/.gitignore)
+📄 [app.py](https://github.com/amscotti/local-LLM-with-RAG/blob/main/app.py)
+📄 [document_loader.py](https://github.com/amscotti/local-LLM-with-RAG/blob/main/document_loader.py)
+📄 [LICENSE](https://github.com/amscotti/local-LLM-with-RAG/blob/main/LICENSE)
+📄 [llm.py](https://github.com/amscotti/local-LLM-with-RAG/blob/main/llm.py)
+📄 [models.py](https://github.com/amscotti/local-LLM-with-RAG/blob/main/models.py)
+📄 [pyproject.toml](https://github.com/amscotti/local-LLM-with-RAG/blob/main/pyproject.toml)
+📄 [pyrightconfig.json](https://github.com/amscotti/local-LLM-with-RAG/blob/main/pyrightconfig.json)
+📄 [readme.md](https://github.com/amscotti/local-LLM-with-RAG/blob/main/readme.md)
+📄 [ui.py](https://github.com/amscotti/local-LLM-with-RAG/blob/main/ui.py)
+📄 [uv.lock](https://github.com/amscotti/local-LLM-with-RAG/blob/main/uv.lock)
 
 
 </details>
@@ -119,302 +75,382 @@ Overall, **RepoSage** is designed to provide a comprehensive and user-friendly t
 <details>
   <summary><strong>Detailed Function Call Hierarchy</strong></summary>
 
-<<<<<<< HEAD
-  Here's the call hierarchy for the **RepoSage** project, illustrating the main execution flow and important function calls between files:
+  ```
+🚀 app.py (ENTRY POINT)
+┣━━ 🧪 main() → Orchestrates RAG pipeline [app.py]
+┃   ┣━━ 📦 models.check_if_model_is_available() → Ensures LLM model exists [models.py]
+┃   ┃   ┣━━ 🔍 __is_model_available_locally() → Checks local Ollama models [models.py]
+┃   ┃   ┗━━ 📥 __pull_model() → Downloads model if missing [models.py]
+┃   ┣━━ 📦 models.check_if_model_is_available() → Ensures embedding model exists [models.py]
+┃   ┗━━ 📁 document_loader.load_documents_into_database() → Processes docs [document_loader.py]
+┃       ┣━━ 📂 load_documents() → Loads raw files [document_loader.py]
+┃       ┃   ┣━━ 📄 PyPDFLoader.load() → For PDFs [langchain_community]
+┃       ┃   ┗━━ 📝 TextLoader.load() → For Markdown [langchain_community]
+┃       ┣━━ 🗜️ RecursiveCharacterTextSplitter.split_documents() → Chunks text [langchain]
+┃       ┗━━ 🧠 OllamaEmbeddings.embed_documents() → Generates embeddings [langchain_ollama]
+┃           ┗━━ 💾 Chroma.from_documents() → Stores in vector DB [langchain_community]
+┗━━ 🔗 llm.getChatChain() → Creates query processing chain [llm.py]
+    ┣━━ 🧩 ChatPromptTemplate.from_messages() → Creates prompt template [langchain_core]
+    ┣━━ 🧠 ConversationBufferMemory() → Tracks conversation history [langchain.memory]
+    ┣━━ 🔁 itemgetter() → Routes inputs through chain [operator]
+    ┗━━ 📤 RunnablePassthrough.assign() → Final answer generation [langchain_core]
+```
 
-### Call Hierarchy
+### Execution Flow Analysis
+1. **Model Validation**  
+   - `app.py` first validates both LLM and embedding models exist via `models.check_if_model_is_available()`
+   - Uses Ollama API to check local availability, pulls models if missing
 
-📁 **analyzeRepository(repoUrl: string) → Promise<object>** [backend/src/analyzer.js]
-├─ 🔷 **parseGitHubUrl(url: string) → { owner: string, repo: string }** [backend/src/utils/github.js]
-├─ 🔷 **buildFileTree(files: array) → object** [backend/src/utils/fileTree.js]
-├─ 🔷 **createChatCompletion(openai: OpenAI, model: string, modelType: string, analysisPrompt: string) → Promise<object>** [backend/src/analyzer.js]
-│   └─ 🟣 **summarizeContent(openai: OpenAI, content: string, fileTree: array) → Promise<string>** [backend/src/analyzer.js]
-│       └─ 🟠 **analyzeCode(openai: OpenAI, filePath: string, content: string, fileTree: array) → Promise<object>** [backend/src/analyzer.js]
-├─ 🔷 **analyzeProjectStructure(openai: OpenAI, repoData: object, files: array, readmeContent: string) → Promise<string>** [backend/src/analyzer.js]
-├─ 🔷 **smartFileFilter(files: array, projectUnderstanding: string) → Promise<array>** [backend/src/analyzer.js]
-├─ 🔷 **saveApiCallContent(functionName: string, content: string) → undefined** [backend/src/analyzer.js]
-└─ 🔷 **saveToFile(filename: string, analysis: object) → Promise<void>** [backend/src/utils/file.js]
+2. **Document Processing**  
+   - `document_loader.load_documents_into_database()` handles:
+     - File type detection (PDF/Markdown)
+     - Text splitting (500-1000 char chunks)
+     - Embedding generation (Ollama nomic-embed-text)
+     - Vector storage (Chroma DB persistence)
 
-📁 **displayResults(analysis: object) → undefined** [backend/src/utils/display.js]
-└─ 🔷 **displayFileTree(node: object, indent: string) → undefined** [backend/src/utils/display.js]
+3. **Query Pipeline Setup**  
+   - `llm.getChatChain()` creates:
+     - Contextual compression chain
+     - Memory-aware prompt template
+     - Streaming response handler
+   - Combines LLM, vector DB, and conversation history
 
-📁 **handleSubmit(event: Event) → undefined** [frontend/src/App.jsx]
-└─ 🔷 **analyzeRepository(repoUrl: string) → Promise<object>** [backend/src/analyzer.js]
+### Cross-File Dependencies
+```
+app.py → models.py (model validation)
+app.py → document_loader.py (data ingestion)
+app.py → llm.py (query processing)
+document_loader.py → langchain_ollama (embeddings)
+llm.py → langchain_core (prompts/runnables)
+```
 
-📁 **main() → React element** [frontend/src/main.jsx]
-└─ 🔷 **App() → JSX element** [frontend/src/App.jsx]
+### Key Technical Path
+1. CLI arguments → `parse_arguments()` → `main()`
+2. Model checks → `__is_model_available_locally()` → `__pull_model()`
+3. Document loading → `DirectoryLoader()` → format-specific loaders
+4. Text processing → `RecursiveCharacterTextSplitter` → `Chroma.from_documents()`
+5. Query handling → `getChatChain()` → `RunnableLambda` chains
 
-### Main Execution Flow
+### Critical Limitation Mapping
+- **No embedding persistence**: `Chroma.from_documents()` recreates DB on each run
+- **Memory intensity**: Ollama embeddings and LLMs require >8GB RAM
+- **Statelessness**: `ConversationBufferMemory` resets on app restart
 
-1. **Entry Point**: The application starts in `frontend/src/main.jsx` where the `main()` function renders the `App` component.
-2. **User Interaction**: The user interacts with the UI in `frontend/src/App.jsx`, triggering the `handleSubmit` function upon form submission.
-3. **Repository Analysis**: The `handleSubmit` function calls `analyzeRepository(repoUrl)` from the backend to analyze the specified GitHub repository.
-4. **Data Fetching and Processing**: 
-   - `analyzeRepository` fetches metadata and file structure using `parseGitHubUrl`, `buildFileTree`, and other helper functions.
-   - It generates insights using the OpenAI API through `createChatCompletion`, which may call `summarizeContent` and `analyzeCode` for detailed analysis.
-5. **Results Display**: The results of the analysis are formatted and displayed using `displayResults` and `displayFileTree` from `backend/src/utils/display.js`.
-6. **File Saving**: The analysis results are saved to files using `saveToFile` in `backend/src/utils/file.js`.
-
-### Important Function Calls Between Files
-
-- **`analyzeRepository`** calls:
-  - **`parseGitHubUrl`** from `github.js` to extract repo details.
-  - **`buildFileTree`** from `fileTree.js` to construct the file structure.
-  - **`createChatCompletion`** for generating insights using OpenAI.
-  - **`saveToFile`** to persist analysis results.
-
-- **`displayResults`** calls:
-  - **`displayFileTree`** to output the file structure in a readable format.
-
-- **`handleSubmit`** in the frontend directly calls `analyzeRepository` in the backend to initiate the analysis process.
-
-### Dependencies Between Modules
-
-- **Backend Dependencies**:
-  - `analyzer.js` depends on utilities from `github.js`, `fileTree.js`, `file.js`, and `display.js`.
-  - Uses external libraries: `octokit`, `openai`, `chalk`, `fs`, and `path`.
-
-- **Frontend Dependencies**:
-  - `App.jsx` relies on React and CSS for styling.
-  - `main.jsx` serves as the entry point, importing `App.jsx` and CSS.
-
-This structured representation provides a clear understanding of how the **RepoSage** application flows from the entry point through various files and functions, highlighting the main execution path and important function calls.
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+This hierarchy shows the core RAG pipeline from model validation through document processing to query execution, highlighting the LangChain components enabling the system's functionality.
 
 </details>
 
 ## 📈 File Analyses  
 
 <details>
-<<<<<<< HEAD
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/analyzer.js">backend/src/analyzer.js</a></strong></summary>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/app.py">app.py</a></strong></summary>
 
-  **1. Main purpose and responsibilities**: The `analyzer.js` file is responsible for analyzing a GitHub repository by fetching its metadata, file structure, and content, and then utilizing OpenAI's API to generate insights, summaries, and analyses of the repository's code and structure.
+  ### 1. Main purpose and responsibilities
 
-**2. Key functions and their purposes**: 
-- `createChatCompletion(openai, model, modelType, analysisPrompt)`: This function expects `openai` (OpenAI client), `model` (string), `modelType` (string), and `analysisPrompt` (string). It processes the input by sending a request to the OpenAI API to create a chat completion based on the provided prompt and returns the response data.
-- `saveApiCallContent(functionName, content)`: This function expects `functionName` (string) and `content` (string). It saves the API call content to a text file, appending the function name as a heading, and returns nothing.
-- `analyzeRepository(repoUrl)`: This function expects `repoUrl` (string). It processes the input by analyzing the specified GitHub repository, fetching its metadata and file structure, and generating analyses and summaries, returning an `analysis` object.
-- `analyzeProjectStructure(openai, repoData, files, readmeContent)`: This function expects `openai` (OpenAI client), `repoData` (object), `files` (array), and `readmeContent` (string). It processes the input by generating a prompt to analyze the project structure and returns a brief understanding of the project.
-- `smartFileFilter(files, projectUnderstanding)`: This function expects `files` (array) and `projectUnderstanding` (string). It processes the input by filtering the files based on their relevance to the project understanding and returns an array of essential files.
-- `summarizeContent(openai, content, fileTree)`: This function expects `openai` (OpenAI client), `content` (string), and `fileTree` (array). It processes the input by summarizing the key aspects of the provided code content and returns the summary.
-- `analyzeCode(openai, filePath, content, fileTree)`: This function expects `openai` (OpenAI client), `filePath` (string), `content` (string), and `fileTree` (array). It processes the input by analyzing the code file and returns both a human-readable analysis and a JSON structure containing essential technical information.
-- `analyzeCallHierarchy(openai, fileMetadata, projectUnderstanding)`: This function expects `openai` (OpenAI client), `fileMetadata` (array), and `projectUnderstanding` (string). It processes the input by creating a visual call hierarchy of the application flow and returns the hierarchy as a string.
-- `generateSummary(openai, analysis)`: This function expects `openai` (OpenAI client) and `analysis` (object). It processes the input by generating a summary of the project based on the provided analysis data and returns the summary.
+The `app.py` file serves as the main entry point for a local LLM (Large Language Model) application that uses RAG (Retrieval-Augmented Generation) with Ollama. Its primary responsibilities are:
+1. Checking the availability of specified LLM and embedding models.
+2. Loading documents from a specified directory into a vector database using an embedding model.
+3. Initializing a chat chain with the LLM and the vector database.
+4. Running an interactive loop to accept user questions, generate responses using the chat chain, and display them until the user exits.
 
-**3. Important interactions with other parts of the system**: The `analyzer.js` file interacts with the GitHub API through the Octokit library to fetch repository data and file content. It also communicates with the OpenAI API to generate analyses, summaries, and metadata about the code. Additionally, it utilizes utility functions from the `utils/github.js` and `utils/fileTree.js` files for parsing GitHub URLs and building file trees.
+### 2. Key functions and their purposes
 
-**4. Notable features or patterns**: The file employs asynchronous programming with `async/await` for handling API calls, ensuring non-blocking execution. It also includes error handling for API responses and file operations. The use of configuration files for managing API keys and model settings is a notable design pattern, allowing for flexibility and scalability in the analysis process.
+- **`main(llm_model_name: str, embedding_model_name: str, documents_path: str) -> None`**:
+  - **Inputs**:
+    - `llm_model_name` (str): The name of the LLM model to use (e.g., "mistral").
+    - `embedding_model_name` (str): The name of the embedding model to use (e.g., "nomic-embed-text").
+    - `documents_path` (str): The path to the directory containing documents to load (e.g., "Research").
+  - **Processing**:
+    1. Checks if the specified LLM and embedding models are available using `check_if_model_is_available` (from `models.py`). If not, exits the program.
+    2. Loads documents from `documents_path` into a vector database using `load_documents_into_database` (from `document_loader.py`).
+    3. Initializes a `ChatOllama` instance with `llm_model_name`.
+    4. Creates a chat chain using `getChatChain` (from `llm.py`) with the LLM and the vector database.
+    5. Enters an interactive loop to accept user questions, generate responses using the chat chain, and print them until the user types "exit" or interrupts with `Ctrl+C`.
+  - **Output**: None (interactive output to the console).
 
-Overall, `analyzer.js` serves as a comprehensive tool for analyzing GitHub repositories, leveraging external APIs to provide detailed insights into project structures and code functionality.
-=======
+- **`parse_arguments() -> argparse.Namespace`**:
+  - **Inputs**: None (reads command-line arguments).
+  - **Processing**:
+    1. Defines command-line arguments for the LLM model, embedding model, and document path using `argparse`.
+    2. Parses and returns the arguments.
+  - **Output**: An `argparse.Namespace` object containing the parsed arguments.
 
+### 3. Important interactions with other parts of the system
 
-  ---
-</details>
+- **`models.py`**: Uses `check_if_model_is_available` to verify the availability of the LLM and embedding models.
+- **`document_loader.py`**: Uses `load_documents_into_database` to load documents into a vector database.
+- **`llm.py`**: Uses `getChatChain` to create a chat chain with the LLM and the vector database.
+- **`langchain_ollama`**: Uses `ChatOllama` to interact with the Ollama LLM.
 
-<details>
+### 4. Notable features or patterns
 
+- **Modular Design**: The code is modular, with separate functions for checking model availability, loading documents, and creating the chat chain. This promotes reusability and separation of concerns.
+- **Interactive Loop**: The main loop allows users to interact with the LLM in real-time, making it suitable for conversational applications.
+- **Error Handling**: The code handles exceptions gracefully, such as model unavailability (`Exception`) and missing document directories (`FileNotFoundError`), and exits the program with an error message.
+- **Command-Line Arguments**: Uses `argparse` to allow users to specify the LLM model, embedding model, and document path at runtime, providing flexibility.
 
-  ---
-</details>
+### Overall
 
-<details>
-
-
-  ---
-</details>
-
-<details>
-
-  ---
-</details>
-
-<details>
-
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
-
-  ---
-</details>
-
-<details>
-<<<<<<< HEAD
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/display.js">backend/src/utils/display.js</a></strong></summary>
-
-  Give a one or two liner description of the code file.
-**1. Main purpose and responsibilities**: This code file is responsible for displaying the results of an analysis on a repository, including its information, summary, project structure, call hierarchy, and file analyses in a formatted manner.
-
-**2. Key functions and their purposes**: 
-- `displayResults(analysis)`: This function expects an input `analysis` of type `Object`, processes various properties of the analysis (like repository info, summary, file tree, etc.), and outputs formatted results to the console.
-- `displayFileTree(node, indent)`: This function expects an input `node` of type `Object` (representing a file or directory) and a string `indent`, processes the node to display its name and structure recursively, and outputs the formatted file tree to the console.
-
-**3. Important interactions with other parts of the system**: The `displayResults` function interacts with the `analysis` object, which is likely generated by other parts of the backend analysis process, and it formats and outputs this data to the console for user visibility.
-
-**4. Notable features or patterns**: The code utilizes the `chalk` library for styling console output, enhancing readability with colors and bold text. It also employs recursion in `displayFileTree` to handle nested file structures effectively.
-
-Overall, this file plays a crucial role in presenting analysis results in a user-friendly format, making it easier for developers to understand the insights derived from the repository analysis.
+`app.py` is the central script that orchestrates the interaction between the user, the LLM, and the document database. It leverages other modules to check model availability, load documents, and create a chat chain, providing an interactive interface for querying the LLM with context from the loaded documents. The use of command-line arguments and modular design makes it adaptable and easy to extend.
 
   ---
 </details>
 
 <details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/file.js">backend/src/utils/file.js</a></strong></summary>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/document_loader.py">document_loader.py</a></strong></summary>
 
-  This code file is responsible for saving analysis results of a GitHub repository to both a markdown and a JSON file.
+  ```python
+### 1. Main purpose and responsibilities
+The `document_loader.py` file is responsible for loading documents from a specified directory, splitting them into smaller chunks, and then embedding and storing them in a Chroma vector database. It also provides functionality to reload the documents or use the existing database.
 
-**1. Main purpose and responsibilities**: 
-The main purpose of this file is to generate and save a structured markdown report and corresponding JSON metadata for a repository analysis, including project details, file structure, and call hierarchy.
+### 2. Key functions and their purposes
+- **`load_documents_into_database(model_name: str, documents_path: str, reload: bool = True) -> Chroma`**:
+  - **Inputs**:
+    - `model_name` (str): The name of the Ollama embedding model to use.
+    - `documents_path` (str): The path to the directory containing the documents to load.
+    - `reload` (bool, optional): Whether to reload the documents or use the existing database. Defaults to True.
+  - **Processing**:
+    - If `reload` is True, it loads the documents from `documents_path`, splits them into chunks, and embeds them using the specified Ollama model before storing them in the Chroma database.
+    - If `reload` is False, it simply loads the existing Chroma database.
+  - **Output**:
+    - Returns a `Chroma` object representing the vector database with the loaded documents.
 
-**2. Key functions and their purposes**: 
-- `saveToFile(filename: string, analysis: object): Promise<void>`: This function expects a filename (string) to save the report and an analysis object (object) containing repository details. It processes this data to create a markdown report and a JSON file, then writes both to the filesystem.
-- `createGitHubLink(filePath: string): string`: This function takes a file path (string), cleans it by removing leading "root/", encodes it for URL compatibility, and returns the full GitHub link (string) to the file.
-- `formatFileTree(node: object, indent: string, repoUrl: string, branch: string, parentPath: string = ''): string`: This function expects a file tree node (object), an indentation string (string), a repository URL (string), a branch name (string), and an optional parent path (string). It recursively formats the file tree into a human-readable string representation, returning this formatted string.
-- `getFullPath(node: object): string`: This function takes a node (object) and returns its full path (string) by reconstructing it from parent references, while removing any leading "root/".
+- **`load_documents(path: str) -> List[Document]`**:
+  - **Inputs**:
+    - `path` (str): The path to the directory containing the documents to load.
+  - **Processing**:
+    - Checks if the path exists and raises a `FileNotFoundError` if it does not.
+    - Uses `DirectoryLoader` with specific loaders for PDF and Markdown files to load the documents into a list of `Document` objects.
+  - **Output**:
+    - Returns a list of `Document` objects representing the loaded documents.
 
-**3. Important interactions with other parts of the system**: 
-The `saveToFile` function interacts with the filesystem using the `writeFile` function from the 'fs/promises' module to save the generated markdown and JSON files. It also relies on the structure of the `analysis` object, which is expected to contain specific properties related to the repository, such as `repository`, `fileTree`, and `fileAnalysis`.
+### 3. Important interactions with other parts of the system
+- **`langchain_community.document_loaders`**: Uses `DirectoryLoader`, `PyPDFLoader`, and `TextLoader` to load documents from the filesystem.
+- **`langchain_core.documents`**: Uses the `Document` class to represent loaded documents.
+- **`langchain_ollama`**: Uses `OllamaEmbeddings` to generate embeddings for the documents.
+- **`langchain_community.vectorstores`**: Uses `Chroma` to store and manage the vector database.
+- **`langchain.text_splitter`**: Uses `RecursiveCharacterTextSplitter` to split documents into smaller chunks.
 
-**4. Notable features or patterns**: 
-The code employs asynchronous programming with `async/await` for file writing, ensuring non-blocking operations. It uses template literals for constructing markdown content, and recursive functions for formatting the file tree structure, demonstrating a clear separation of concerns and modular design.
+### 4. Notable features or patterns
+- **Modular Loading**: The `load_documents` function supports loading multiple file types (PDF and Markdown) using different loaders, making it easy to extend to other file types.
+- **Chunking**: Documents are split into smaller chunks using `RecursiveCharacterTextSplitter` to improve the efficiency of embedding and retrieval.
+- **Persistence**: The Chroma database is persisted to disk (`PERSIST_DIRECTORY = "storage"`), allowing for reuse without reloading documents.
+- **Conditional Reloading**: The `load_documents_into_database` function allows for conditional reloading of documents based on the `reload` parameter, providing flexibility in managing the database.
 
-Overall, this file plays a crucial role in generating a comprehensive report of the analysis performed on a GitHub repository, providing both a human-readable format and structured data for further processing or review.
-
-  ---
-</details>
-
-<details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/fileTree.js">backend/src/utils/fileTree.js</a></strong></summary>
-
-  This code file is responsible for constructing a hierarchical representation of a file tree structure from a flat list of file paths.
-
-**1. Main purpose and responsibilities**: 
-The main purpose of this file is to build a structured file tree from an array of file objects, categorizing them into directories and files while maintaining a clear hierarchy.
-
-**2. Key functions and their purposes**: 
-- **buildFileTree(files)**: This function expects an array of file objects (each containing a `path` and `type`), processes this array to create a nested directory structure, and returns the constructed file tree as an object.
-- **sortFileTree(node)**: This function expects a node object representing a directory, processes its children to sort them by type (directories first) and then alphabetically, and returns the sorted node.
-
-**3. Important interactions with other parts of the system**: 
-The `buildFileTree` function interacts with the input data structure (an array of file objects) and outputs a structured file tree, which can be utilized by other components of the backend or frontend for displaying file hierarchies or performing file-related operations.
-
-**4. Notable features or patterns**: 
-The code employs a recursive approach for sorting the file tree, ensuring that directories are prioritized over files in the sorting process. It also includes logic to handle cases where a file path may represent a directory that was previously identified as a file, allowing for dynamic adjustments to the tree structure.
-
-Overall, this file is crucial for transforming a flat list of files into a more navigable and organized tree structure, facilitating better file management and representation within the application.
-
-  ---
-</details>
-
-<details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/backend/src/utils/github.js">backend/src/utils/github.js</a></strong></summary>
-
-  This code file (backend/src/utils/github.js) provides utility functions for handling GitHub repository URLs.
-
-**1. Main purpose and responsibilities**:  
-The main purpose of this file is to parse GitHub repository URLs and extract the owner and repository name from them.
-
-**2. Key functions and their purposes**:  
-- `parseGitHubUrl(url: string)`: This function expects a URL of type string, processes it to extract the owner and repository name from the GitHub URL, and returns an object containing `owner` (string) and `repo` (string) without the '.git' suffix.
-
-**3. Important interactions with other parts of the system**:  
-This function can be utilized by other modules that require GitHub repository information, such as analysis or data retrieval components, ensuring that the input URLs are correctly formatted before further processing.
-
-**4. Notable features or patterns**:  
-The function employs error handling using try-catch blocks to manage invalid URL formats, ensuring robustness in parsing operations.
-
-Overall, this utility function is essential for ensuring that GitHub URLs are correctly interpreted, facilitating seamless interactions with GitHub-related functionalities in the application.
+### Overall
+The `document_loader.py` file provides a robust mechanism for loading, chunking, embedding, and storing documents in a vector database. It leverages the LangChain ecosystem to handle various document types and embedding models, and it offers flexibility in managing the database through conditional reloading. This file is crucial for setting up the document retrieval system in the project.
 
   ---
 </details>
 
 <details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/App.jsx">frontend/src/App.jsx</a></strong></summary>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/llm.py">llm.py</a></strong></summary>
 
-  Give a one or two liner description of the code file.
-This file defines a React component that allows users to analyze a GitHub repository and download the analysis results.
+  ### 1. Main purpose and responsibilities
+The `llm.py` file is responsible for setting up and managing the conversational chain for a research assistant chatbot. It integrates LangChain components to handle conversation history, question rephrasing, document retrieval, and answer generation. The file provides two main functionalities:
+1. `getStreamingChain`: Creates a streaming chain for real-time response generation.
+2. `getChatChain`: Creates a chat chain for interactive conversations with memory management.
 
-**1. Main purpose and responsibilities**: 
-The main purpose of the `App` component is to provide a user interface for inputting a GitHub repository URL, triggering an analysis on that repository, displaying logs of the analysis process, and allowing users to download the results once the analysis is complete.
+### 2. Key functions and their purposes
 
-**2. Key functions and their purposes**: 
-- `handleSubmit`: This function expects an event object (`e`) as input, prevents the default form submission behavior, sets loading states, and sends a POST request to analyze the repository. It processes the response stream, updates logs based on the analysis progress, and handles errors. It does not return any data.
-- `handleDownload`: This function expects no inputs, fetches the analysis results from the server, creates a downloadable link for the results file, and triggers the download. It does not return any data.
+#### `_combine_documents(docs, document_prompt=DEFAULT_DOCUMENT_PROMPT, document_separator="\n\n")`
+- **Inputs**:
+  - `docs` (List[Document]): A list of documents to be combined.
+  - `document_prompt` (PromptTemplate): Template for formatting each document (default: `DEFAULT_DOCUMENT_PROMPT`).
+  - `document_separator` (str): Separator between documents (default: `"\n\n"`).
+- **Processing**: Formats each document using `document_prompt` and joins them with `document_separator`.
+- **Output**: A single string containing all formatted documents separated by `document_separator`.
 
-**3. Important interactions with other parts of the system**: 
-The component interacts with a backend API at `http://localhost:5000/api/analyze` for submitting the repository URL and `http://localhost:5000/api/download-analysis` for downloading the analysis results. It also manages local state for logs, loading status, and analysis completion.
+#### `getStreamingChain(question: str, memory, llm, db)`
+- **Inputs**:
+  - `question` (str): The user's question.
+  - `memory`: The conversation memory (not used in the function, but passed to the chain).
+  - `llm`: The language model to use for generating responses.
+  - `db`: The document database to retrieve relevant documents from.
+- **Processing**:
+  1. Creates a retriever from `db` with `k=10` documents.
+  2. Sets up a chain that:
+     - Formats the chat history from `memory`.
+     - Rephrases the question using `CONDENSE_QUESTION_PROMPT` and `llm`.
+     - Retrieves relevant documents using the rephrased question.
+     - Combines the documents and generates an answer using `ANSWER_PROMPT` and `llm`.
+- **Output**: A streaming chain that can be used to generate responses in real-time.
 
-**4. Notable features or patterns**: 
-The component uses React hooks (`useState`) for state management, handles asynchronous operations with `async/await`, and processes streaming responses from the server. It includes error handling and conditional rendering based on loading states and analysis completion.
+#### `getChatChain(llm, db)`
+- **Inputs**:
+  - `llm`: The language model to use for generating responses.
+  - `db`: The document database to retrieve relevant documents from.
+- **Processing**:
+  1. Creates a retriever from `db` with `k=10` documents.
+  2. Sets up a chain that:
+     - Loads the chat history from `memory`.
+     - Rephrases the question using `CONDENSE_QUESTION_PROMPT` and `llm`.
+     - Retrieves relevant documents using the rephrased question.
+     - Combines the documents and generates an answer using `ANSWER_PROMPT` and `llm`.
+     - Saves the conversation to `memory`.
+- **Output**: A `chat` function that can be called with a question to get a response and update the memory.
 
-Overall, the `App.jsx` file serves as the core interface for users to interact with the analysis functionality, providing feedback and control throughout the process.
+### 3. Important interactions with other parts of the system
+- **LangChain**: The file heavily relies on LangChain components like `ConversationBufferMemory`, `ChatPromptTemplate`, `RunnableLambda`, and `RunnablePassthrough` to manage the conversational flow.
+- **Document Database (`db`)**: The `db` parameter is used to retrieve relevant documents based on the user's question.
+- **Language Model (`llm`)**: The `llm` parameter is used to generate responses and rephrase questions.
+- **Streaming**: The `getStreamingChain` function uses `StreamingStdOutCallbackHandler` to stream responses in real-time.
+
+### 4. Notable features or patterns
+- **Conversation Memory**: The `ConversationBufferMemory` is used to store and retrieve conversation history.
+- **Question Rephrasing**: The `CONDENSE_QUESTION_PROMPT` is used to rephrase follow-up questions into standalone questions.
+- **Document Retrieval**: The `retriever` is used to fetch relevant documents based on the rephrased question.
+- **Answer Generation**: The `ANSWER_PROMPT` is used to generate answers based on the retrieved documents and the user's question.
+- **Streaming Support**: The `getStreamingChain` function provides a way to stream responses in real-time.
+
+### Overall
+The `llm.py` file is a crucial part of the research assistant chatbot, providing the logic for handling conversations, retrieving relevant documents, and generating answers. It uses LangChain components to manage the conversational flow and integrates with a document database to provide contextually relevant responses. The file supports both streaming and interactive chat modes, making it versatile for different use cases.
 
   ---
 </details>
 
 <details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/src/main.jsx">frontend/src/main.jsx</a></strong></summary>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/models.py">models.py</a></strong></summary>
 
-  Give a one or two liner description of the code file.
-This code file serves as the entry point for the React application, initializing the app and rendering it into the DOM.
+  ### 1. Main purpose and responsibilities
+The `models.py` file is responsible for managing interactions with the Ollama service, specifically focusing on checking the availability of models locally, pulling models from the Ollama repository if they are not available, and listing available models. It ensures that the required models are present and can be used by other parts of the system.
 
-**1. Main purpose and responsibilities**:  
-The main purpose of this file is to set up and render the React application within the root DOM element, ensuring that the app runs in strict mode for better error handling and debugging.
+### 2. Key functions and their purposes
 
-**2. Key functions and their purposes**:  
-- `createRoot(element: HTMLElement)`: This function expects an HTML element as input, specifically the root element where the React app will be rendered. It processes this element to create a root for the React application and returns a root object.
-- `render(children: ReactNode)`: This method expects a React node (in this case, the `<App />` component) as input, processes it, and renders it into the DOM at the specified root element.
+- **`__pull_model(name: str) -> None`**:
+  - **Inputs**: 
+    - `name` (str): The name of the model to pull from the Ollama repository.
+  - **Processing**: 
+    - Streams the model pull progress from Ollama.
+    - Uses `tqdm` to display a progress bar for each digest (part of the model) being downloaded.
+    - Updates the progress bar as parts of the model are downloaded.
+  - **Output**: None. The function is responsible for pulling the model and displaying progress.
 
-**3. Important interactions with other parts of the system**:  
-The file imports the `App` component from `./App.jsx`, which contains the main application logic and UI. It also imports a CSS file for styling, ensuring that the application is styled correctly upon rendering.
+- **`__is_model_available_locally(model_name: str) -> bool`**:
+  - **Inputs**: 
+    - `model_name` (str): The name of the model to check for local availability.
+  - **Processing**: 
+    - Attempts to retrieve the model details using `ollama.show(model_name)`.
+    - Returns `True` if the model is available locally, `False` otherwise.
+  - **Output**: A boolean indicating whether the model is available locally.
 
-**4. Notable features or patterns**:  
-The use of `StrictMode` is notable as it helps identify potential problems in the application by activating additional checks and warnings for its descendants. The file follows a modular approach by importing components and styles, promoting better organization and maintainability.
+- **`get_list_of_models() -> list[str]`**:
+  - **Inputs**: None.
+  - **Processing**: 
+    - Calls `ollama.list()` to get a list of available models.
+    - Extracts the model names from the response.
+  - **Output**: A list of strings representing the names of available models.
 
-Overall, this file is crucial for bootstrapping the React application, ensuring it is rendered correctly and adheres to best practices through the use of strict mode.
+- **`check_if_model_is_available(model_name: str) -> None`**:
+  - **Inputs**: 
+    - `model_name` (str): The name of the model to check and potentially pull.
+  - **Processing**: 
+    - Checks if the model is available locally using `__is_model_available_locally`.
+    - If not available, attempts to pull the model using `__pull_model`.
+    - Raises exceptions if there are issues communicating with Ollama or if the model cannot be found.
+  - **Output**: None. Ensures the model is available locally or raises an exception.
+
+### 3. Important interactions with other parts of the system
+- **Ollama Service**: The file interacts directly with the Ollama service to list, check, and pull models.
+- **`tqdm` Library**: Used to display progress bars when pulling models.
+- **Potential Callers**: Other parts of the system (e.g., `llm.py` or `app.py`) might call `check_if_model_is_available` to ensure a model is ready for use.
+
+### 4. Notable features or patterns
+- **Progress Tracking**: Uses `tqdm` to provide visual feedback on the progress of model downloads.
+- **Error Handling**: Includes exception handling to manage issues with Ollama communication or missing models.
+- **Private Functions**: Uses `__` prefix for internal functions (`__pull_model`, `__is_model_available_locally`) to indicate they are not meant for external use.
+
+### Overall
+The `models.py` file serves as a bridge between the application and the Ollama service, ensuring that required models are available locally. It abstracts the complexity of checking and pulling models, providing a simple interface (`check_if_model_is_available`) for other parts of the system to use. The use of `tqdm` enhances user experience by providing visual feedback during model downloads.
 
   ---
 </details>
 
 <details>
-  <summary><strong>File: <a href="https://github.com/bhavya1600/RepoSage/blob/main/frontend/vite.config.js">frontend/vite.config.js</a></strong></summary>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/ui.py">ui.py</a></strong></summary>
 
-  This code file (frontend/vite.config.js) is a configuration file for Vite, a build tool that is optimized for modern web development, particularly with React.
+  ### 1. Main purpose and responsibilities
+The `ui.py` file is responsible for creating the Streamlit-based user interface for the Local LLM with RAG (Retrieval-Augmented Generation) application. It handles user interactions, manages session state, and orchestrates the flow of data between the user, the document database, and the language model. Key responsibilities include:
+- Providing a sidebar for model selection and document indexing.
+- Displaying chat messages and handling user input.
+- Initializing and managing the language model and document database.
+- Invoking the RAG chain to generate responses based on user queries and indexed documents.
 
-**1. Main purpose and responsibilities**:  
-The main purpose of this file is to configure Vite for a React application, enabling the use of React-specific features and optimizations during development and build processes.
+### 2. Key functions and their purposes
+- **`get_list_of_models()`**:
+  - **Inputs**: None.
+  - **Processing**: Retrieves a list of available language models from the `models.py` module.
+  - **Output**: A list of model names (`List[str]`).
 
-**2. Key functions and their purposes**:  
-- `defineConfig`: This function expects a single input, an object (of type `Object`), which contains configuration settings for Vite. It processes this configuration to set up the development environment and build process, then returns a configuration object (of type `Object`) that Vite uses to run the application.
+- **`load_documents_into_database(EMBEDDING_MODEL, folder_path)`**:
+  - **Inputs**: 
+    - `EMBEDDING_MODEL` (str): The name of the embedding model to use.
+    - `folder_path` (str): The path to the folder containing documents to index.
+  - **Processing**: Loads documents from the specified folder, creates embeddings, and stores them in a Chroma database.
+  - **Output**: A Chroma database instance (`Chroma`).
 
-**3. Important interactions with other parts of the system**:  
-This configuration file interacts with the Vite build tool and the React plugin (`@vitejs/plugin-react`), allowing for features like JSX support and fast refresh during development. It also integrates with the overall frontend structure, ensuring that the React application can be built and served correctly.
+- **`getStreamingChain(prompt, messages, llm, db)`**:
+  - **Inputs**: 
+    - `prompt` (str): The user's question or input.
+    - `messages` (List[Dict]): The chat history.
+    - `llm` (ChatOllama): The language model instance.
+    - `db` (Chroma): The document database.
+  - **Processing**: Constructs a RAG chain using the provided inputs and streams the response.
+  - **Output**: A generator that yields the response tokens (`Generator[str, None, None]`).
 
-**4. Notable features or patterns**:  
-The use of `defineConfig` is a notable pattern as it provides type inference and better IDE support for Vite configurations. The inclusion of the React plugin signifies a focus on React development, streamlining the setup process for developers.
+### 3. Important interactions with other parts of the system
+- **`models.py`**: Provides the list of available language models via `get_list_of_models()`.
+- **`document_loader.py`**: Handles document loading and indexing into the Chroma database via `load_documents_into_database()`.
+- **`llm.py`**: Constructs the RAG chain and streams responses via `getStreamingChain()`.
+- **`langchain_ollama`**: Used to instantiate the `ChatOllama` language model.
+- **`streamlit`**: Provides the UI framework for the application.
 
-Overall, this file serves as a crucial setup point for the frontend development environment, ensuring that Vite is properly configured to handle a React application efficiently.
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+### 4. Notable features or patterns
+- **Session State Management**: Uses `st.session_state` to persist the language model, document database, and chat messages across interactions.
+- **Streaming Responses**: Uses a generator to stream the language model's response to the user in real-time.
+- **Conditional UI Rendering**: Disables chat input until documents are indexed and shows appropriate warnings or info messages based on the application state.
+- **Modular Design**: Separates concerns by delegating specific tasks to other modules (e.g., document loading, model listing, RAG chain construction).
+
+### Overall
+The `ui.py` file serves as the central hub for the Streamlit application, integrating the language model, document database, and user interface. It provides a seamless experience for users to select models, index documents, and interact with the RAG-powered chatbot. The code is well-structured, leveraging session state to maintain context and using modular functions to keep responsibilities clear. The use of streaming responses enhances the user experience by providing real-time feedback.
 
   ---
 </details>
 
 
 ## ✒️ Project Summary 
-<<<<<<< HEAD
-This project is a tool designed to help users understand GitHub repositories by providing detailed analysis and insights on a file-by-file basis.
+This project is a local Retrieval-Augmented Generation (RAG) system that uses Large Language Models (LLMs) via Ollama to query PDF and Markdown documents. It provides both a command-line interface and an interactive Streamlit web UI for user interaction.
 
-1. **Main purpose and functionality**: The main purpose of RepoSage is to analyze GitHub repositories, fetching metadata and file structures, and generating insights using the OpenAI API. It allows users to visualize call hierarchies and summaries of projects.
+1. **Main purpose and functionality**:
+   - The project allows users to interact with local LLMs to perform RAG on PDF and Markdown documents.
+   - It supports querying documents using a command-line interface or a Streamlit web UI.
+   - The system loads documents, generates embeddings, and stores them in a Chroma vector database for efficient retrieval.
 
-2. **Tech stack and architecture**: The project utilizes a modular architecture with a backend built in JavaScript (Node.js) using Express.js and a frontend developed with React. It employs Vite as the build tool for the frontend and integrates OpenAI and GitHub APIs for data processing.
+2. **Tech stack and architecture**:
+   - **Languages**: Python
+   - **LLM Frameworks**: Ollama (Mistral/nomic-embed-text models), LangChain
+   - **Vector DB**: Chroma
+   - **Web Framework**: Streamlit
+   - **Utilities**: PyPDF2, UV (Python package manager)
+   - The architecture is modular monolithic, with separate layers for document ingestion, embedding generation/storage, LLM query processing, and dual interfaces (CLI and web).
 
-3. **Key components and their interactions**: The backend consists of core analysis logic in `analyzer.js`, utility functions for file handling and GitHub interactions, and configuration files for API settings. The frontend provides a user interface for submitting repository URLs and displaying analysis results. The main interaction occurs when the frontend submits a repository URL, triggering the backend to analyze the repository and return results.
+3. **Key components and their interactions**:
+   - `app.py`: Orchestrates the RAG pipeline, including model validation, document loading, and query processing.
+   - `document_loader.py`: Handles loading and preprocessing of PDF and Markdown documents.
+   - `llm.py`: Manages interactions with the LLM, including creating query processing chains.
+   - `models.py`: Provides functions to manage and interact with Ollama models, including checking availability and pulling models.
+   - `ui.py`: Implements the Streamlit web interface for user interaction.
+   - `Chroma`: Vector database for storing and retrieving document embeddings.
 
-4. **Notable features**: RepoSage features AI-powered analysis through the OpenAI API, allowing for detailed summaries and insights about repository structures. It also includes functionalities for saving analysis results in markdown and JSON formats.
+4. **Notable features**:
+   - Supports both CLI and web interfaces for user interaction.
+   - Uses Ollama for local LLM and embedding generation.
+   - Integrates with LangChain for document processing and query handling.
+   - Provides a modular architecture for easy extension and customization.
 
-5. **Code organization and structure**: The project is organized into a `backend` directory containing the analysis logic and utilities, and a `frontend` directory for the user interface. Each component is further divided into specific files for clarity and maintainability.
+5. **Code organization and structure**:
+   - The code is organized into separate modules for different functionalities, such as document loading, LLM interaction, and model management.
+   - Each module is responsible for a specific aspect of the RAG pipeline, promoting modularity and maintainability.
+   - The project uses a combination of Python scripts and configuration files to manage dependencies and settings.
 
-Overall, RepoSage provides a comprehensive and user-friendly tool for analyzing GitHub repositories, leveraging modern web technologies and AI capabilities.
-=======
->>>>>>> 6474e8dc2555e8ade50798c034445731bc7521f5
+Overall, this project provides a comprehensive solution for performing RAG on local documents using LLMs, with a focus on modularity and ease of use.

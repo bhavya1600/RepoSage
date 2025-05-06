@@ -1,0 +1,36 @@
+{
+  "MAX_TOKENS_PER_REQUEST": 128000,
+  "configurations": [
+    {
+      "name": "analyzeProjectStructure",
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "reasoning"
+    },
+    {
+      "name": "smartFileFilter",
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "reasoning"
+    },
+    {
+      "name": "summarizeContent",
+      "model": "deepseek/deepseek-prover-v2:free",
+      "modelType": "Non Reasoning"
+    },
+    {
+      "name": "analyzeCode",
+      "model": "deepseek/deepseek-prover-v2:free",
+      "modelType": "Non Reasoning"
+    },
+    {
+      "name": "analyzeCallHierarchy",
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "reasoning"
+    },
+    {
+      "name": "generateSummary",
+      "model": "deepseek/deepseek-prover-v2:free",
+      "modelType": "Non Reasoning"
+    }
+  ]
+}
+  
