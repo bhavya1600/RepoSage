@@ -3,32 +3,32 @@
   "configurations": [
     {
       "name": "analyzeProjectStructure",
-      "model": "o1-mini-2024-09-12",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "smartFileFilter",
-      "model": "o1-mini-2024-09-12",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "summarizeContent",
-      "model": "chatgpt-4o-latest",
+      "model": "deepseek/deepseek-prover-v2:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCode",
-      "model": "chatgpt-4o-latest",
+      "model": "deepseek/deepseek-prover-v2:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCallHierarchy",
-      "model": "o1-mini-2024-09-12",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-235b-a22b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "generateSummary",
-      "model": "chatgpt-4o-latest",
+      "model": "deepseek/deepseek-prover-v2:free",
       "modelType": "Non Reasoning"
     }
   ]

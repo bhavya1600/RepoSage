@@ -3,13 +3,13 @@
   "configurations": [
     {
       "name": "analyzeProjectStructure",
-      "model": "qwen/qwen3-235b-a22b:free",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-32b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "smartFileFilter",
-      "model": "qwen/qwen3-235b-a22b:free",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-32b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "summarizeContent",
@@ -23,8 +23,8 @@
     },
     {
       "name": "analyzeCallHierarchy",
-      "model": "qwen/qwen3-235b-a22b:free",
-      "modelType": "reasoning"
+      "model": "qwen/qwen3-32b:free",
+      "modelType": "Reasoning"
     },
     {
       "name": "generateSummary",

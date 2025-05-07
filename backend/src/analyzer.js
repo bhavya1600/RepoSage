@@ -43,7 +43,7 @@ const IMPORTANT_FILES = [
 
 async function createChatCompletion(openai, model, modelType, analysisPrompt) {
   // Check model name based on modelType.
-  if (modelType === "reasoning") {
+  if (modelType === "Reasoning") {
     return await openai.chat.completions.create({
       model: model,
       messages: [
@@ -53,7 +53,7 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt) {
         },
         { role: "user", content: analysisPrompt }
       ],
-      temperature: 1,
+      temperature: 0.3,
       // show_thought_process: false,
       max_completion_tokens: 4000
     });
