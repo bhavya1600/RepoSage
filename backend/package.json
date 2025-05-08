@@ -2,11 +2,12 @@
   "name": "github-repo-analyzer-backend",
   "version": "1.0.0",
   "description": "Backend for GitHub Repository Analyzer",
-  "main": "src/index.js",
+  "main": "api/index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "vercel-build": "echo Building Vercel deployment"
   },
   "dependencies": {
     "@octokit/rest": "^19.0.13",
@@ -19,5 +20,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }

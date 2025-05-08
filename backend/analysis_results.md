@@ -9,37 +9,36 @@
 <details>
   <summary><strong>Peek Under the Hood 👀</strong></summary>
 
-  1. **Project Overview**:  
-   An experimental project for running local LLMs (via Ollama) with Retrieval-Augmented Generation (RAG) to answer questions using documents (PDFs/Markdown). Includes a Streamlit-based web UI for interaction.
+  ### Analysis of the Project
+
+1. **Project Overview**:  
+   This project implements a local Large Language Model (LLM) with Retrieval-Augmented Generation (RAG) capabilities. It uses Ollama to run LLMs locally, Langchain for processing, and Chroma for vector storage. The system allows users to interact with the RAG system via a command-line interface or a Streamlit-based web UI.
 
 2. **Main Components**:  
-   - `app.py`: Core script for processing documents, generating embeddings, and answering queries.  
-   - `document_loader.py`: Handles loading and parsing of PDF/Markdown files.  
-   - `llm.py`: Manages interactions with Ollama for LLM inference and embeddings.  
-   - `models.py`: Defines data models and Chroma vector database integration.  
-   - `ui.py`: Streamlit web interface for user interaction.  
-   - `Research/`: Directory containing sample PDF documents for RAG.  
+   - **Document Loader**: Handles loading and processing of PDF and Markdown files (e.g., `document_loader.py`).  
+   - **LLM Integration**: Uses Ollama to run LLMs like Mistral for text generation (`llm.py`).  
+   - **Embeddings**: Implements embeddings using models like Nomic Embed Text for vector storage (`models.py`).  
+   - **Vector Database**: Utilizes Chroma for efficient retrieval of similar text embeddings.  
+   - **User Interface**: A Streamlit-based web UI (`ui.py`) for interactive user interaction.  
+   - **Main Application**: Combines all components into a RAG pipeline (`app.py`).
 
 3. **Tech Stack**:  
-   - **Languages**: Python  
-   - **Frameworks/Libraries**:  
-     - [Ollama](https://ollama.ai/) for local LLMs/embeddings  
-     - [LangChain](https://github.com/langchain/langchain) for RAG orchestration  
-     - [Chroma](https://docs.trychroma.com/) for vector storage  
-     - [Streamlit](https://streamlit.io/) for web UI  
-     - [PyPDF](https://pypi.org/project/PyPDF2/) for PDF parsing  
-     - [UV](https://astral.sh/uv) for dependency management  
+   - **Programming Language**: Python.  
+   - **Frameworks/Libraries**: Langchain, Ollama, Chroma, PyPDF2, Streamlit.  
+   - **Dependency Management**: UV (Astral).  
 
 4. **Architecture**:  
-   Modular monorepo with a pipeline:  
-   `Document Loader` → `Embedding Generation (Ollama)` → `Chroma Vector DB` → `LLM Query (Ollama + LangChain)` → `Streamlit UI`.  
-   Separation of concerns between data processing, model interaction, and user interface.
+   The system follows a modular architecture:  
+   - **Document Processing**: Loads and processes documents into embeddings.  
+   - **Vector Storage**: Embeddings are stored in Chroma for efficient retrieval.  
+   - **LLM Integration**: Uses Ollama to generate responses based on retrieved context.  
+   - **User Interaction**: Streamlit provides a web-based UI for user interaction.  
 
 5. **Key Limitations/Constraints**:  
-   - Embeddings are reloaded on each run (non-persistent storage).  
-   - Experimental focus with minimal production-ready optimizations.  
-   - Relies on Ollama's local model execution, limiting cloud/deployment flexibility.  
-   - No explicit error handling or scalability features.
+   - **Dependency on Local Setup**: The system is designed to run locally, which may limit scalability.  
+   - **UV Dependency**: Uses UV for dependency management, which may not be familiar to all users.  
+   - **Re-Loading Embeddings**: Embeddings are reloaded on each run, which is inefficient for production use.  
+   - **Limited Documentation**: The provided README is minimal and could benefit from more detailed explanations and examples.
 
 </details>
 
@@ -76,69 +75,20 @@
 
   ```
 🚀 app.py (ENTRY POINT)
-┣━━ 🔄 main(llm_model_name: str, embedding_model_name: str, documents_path: str) → None [app.py]
-┃   ┣━━ 🧪 check_if_model_is_available(model_name: str) → None [models.py]
-┃   ┃   ┣━━ 📥 __is_model_available_locally(model_name: str) → bool [models.py]
-┃   ┃   ┗━━ 📥 __pull_model(name: str) → None [models.py]
-┃   ┣━━ 📁 load_documents_into_database(model_name: str, documents_path: str, reload: bool) → Chroma [document_loader.py]
-┃   ┃   ┣━━ 📄 load_documents(path: str) → List[Document] [document_loader.py]
-┃   ┃   ┣━━ 📄 RecursiveCharacterTextSplitter() → TextSplitter [langchain.text_splitter]
-┃   ┃   ┣━━ 📦 OllamaEmbeddings(model_name: str) → Embeddings [langchain_ollama]
-┃   ┃   ┗━━ 🗄️ Chroma.from_documents() → VectorDB [langchain_community.vectorstores]
-┃   ┣━━ 🤖 getChatChain(llm: ChatOllama, db: Chroma) → Function [llm.py]
-┃   ┃   ┣━━ 🧠 _combine_documents(docs: List, document_prompt: PromptTemplate, separator: str) → str [llm.py]
-┃   ┃   ┣━━ 🧠 ChatPromptTemplate.from_messages() → Prompt [langchain_core.prompts]
-┃   ┃   ┗━━ 🧠 ConversationBufferMemory() → Memory [langchain.memory]
-┃   ┗━━ 🧑‍💻 User interaction loop (query processing) [app.py]
-┃       ┗━━ 🤖 chat_chain.invoke(question: str) → Response [llm.py]
-
-🚀 ui.py (ENTRY POINT - Streamlit Web UI)
-┣━━ 🖥️ Streamlit app initialization [ui.py]
-┃   ┣━━ 📦 get_list_of_models() → List[str] [models.py]
-┃   ┣━━ 📁 load_documents_into_database(embedding_model: str, documents_path: str) → Chroma [document_loader.py]
-┃   ┗━━ 🤖 getStreamingChain(question: str, memory: Memory, llm: ChatOllama, db: Chroma) → StreamingChain [llm.py]
-┃       ┣━━ 🧠 StreamingStdOutCallbackHandler() → Callback [langchain.callbacks]
-┃       ┗━━ 🧠 get_buffer_string() → str [langchain_core.messages]
-
-📦 Module Dependencies
-┣━━ app.py ➡ models.py (model availability checks)
-┣━━ app.py ➡ document_loader.py (document ingestion)
-┣━━ app.py ➡ llm.py (chat chain creation)
-┣━━ ui.py ➡ models.py (model listing)
-┣━━ ui.py ➡ document_loader.py (document ingestion)
-┣━━ ui.py ➡ llm.py (streaming chain)
-┗━━ All ➡ langchain_ollama (LLM/embeddings)
-    ┗━━ All ➡ langchain_core (base classes)
+  ┣━━ 📋 parse_arguments() → Parses command-line arguments [app.py]
+  ┃   ┗━━ Returns configuration for the application
+  ┣━━ 🏋️♂️ main() → Runs the RAG pipeline and user interaction [app.py]
+  ┃   ┣━━ 🔍 check_if_model_is_available() → Ensures LLM model is available [models.py]
+  ┃   ┣━━ 📂 load_documents_into_database() → Loads documents and creates database [document_loader.py]
+  ┃   ┣━━ 🔧 getChatChain() → Initializes the LLM chat chain [llm.py]
+  ┃   ┗━━ 📱 Handles user input and interacts with the LLM
+  ┣━━ 🌐 (Alternative Entry Point) ui.py → Streamlit-based web UI [ui.py]
+  ┃   ┣━━ 📂 load_documents_into_database() → Loads documents and creates database [document_loader.py]
+  ┃   ┣━━ 🔧 getStreamingChain() → Initializes streaming LLM chain [llm.py]
+  ┃   ┣━━ 📬 Handles user input through web interface
+  ┃   ┗━━ 📝 Displays streaming responses to user
+  ┗━━ 📋 (Alternative Entry Point) CLI → Command-line interface for RAG interaction
 ```
-
-### Key Execution Flow Analysis:
-1. **Main CLI Execution Path** (`app.py`):
-   - `main()` → `check_if_model_is_available()` (models.py)
-   - `main()` → `load_documents_into_database()` (document_loader.py)
-   - `main()` → `getChatChain()` (llm.py)
-   - Chat loop → `chat_chain.invoke()` (llm.py)
-
-2. **Web UI Execution Path** (`ui.py`):
-   - Streamlit app → `get_list_of_models()` (models.py)
-   - Document upload → `load_documents_into_database()` (document_loader.py)
-   - Query handling → `getStreamingChain()` (llm.py)
-
-3. **Cross-File Dependencies**:
-   - `document_loader.py` uses `OllamaEmbeddings` and `Chroma` from LangChain
-   - `llm.py` combines `ChatOllama` with `Chroma` retriever for RAG
-   - Both entry points share common dependencies on `models.py` and `document_loader.py`
-
-4. **Critical Function Calls**:
-   - `check_if_model_is_available()` ensures required Ollama models are present
-   - `load_documents_into_database()` handles document parsing, splitting, and vectorization
-   - `getChatChain()`/`getStreamingChain()` create LangChain pipelines for RAG
-
-This architecture follows a clear separation of concerns:
-- **Data Layer**: `document_loader.py` handles document ingestion and vectorization
-- **Model Layer**: `llm.py` and `models.py` manage LLM interactions
-- **Interface Layer**: `app.py` (CLI) and `ui.py` (Streamlit) provide user-facing entry points
-
-The application supports both direct CLI usage and a web-based interface while maintaining a consistent RAG pipeline through shared modules.
 
 </details>
 
@@ -147,49 +97,55 @@ The application supports both direct CLI usage and a web-based interface while m
 <details>
   <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/app.py">app.py</a></strong></summary>
 
-  ### 1. Main purpose and responsibilities
-The `app.py` file serves as the main entry point for a local LLM (Large Language Model) with RAG (Retrieval-Augmented Generation) using Ollama. Its primary responsibilities include:
-1. Parsing command-line arguments to configure the LLM and embedding models, as well as the path to the documents.
-2. Checking the availability of the specified LLM and embedding models, and attempting to pull them if they are not available.
-3. Loading documents into a database using the specified embedding model.
-4. Initializing the LLM and setting up the chat chain for interaction.
-5. Running a continuous loop to accept user questions, process them using the chat chain, and display responses until the user exits.
+  ### 1. Main Purpose and Responsibilities
 
-### 2. Key functions and their purposes
+The `app.py` file serves as the main entry point for a local application that leverages Large Language Models (LLMs) with Retrieval-Augmented Generation (RAG) capabilities. Its primary responsibilities include:
 
-- **`main(llm_model_name: str, embedding_model_name: str, documents_path: str) -> None`**:
-  - **Inputs**:
-    - `llm_model_name` (str): The name of the LLM model to use (e.g., "mistral").
-    - `embedding_model_name` (str): The name of the embedding model to use (e.g., "nomic-embed-text").
-    - `documents_path` (str): The path to the directory containing documents to load (e.g., "Research").
-  - **Processing**:
-    1. Checks if the specified LLM and embedding models are available; if not, attempts to pull them.
-    2. Loads documents from `documents_path` into a database using the specified embedding model.
-    3. Initializes the LLM and sets up the chat chain.
-    4. Enters a loop to accept user questions, processes them using the chat chain, and prints responses until the user types "exit" or interrupts with `Ctrl+C`.
-  - **Output**: None (runs interactively until terminated).
+- **Model Availability Check**: Ensuring the required LLM and embedding models are available or can be downloaded.
+- **Document Loading**: Loading documents from a specified directory into a vector database for efficient retrieval.
+- **User Interaction**: Providing an interactive prompt where users can input questions, which are then answered using the LLM and RAG pipeline.
+- **Command-Line Interface (CLI)**: Parsing command-line arguments to configure the application's behavior, such as specifying the model names and document paths.
 
-- **`parse_arguments() -> argparse.Namespace`**:
-  - **Inputs**: None (reads command-line arguments).
-  - **Processing**:
-    1. Defines command-line arguments for the LLM model (`--model`), embedding model (`--embedding_model`), and document path (`--path`).
-    2. Parses the command-line arguments and returns them as a `Namespace` object.
-  - **Output**: `argparse.Namespace` containing the parsed arguments.
+### 2. Key Functions and Their Purposes
 
-### 3. Important interactions with other parts of the system
-- **`models.py`**: Uses `check_if_model_is_available` to verify the availability of the specified LLM and embedding models.
-- **`document_loader.py`**: Uses `load_documents_into_database` to load documents from `documents_path` into a database using the specified embedding model.
-- **`llm.py`**: Uses `getChatChain` to set up the chat chain with the initialized LLM and the document database.
-- **`langchain_ollama`**: Uses `ChatOllama` to initialize the LLM with the specified model name.
+#### `main(llm_model_name: str, embedding_model_name: str, documents_path: str) -> None`
+- **Inputs**:
+  - `llm_model_name` (str): The name of the LLM model to use (e.g., "mistral").
+  - `embedding_model_name` (str): The name of the embedding model to use (e.g., "nomic-embed-text").
+  - `documents_path` (str): The path to the directory containing documents to load (e.g., "Research").
+- **Processing**:
+  - Checks if the specified LLM and embedding models are available.
+  - Loads documents from the specified directory into a vector database.
+  - Initializes the LLM and creates a chat chain for interacting with the RAG system.
+  - Enters a loop to accept user input, process questions using the RAG system, and handle exit conditions.
+- **Output**: None. The function runs interactively and exits when the user types "exit" or interrupts the process.
 
-### 4. Notable features or patterns
-- **Command-line Interface**: Uses `argparse` to allow users to specify the LLM model, embedding model, and document path at runtime.
-- **Model Availability Check**: Ensures that the required models are available before proceeding, and attempts to pull them if not.
-- **Interactive Loop**: Provides an interactive command-line interface for users to ask questions and receive responses until they choose to exit.
-- **Modular Design**: Relies on separate modules (`models.py`, `document_loader.py`, `llm.py`) for specific functionalities, promoting separation of concerns.
+#### `parse_arguments() -> argparse.Namespace`
+- **Inputs**: None.
+- **Processing**:
+  - Creates an argument parser to handle command-line arguments.
+  - Defines three arguments: `--model` (default: "mistral"), `--embedding_model` (default: "nomic-embed-text"), and `--path` (default: "Research").
+- **Output**:
+  - Returns an `argparse.Namespace` object containing the parsed arguments, which can be accessed as attributes (e.g., `args.model`).
+
+### 3. Important Interactions with Other Parts of the System
+
+- **Models Module**: Uses `check_if_model_is_available` to verify if the specified models are available. If not, it attempts to pull them (though the exact mechanism isn't shown in the provided code).
+- **Document Loader Module**: Uses `load_documents_into_database` to load documents from the specified directory into a vector database. This likely involves parsing document formats, extracting text, and embedding the text using the specified embedding model.
+- **LLM Module**: Uses `getChatChain` to create a chat chain that combines the LLM with the vector database for RAG functionality.
+- **LangChain Ollama**: Uses `ChatOllama` to interface with the Ollama service for running the specified LLM model.
+
+### 4. Notable Features or Patterns
+
+- **Modular Architecture**: The application is structured into separate modules (`models.py`, `document_loader.py`, `llm.py`) for different functionalities, promoting code organization and maintainability.
+- **Command-Line Interface**: The use of `argparse` allows users to configure the application's behavior via command-line arguments, making it flexible and easy to use.
+- **Exception Handling**: The application includes error handling for missing documents and keyboard interrupts, ensuring a clean exit and user-friendly experience.
+- **Interactive Mode**: The while loop provides an interactive prompt, allowing users to ask multiple questions in a single session.
+- **RAG Implementation**: The application integrates LLMs with vector databases to enable context-aware responses, leveraging the power of both local documents and large language models.
 
 ### Overall
-`app.py` is the central script that orchestrates the interaction between the user, the LLM, and the document database. It leverages other modules to handle model availability, document loading, and chat chain setup, providing a streamlined command-line interface for users to interact with the system. The script is designed to be flexible, allowing users to specify different models and document paths, and to be robust by handling potential errors such as missing models or documents.
+
+The `app.py` file is the central component of this application, orchestrating the setup and execution of a RAG system. It ensures that all necessary components (models, document loading, and user interaction) are properly configured and functioning together. By leveraging external libraries like `langchain_ollama` and maintaining a modular structure, the application is both efficient and easy to extend. The inclusion of a command-line interface and interactive prompt makes it accessible to users while maintaining robust error handling and resource management.
 
   ---
 </details>
@@ -198,43 +154,54 @@ The `app.py` file serves as the main entry point for a local LLM (Large Language
   <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/document_loader.py">document_loader.py</a></strong></summary>
 
   ### 1. Main purpose and responsibilities
-The `document_loader.py` file is responsible for loading documents from a specified directory, splitting them into smaller chunks, and then embedding these chunks into a vector database (Chroma) using the Ollama embeddings model. It also provides functionality to reload documents if needed.
+The `document_loader.py` file is responsible for loading and processing documents from a specified directory into a vector database (Chroma). It supports multiple document formats (PDF, Markdown, and HTML) and handles document splitting, embedding, and database persistence. This module acts as the document ingestion engine for the system.
+
+---
 
 ### 2. Key functions and their purposes
 
-- **`load_documents_into_database(model_name: str, documents_path: str, reload: bool = True) -> Chroma`**:
-  - **Inputs**:
-    - `model_name` (str): The name of the Ollama embeddings model to use.
-    - `documents_path` (str): The path to the directory containing the documents to load.
-    - `reload` (bool, optional): Whether to reload the documents or use the existing database. Defaults to True.
-  - **Processing**:
-    - If `reload` is True, it loads the documents from `documents_path` using `load_documents`, splits them into chunks using `TEXT_SPLITTER`, and then embeds them into the Chroma database using the specified Ollama embeddings model.
-    - If `reload` is False, it loads the existing Chroma database from the `PERSIST_DIRECTORY`.
-  - **Output**:
-    - Returns a `Chroma` database instance with the loaded documents.
+#### **`load_documents_into_database(model_name: str, documents_path: str, reload: bool = True) -> Chroma`**
+- **Inputs**: 
+  - `model_name` (str): Name of the Ollama model to use for embeddings.
+  - `documents_path` (str): Path to the directory containing documents to load.
+  - `reload` (bool): Whether to reload documents from scratch (default: True).
+- **Processing**:
+  - If `reload` is True, it loads raw documents, splits them into chunks, creates embeddings using the specified model, and persists them in the Chroma database.
+  - If `reload` is False, it connects to an existing Chroma database without reloading documents.
+- **Output**: 
+  - Returns a Chroma database instance with the loaded documents.
 
-- **`load_documents(path: str) -> List[Document]`**:
-  - **Inputs**:
-    - `path` (str): The path to the directory containing documents to load.
-  - **Processing**:
-    - Checks if the path exists and raises a `FileNotFoundError` if it does not.
-    - Uses `DirectoryLoader` with `PyPDFLoader` to load PDF files and `TextLoader` to load Markdown files.
-    - Extends the list of documents with the loaded files.
-  - **Output**:
-    - Returns a list of `Document` objects loaded from the specified directory.
+#### **`load_documents(path: str) -> List[Document]`**
+- **Inputs**:
+  - `path` (str): Path to the directory containing documents to load.
+- **Processing**:
+  - Checks if the directory exists and raises a `FileNotFoundError` if it does not.
+  - Uses different document loaders based on file extensions (`.pdf`, `.md`, `.html`).
+  - Loads all documents of supported types and returns them as a list of Document objects.
+- **Output**:
+  - Returns a list of loaded documents (`List[Document]`).
+
+---
 
 ### 3. Important interactions with other parts of the system
-- The file interacts with `langchain_community.document_loaders` to load documents of different types (PDF, Markdown).
-- It uses `langchain_ollama` for embeddings and `langchain_community.vectorstores` for storing embeddings in the Chroma database.
-- The `TEXT_SPLITTER` is an instance of `RecursiveCharacterTextSplitter` from `langchain.text_splitter`, used to split documents into smaller chunks.
+- **With `app.py`**: Likely used to trigger document loading and database population.
+- **With `llm.py` or `models.py`**: The embeddings are created using Ollama, which may be configured elsewhere in the system.
+- **With `ui.py`**: Probably used to load documents when building the user interface or responding to user queries.
+- **With `Chroma` database**: Persists document embeddings and metadata for later retrieval.
+
+---
 
 ### 4. Notable features or patterns
-- The code uses a dictionary (`loaders`) to map file extensions to their respective loaders, making it easy to extend support for additional file types.
-- The `load_documents_into_database` function conditionally reloads documents based on the `reload` flag, allowing for flexibility in updating the database.
-- The use of `Chroma.from_documents` and `Chroma` constructors ensures that the database is either created from scratch or loaded from an existing directory, depending on the `reload` flag.
+1. **Modular Document Loading**: The `load_documents` function uses a dictionary-based approach to map file extensions to their respective loaders. This makes the code extensible and easy to maintain.
+2. **Multithreading**: The PDF loader (`PyPDFLoader`) uses multithreading (`use_multithreading=True`), which improves performance for large directories of PDFs.
+3. **Lazy Loading**: When `reload=False`, the function connects to an existing Chroma database without reloading documents, which improves performance for subsequent runs.
+4. **Type Safety**: The code uses Python type hints throughout, ensuring better maintainability and developer experience.
+5. **Progress Tracking**: The loaders provide progress feedback (`show_progress=True`), which is helpful for monitoring long-running operations.
+
+---
 
 ### Overall
-The `document_loader.py` file provides a structured way to load, split, and embed documents into a vector database using the Ollama embeddings model. It supports multiple file types and allows for conditional reloading of documents, making it a flexible and reusable component in the system.
+The `document_loader.py` is a critical component of the system, handling the ingestion and preprocessing of documents. It efficiently loads multiple document types, splits them into manageable chunks, and stores them in a vector database for later use. The modular design and use of LangChain libraries make it both powerful and maintainable. This module ensures that the system can handle diverse document formats while maintaining performance and scalability.
 
   ---
 </details>
@@ -243,63 +210,65 @@ The `document_loader.py` file provides a structured way to load, split, and embe
   <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/llm.py">llm.py</a></strong></summary>
 
   ### 1. Main purpose and responsibilities
-The `llm.py` file is responsible for setting up and managing the conversational chain for a research assistant chatbot. It integrates LangChain components to handle memory, question rephrasing, document retrieval, and answer generation. The file provides two main functionalities:
-1. **Streaming Chain**: A chain that streams responses to questions using retrieved documents and chat history.
-2. **Chat Chain**: A chain that handles interactive chat sessions with memory, allowing the chatbot to maintain context across multiple turns.
+The `llm.py` file is the core component of a question-answering system that leverages large language models (LLMs) and research documents. Its primary responsibilities include:
+- Processing user questions to generate standalone, context-aware queries.
+- Retrieving relevant research documents based on the processed queries.
+- Using LLMs to generate answers based on the retrieved documents and the processed queries.
+- Handling memory to maintain conversation context for subsequent interactions.
 
 ### 2. Key functions and their purposes
 
-#### `_combine_documents(docs, document_prompt=DEFAULT_DOCUMENT_PROMPT, document_separator="\n\n")`:
+#### `_combine_documents(docs, document_prompt=DEFAULT_DOCUMENT_PROMPT, document_separator="\n\n")`
 - **Inputs**:
-  - `docs` (List[Document]): A list of documents to combine.
-  - `document_prompt` (PromptTemplate): A template to format each document (default is `DEFAULT_DOCUMENT_PROMPT`).
-  - `document_separator` (str): A separator to join the formatted documents (default is `"\n\n"`).
-- **Processing**: Formats each document using `document_prompt` and joins them with `document_separator`.
-- **Output**: A single string containing all formatted documents.
+  - `docs`: List of documents retrieved from the database.
+  - `document_prompt` (PromptTemplate): Template used to format each document.
+  - `document_separator` (str): String used to join formatted documents.
+- **Processing**: Formats each document using the provided prompt and joins them into a single string with the specified separator.
+- **Output**: A single string containing all formatted documents, separated by the specified separator.
 
-#### `getStreamingChain(question: str, memory, llm, db)`:
+#### `getStreamingChain(question: str, memory, llm, db)`
 - **Inputs**:
   - `question` (str): The user's question.
-  - `memory`: The chat history memory (not used in the function, but passed for consistency).
-  - `llm`: The language model to use for generating answers.
-  - `db`: The document database to retrieve relevant documents.
+  - `memory`: Object handling conversation memory.
+  - `llm`: The large language model used for generating answers.
+  - `db`: The database used to retrieve relevant documents.
 - **Processing**:
-  1. Sets up a retriever from `db` with `k=10`.
-  2. Constructs a chain that:
-     - Loads chat history from `memory` (but `memory` is not actually used here).
-     - Rephrases the question using `CONDENSE_QUESTION_PROMPT` and `llm`.
-     - Retrieves documents based on the rephrased question.
-     - Combines the documents and generates an answer using `ANSWER_PROMPT` and `llm`.
-- **Output**: A streaming generator for the answer.
+  1. Creates a retriever from the database to fetch up to 10 most relevant documents.
+  2. Processes the question to create a standalone query based on the conversation history.
+  3. Retrieves documents related to the standalone query.
+  4. Combines the retrieved documents into a context string.
+  5. Uses the LLM to generate an answer based on the context and the processed question, streaming the output.
+- **Output**: A streaming chain that can be used to process the question and generate a streamed response.
 
-#### `getChatChain(llm, db)`:
+#### `getChatChain(llm, db)`
 - **Inputs**:
-  - `llm`: The language model to use for generating answers.
-  - `db`: The document database to retrieve relevant documents.
+  - `llm`: The large language model used for generating answers.
+  - `db`: The database used to retrieve relevant documents.
 - **Processing**:
-  1. Sets up a retriever from `db` with `k=10`.
-  2. Constructs a chain that:
-     - Loads chat history from `memory` (global `ConversationBufferMemory`).
-     - Rephrases the question using `CONDENSE_QUESTION_PROMPT` and `llm`.
-     - Retrieves documents based on the rephrased question.
-     - Combines the documents and generates an answer using `ANSWER_PROMPT` and `llm`.
-     - Saves the question and answer to `memory`.
-  3. Returns a `chat(question: str)` function that invokes the chain and updates memory.
-- **Output**: A `chat(question: str)` function that can be called to get responses and update memory.
+  1. Creates a retriever from the database to fetch up to 10 most relevant documents.
+  2. Sets up memory to track conversation history.
+  3. Processes the question to create a standalone query based on the conversation history.
+  4. Retrieves documents related to the standalone query.
+  5. Combines the retrieved documents into a context string.
+  6. Uses the LLM to generate an answer based on the context and the processed question.
+  7. Saves the conversation context for future interactions.
+- **Output**: A chat function that can be used to process questions and generate non-streaming responses, maintaining conversation context.
 
 ### 3. Important interactions with other parts of the system
-- **LangChain**: The file heavily relies on LangChain components (`ConversationBufferMemory`, `ChatPromptTemplate`, `RunnableLambda`, etc.) to build the conversational chain.
-- **Document Database (`db`)**: The `db` parameter is expected to be a LangChain retriever-compatible object (e.g., a vector store) that provides relevant documents for a given query.
-- **Language Model (`llm`)**: The `llm` parameter is expected to be a LangChain-compatible language model (e.g., OpenAI, HuggingFace) used for generating answers and rephrasing questions.
+- **`app.py`**: Likely uses the chains created by `getStreamingChain` and `getChatChain` to handle user interactions and display responses.
+- **`ui.py`**: Probably interacts with `llm.py` to handle user interface logic and display the results of the LLM's responses.
+- **`document_loader.py`**: May work with `llm.py` to load and format research documents for use in the system.
+- **`models.py`**: Could provide the LLMs and other models used by `llm.py`.
 
 ### 4. Notable features or patterns
-- **Memory Management**: Uses `ConversationBufferMemory` to maintain chat history across turns, but note that `getStreamingChain` does not actually use the passed `memory` (it is hardcoded to use `memory` from the global scope in `getChatChain`).
-- **Modular Chain Construction**: The conversational chain is built using LangChain's `RunnablePassthrough` and `RunnableLambda` to create a pipeline of operations (rephrasing, retrieval, answer generation).
-- **Streaming Support**: `getStreamingChain` returns a streaming generator, allowing for real-time output of the answer.
-- **Prompt Engineering**: Uses carefully designed prompts (`CONDENSE_QUESTION_PROMPT`, `ANSWER_PROMPT`) to guide the language model's behavior.
+- **Modular Chain Architecture**: Uses LangChain's Runnable components to create modular, composable chains for processing questions and generating answers.
+- **Context-Aware Processing**: Reformulates follow-up questions to be standalone based on the conversation history, improving the quality of answers.
+- **Streaming Support**: Provides support for streaming LLM outputs, enabling real-time response generation.
+- **Memory Integration**: Uses `ConversationBufferMemory` to maintain context across interactions, allowing for coherent multi-turn conversations.
+- **Template-Based Prompts**: Uses `PromptTemplate` and `ChatPromptTemplate` for defining structured inputs to the LLM, ensuring consistent and clear prompts.
 
 ### Overall
-The `llm.py` file provides the core functionality for a research assistant chatbot by integrating LangChain components to handle memory, document retrieval, and answer generation. It supports both streaming responses and interactive chat sessions with memory. The code is modular and relies on LangChain's abstractions to build the conversational pipeline. However, there is a discrepancy in how `memory` is handled between `getStreamingChain` and `getChatChain`, which should be addressed for consistency.
+The `llm.py` file is the core of the system's natural language processing capabilities. It orchestrates the entire process of turning user questions into meaningful answers by leveraging LLMs, research documents, and conversation history. Its use of LangChain's components ensures modularity and scalability, while its integration with other parts of the system (like the UI and document loaders) makes it a critical hub for the application's functionality.
 
   ---
 </details>
@@ -308,7 +277,7 @@ The `llm.py` file provides the core functionality for a research assistant chatb
   <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/models.py">models.py</a></strong></summary>
 
   ### 1. Main purpose and responsibilities
-The `models.py` file is responsible for managing interactions with the Ollama service to check the availability of machine learning models, pull them if they are not available locally, and list available models. It ensures that the required models are present and can be used by other parts of the system.
+The `models.py` file is responsible for managing machine learning models within the system. It handles model downloading, checking availability, and providing a list of available models through integration with the Ollama service. The file ensures that models are available locally before they are used, improving the system's reliability and user experience.
 
 ### 2. Key functions and their purposes
 
@@ -316,48 +285,109 @@ The `models.py` file is responsible for managing interactions with the Ollama se
   - **Inputs**: 
     - `name` (str): The name of the model to pull from the Ollama repository.
   - **Processing**: 
-    - Initiates a pull request to the Ollama service for the specified model.
-    - Streams the download progress, updating a progress bar for each digest (part of the model).
-    - Closes the progress bar when a new digest is encountered or when the download is complete.
-  - **Output**: None. The function is responsible for downloading the model and updating the progress bars.
+    - Initiates the download of the specified model using the Ollama API.
+    - Monitors the download progress and displays a progress bar for each part of the model being downloaded.
+    - Handles the streaming of progress updates and manages multiple parts of the model download concurrently.
+  - **Output**: 
+    - None. The function's purpose is to download the model locally, which is reflected in the system's file storage.
 
 - **`__is_model_available_locally(model_name: str) -> bool`**:
   - **Inputs**: 
     - `model_name` (str): The name of the model to check for local availability.
   - **Processing**: 
-    - Attempts to retrieve information about the model using `ollama.show(model_name)`.
-    - Returns `True` if the model is found locally, `False` if an error occurs (indicating the model is not available).
-  - **Output**: A boolean indicating whether the model is available locally.
+    - Calls the Ollama API to check if the model is installed locally.
+    - Catches any errors that may occur during the API call and returns False if an error is encountered.
+  - **Output**: 
+    - Returns a boolean indicating whether the model is available locally.
 
 - **`get_list_of_models() -> list[str]`**:
-  - **Inputs**: None.
+  - **Inputs**: 
+    - None.
   - **Processing**: 
-    - Calls `ollama.list()` to get a list of all available models in the Ollama repository.
-    - Extracts the model names from the response and returns them as a list of strings.
-  - **Output**: A list of strings representing the names of available models.
+    - Retrieves a list of all models available in the Ollama repository.
+    - Extracts the model names from the API response and compiles them into a list.
+  - **Output**: 
+    - Returns a list of strings, where each string is the name of a model available in the Ollama repository.
 
 - **`check_if_model_is_available(model_name: str) -> None`**:
   - **Inputs**: 
-    - `model_name` (str): The name of the model to check and potentially pull.
+    - `model_name` (str): The name of the model to check for availability.
   - **Processing**: 
-    - Checks if the model is available locally using `__is_model_available_locally`.
-    - If not available, attempts to pull the model using `__pull_model`.
-    - Raises exceptions if there are issues communicating with the Ollama service or if the model cannot be found.
-  - **Output**: None. The function ensures the model is available locally or raises an exception.
+    - Uses `__is_model_available_locally` to determine if the model is already installed.
+    - If the model is not available, it calls `__pull_model` to download the model.
+    - Includes error handling to catch any issues during the availability check or download process.
+  - **Output**: 
+    - None. The function ensures the model is available locally, either by verifying its presence or downloading it if necessary.
 
 ### 3. Important interactions with other parts of the system
-- The file interacts with the `ollama` library to manage models (pull, list, show).
-- It uses `tqdm` to display progress bars during model downloads.
-- The functions in this file are likely used by other parts of the system (e.g., `llm.py` or `app.py`) to ensure models are available before attempting to use them.
+The `models.py` file interacts with:
+- **Ollama API**: To manage model downloads and availability checks.
+- **`tqdm`**: To display progress bars during model downloads, improving user feedback.
+- **Other components**: Likely interacts with the main application or UI components to trigger model downloads or verify availability before using a model.
 
 ### 4. Notable features or patterns
-- **Lazy Loading**: Models are only pulled when they are not available locally, reducing unnecessary downloads.
-- **Progress Tracking**: Uses `tqdm` to provide visual feedback on the download progress of models.
-- **Error Handling**: Raises specific exceptions when there are issues with the Ollama service or model availability.
-- **Encapsulation**: Private functions (`__pull_model`, `__is_model_available_locally`) are used to hide implementation details from the rest of the system.
+- **Modular Design**: The file focuses solely on model management, adhering to the single responsibility principle.
+- **Progress Tracking**: Uses `tqdm` to provide visual feedback during model downloads, enhancing user experience.
+- **Error Handling**: Includes exception handling to manage potential issues during model availability checks and downloads.
+- **Helper Functions**: Uses private functions (prefixed with double underscores) for internal operations, keeping the public API clean.
+- **Streamed Downloads**: Implements streaming for model downloads, allowing for more efficient handling of large files.
 
 ### Overall
-The `models.py` file provides essential functionality for managing machine learning models in the Ollama repository. It ensures that models are available locally, handles downloading them if necessary, and provides a list of available models. The file is designed to be modular and reusable, with clear separation of concerns and robust error handling.
+The `models.py` file serves as the core component for managing machine learning models within the system. It efficiently handles model downloads, checks for local availability, and provides a list of available models. By integrating with the Ollama service and utilizing the `tqdm` library for progress tracking, it ensures a seamless and user-friendly experience while maintaining robust error handling and clean code structure.
+
+  ---
+</details>
+
+<details>
+  <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/pyproject.toml">pyproject.toml</a></strong></summary>
+
+  ### 1. Main purpose and responsibilities
+The `pyproject.toml` file is the primary configuration file for a Python project, defining metadata and dependencies required for building, installing, and distributing the package. It specifies the project's name, version, description, and the Python packages it depends on.
+
+### 2. Key functions and their purposes
+- **`name = "local-llm-with-rag"`**:
+  - **Input**: None
+  - **Processing**: Defines the name of the Python package.
+  - **Output**: The package name "local-llm-with-rag" is used for installation and distribution.
+
+- **`version = "0.1.0"`**:
+  - **Input**: None
+  - **Processing**: Specifies the version of the package using semantic versioning.
+  - **Output**: Version number "0.1.0" is used for tracking updates and ensuring compatibility.
+
+- **`description = "Add your description here"`**:
+  - **Input**: None
+  - **Processing**: Provides a brief description of the project.
+  - **Output**: The description is displayed when the package is installed or viewed in package repositories.
+
+- **`readme = "README.md"`**:
+  - **Input**: None
+  - **Processing**: Points to the README file that contains project documentation and setup instructions.
+  - **Output**: The README.md is used to generate documentation and provide installation instructions.
+
+- **`requires-python = ">=3.12"`**:
+  - **Input**: None
+  - **Processing**: Specifies the minimum version of Python required to run the project.
+  - **Output**: Ensures compatibility with Python versions 3.12 and above.
+
+- **`dependencies = [...]`**:
+  - **Input**: None
+  - **Processing**: Lists all the Python packages required for the project to function.
+  - **Output**: When the package is installed, these dependencies are automatically installed.
+
+### 3. Important interactions with other parts of the system
+The `pyproject.toml` file is used by Python's package management tools like `pip` and `setuptools` to:
+- Install the required dependencies when the package is installed.
+- Build the package for distribution.
+- Validate the package structure and metadata.
+
+### 4. Notable features or patterns
+- **Semantic Versioning**: The version number "0.1.0" follows semantic versioning (SemVer) standards, which helps in managing releases and dependencies.
+- **Dependency Management**: The file specifies exact versions of dependencies (e.g., "langchain==0.3.18"), ensuring consistent environments and preventing version conflicts.
+- **PEP 621 Compliance**: The file adheres to PEP 621, the standard for Python project metadata, ensuring compatibility with modern packaging tools.
+
+### Overall
+The `pyproject.toml` file is a critical component of the project, defining its metadata and dependencies. It ensures that the project can be installed, built, and distributed consistently across different environments, leveraging Python's packaging ecosystem to manage dependencies and versioning effectively.
 
   ---
 </details>
@@ -366,101 +396,67 @@ The `models.py` file provides essential functionality for managing machine learn
   <summary><strong>File: <a href="https://github.com/amscotti/local-LLM-with-RAG/blob/main/ui.py">ui.py</a></strong></summary>
 
   ### 1. Main purpose and responsibilities
-The `ui.py` file is responsible for creating a Streamlit-based user interface for a local Large Language Model (LLM) with Retrieval-Augmented Generation (RAG) capabilities. It allows users to:
-1. Select a model from a list of available models.
-2. Specify a folder path containing documents to be indexed.
-3. Index the documents into a Chroma database using embeddings.
-4. Interact with the LLM by asking questions, leveraging the indexed documents for context.
+The `ui.py` file serves as the user interface for a RAG (Retrieval-Augmented Generation) application built with Streamlit. Its primary responsibilities include:
+- Providing a web-based interface for users to interact with the application.
+- Allowing users to select and manage different language models (LLMs).
+- Enabling document indexing from a specified folder.
+- Facilitating chat interactions where users can ask questions, with responses generated using the selected LLM and indexed documents.
 
 ### 2. Key functions and their purposes
-The code does not define any functions but uses Streamlit's interactive components to build the UI and manage the application's state. The key interactions are:
-1. **Model Selection**:
-   - Uses `st.sidebar.selectbox` to let the user choose a model from `st.session_state["list_of_models"]`.
-   - If the selected model changes, it updates `st.session_state["ollama_model"]` and `st.session_state["llm"]` with a new `ChatOllama` instance.
+- **`st.title("Local LLM with RAG 📚")`**:
+  - **Purpose**: Displays the title of the application.
 
-2. **Folder Path Input**:
-   - Uses `st.sidebar.text_input` to accept a folder path (`PATH` defaults to "Research").
-   - Validates the path and displays an error if invalid.
+- **`get_list_of_models()`**:
+  - **Purpose**: Retrieves a list of available LLM models for the user to select from.
 
-3. **Indexing Documents**:
-   - When the "Index Documents" button is clicked, it calls `load_documents_into_database` to create embeddings and load documents into Chroma.
-   - The resulting database is stored in `st.session_state.db`.
+- **`load_documents_into_database(EMBEDDING_MODEL, folder_path)`**:
+  - **Purpose**: Loads documents from the specified folder into a database, likely using embeddings for retrieval.
 
-4. **Chat Interface**:
-   - Displays previous chat messages from `st.session_state.messages`.
-   - Uses `st.chat_input` to accept user questions.
-   - If `st.session_state.db` is not `None`, it calls `getStreamingChain` to generate a response, which is streamed to the UI and appended to `st.session_state.messages`.
+- **`getStreamingChain(prompt, messages, llm, db)`**:
+  - **Purpose**: Creates a streaming chain that processes the user's prompt, using the LLM and database to generate a response.
 
 ### 3. Important interactions with other parts of the system
-- **`document_loader.py`**: The `load_documents_into_database` function is imported from here to handle document indexing.
-- **`models.py`**: The `get_list_of_models` function is imported to populate the model selection dropdown.
-- **`llm.py`**: The `getStreamingChain` function is imported to generate responses to user queries using the LLM and the indexed documents.
-- **`langchain_ollama`**: The `ChatOllama` class is used to instantiate the selected LLM.
+- **With `document_loader.py`**: Handles the loading and indexing of documents from the specified folder.
+- **With `models.py`**: Manages the list of available LLM models.
+- **With `llm.py`**: Interfaces with the selected LLM to generate responses.
+- **With Streamlit**: Uses Streamlit's state management and UI components to build the interactive interface.
 
 ### 4. Notable features or patterns
-- **Session State Management**: The code uses `st.session_state` to persist the model, database, and chat messages across reruns.
-- **Streaming Responses**: The `getStreamingChain` function streams the LLM's response to the UI in real-time.
-- **Error Handling**: The UI provides warnings and errors for invalid folder paths or unindexed documents.
-- **Modularity**: The UI is separated from the core logic (document loading, model management, and LLM interaction), which is handled by other modules.
+- **Streamlit Integration**: Uses Streamlit for building a user-friendly web interface with minimal code.
+- **State Management**: Uses Streamlit's session state to maintain application state across user interactions.
+- **Dynamic UI**: The interface is dynamic, with conditional rendering based on whether documents have been indexed or not.
+- **Streaming Responses**: The chat interface supports streaming responses, providing real-time feedback to the user.
 
 ### Overall
-The `ui.py` file provides a user-friendly interface for interacting with a local LLM using RAG. It handles model selection, document indexing, and chat interactions, delegating the core functionality to other modules. The use of Streamlit makes it easy to build and deploy the application, while session state management ensures a smooth user experience.
+The `ui.py` file is the core of the application, providing a user-friendly interface that integrates various components (document loading, model selection, and response generation) into a cohesive experience. It leverages Streamlit's capabilities to create an interactive and responsive application, making it accessible to users without requiring deep technical knowledge.
 
   ---
 </details>
 
 
 ## ✒️ Project Summary 
-### Project Summary
+This project is a local implementation of a Large Language Model (LLM) with Retrieval-Augmented Generation (RAG) capabilities, enabling users to interact with documents through a local AI system.
 
-This project is an experimental implementation of a **local Language Model (LLM) with Retrieval-Augmented Generation (RAG)**. It uses **Ollama** to run LLMs locally and **LangChain** for RAG to answer questions based on user-provided documents (PDFs or Markdown files). The project includes a **Streamlit-based web UI** for interactive use.
+1. **Main purpose and functionality**:  
+   The system allows users to load documents (PDFs, Markdown, etc.), convert them into embeddings, and query them using a local LLM (e.g., Mistral via Ollama). It supports both command-line and web-based interfaces for user interaction.
 
----
+2. **Tech stack and architecture**:  
+   Built with Python, Langchain, Ollama, and Chroma for vector storage. The architecture processes documents into embeddings, stores them in Chroma, and uses Ollama for LLM interactions, with a Streamlit UI for user access.
 
-1. **Main purpose and functionality**:
-   - **Purpose**: Enable users to run LLMs locally and perform RAG to answer questions using their own documents.
-   - **Functionality**:
-     - Load and parse PDF/Markdown documents.
-     - Generate embeddings for document chunks using Ollama.
-     - Store embeddings in a Chroma vector database.
-     - Answer user queries by retrieving relevant documents and generating responses with the LLM.
-     - Provide both a CLI and a Streamlit web UI for interaction.
+3. **Key components and their interactions**:  
+   - Document loading and processing (`document_loader.py`).  
+   - Local LLM integration and chaining (`llm.py`).  
+   - Embeddings and vector database management (`models.py`).  
+   - Streamlit-based web UI for interaction (`ui.py`).  
+   - Main application script (`app.py`) orchestrating the pipeline.
 
-2. **Tech stack and architecture**:
-   - **Languages**: Python
-   - **Frameworks/Libraries**:
-     - **Ollama**: Local LLM execution and embeddings.
-     - **LangChain**: RAG orchestration.
-     - **Chroma**: Vector storage.
-     - **Streamlit**: Web UI.
-     - **PyPDF**: PDF parsing.
-     - **UV**: Dependency management.
-   - **Architecture**: Modular monorepo with a pipeline:
-     - Document Loader → Embedding Generation (Ollama) → Chroma Vector DB → LLM Query (Ollama + LangChain) → Streamlit UI.
+4. **Notable features**:  
+   - Local operation for privacy and efficiency.  
+   - Support for multiple document formats.  
+   - Real-time streaming responses via the LLM.  
+   - Web-based UI for user-friendly interaction.
 
-3. **Key components and their interactions**:
-   - **`app.py`**: Main CLI script for checking model availability, loading documents, and running the chat loop.
-   - **`document_loader.py`**: Loads and splits documents, generates embeddings, and stores them in Chroma.
-   - **`llm.py`**: Creates LangChain pipelines for RAG (chat and streaming chains).
-   - **`models.py`**: Manages Ollama models (checking availability, pulling models).
-   - **`ui.py`**: Streamlit web UI for document upload and querying.
-   - **`Research/`**: Sample PDF documents for testing.
+5. **Code organization and structure**:  
+   The project is structured into modules for document handling, LLM integration, embeddings, and UI, with a main application script to tie everything together. Configuration and dependencies are managed through `pyproject.toml`.
 
-4. **Notable features**:
-   - Supports both CLI and web UI.
-   - Uses local LLMs via Ollama, ensuring privacy and offline use.
-   - Modular design allows easy swapping of components (e.g., vector DB, document loaders).
-   - Includes a sample set of research papers for quick testing.
-
-5. **Code organization and structure**:
-   - **Entry Points**: `app.py` (CLI), `ui.py` (Streamlit UI).
-   - **Core Modules**:
-     - `document_loader.py`: Document processing and embedding.
-     - `llm.py`: RAG chain construction.
-     - `models.py`: Ollama model management.
-   - **Dependencies**: Managed via `pyproject.toml` and `uv.lock`.
-   - **Data**: Sample documents in `Research/` directory.
-
----
-
-**Overall**, this project provides a flexible and locally executable framework for experimenting with RAG using local LLMs, with a focus on modularity and ease of use through both CLI and web interfaces.
+Overall, the project provides a comprehensive solution for running a local RAG system, combining ease of use with powerful AI capabilities.
