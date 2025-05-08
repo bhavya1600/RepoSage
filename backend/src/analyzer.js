@@ -227,7 +227,7 @@ ${fileList}
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeProjectStructure');
   const response = await createChatCompletion(openai, model, modelType, prompt);
 
-  await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
+  // // await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
 }
@@ -268,7 +268,7 @@ DO NOT use Markdown formatting or any additional explanation.`;
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
     const response = await createChatCompletion(openai, model, modelType, prompt);
 
-    await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
+    // await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
     
     // Clean the response and handle markdown formatting
     const rawResponse = response.choices[0].message.content;
@@ -322,7 +322,7 @@ async function summarizeContent(openai, content, fileTree) {
     const { model, modelType } = config.configurations.find(c => c.name === 'summarizeContent');
     const response = await createChatCompletion(openai, model, modelType, prompt);
 
-  await saveApiCallContent("summarizeContent", response.choices[0].message.content); // Save API response
+  // await saveApiCallContent("summarizeContent", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
 }
@@ -364,7 +364,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
     const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
 
-  await saveApiCallContent("analyzeCode - analysis", analysisResponse.choices[0].message.content); // Save API response
+  // await saveApiCallContent("analyzeCode - analysis", analysisResponse.choices[0].message.content); // Save API response
 
   // Second prompt for JSON metadata
   const metadataPrompt = `
@@ -433,7 +433,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     };
   }
 
-  await saveApiCallContent("analyzeCode - metadata", JSON.stringify(jsonMetadata, null, 2)); // Save API response
+  // await saveApiCallContent("analyzeCode - metadata", JSON.stringify(jsonMetadata, null, 2)); // Save API response
   
   return {
     textAnalysis: analysisResponse.choices[0].message.content,
@@ -480,7 +480,7 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
   const response = await createChatCompletion(openai, model, modelType, prompt);
   console.log("Call Hierarchy: ", response.choices[0].message.content);
-  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
+  // await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
   return response.choices[0].message.content;
 }
 
@@ -509,7 +509,7 @@ async function generateSummary(openai, analysis) {
     const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
     const response = await createChatCompletion(openai, model, modelType, prompt);
 
-  await saveApiCallContent("generateSummary", response.choices[0].message.content); // Save API response
+  // await saveApiCallContent("generateSummary", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
 }
