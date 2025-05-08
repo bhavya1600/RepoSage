@@ -14,7 +14,7 @@ function App() {
     setLogs("")
 
     try {
-      const response = await fetch('http://localhost:5000/api/analyze', {
+      const response = await fetch('https://reposage.onrender.com:5000/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ function App() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/download-analysis')
+      const response = await fetch('https://reposage.onrender.com:5000/api/download-analysis')
       if (!response.ok) {
         throw new Error('Failed to download analysis file')
       }
