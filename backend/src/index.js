@@ -29,7 +29,7 @@ app.use(express.json());
 // Endpoint to serve the analysis file
 app.get('/api/download-analysis', async (req, res) => {
     try {
-        const filePath = path.join(__dirname, '..', 'analysis_results.md');
+        const filePath = path.join('/tmp', 'analysis_results.md');
         res.setHeader('Content-Type', 'text/markdown');
         res.setHeader('Content-Disposition', 'attachment; filename=analysis_results.md');
         const fileContent = await fs.readFile(filePath, 'utf-8');
