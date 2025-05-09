@@ -1,5 +1,4 @@
 import { writeFile } from 'fs/promises';
-import path from 'path';
 
 export async function saveToFile(filename, analysis) {
   // Create base GitHub URL for the repository
@@ -60,12 +59,12 @@ ${analysis.fileAnalysis.map(file => `
 ## ✒️ Project Summary 
 ${analysis.summary}`;
 
-  await writeFile(filename, mdContent, 'utf8');
+  // Ensure we're saving to the /tmp directory
+  const tmpFilename = `/tmp/${filename.split('/').pop()}`;
+  await writeFile(tmpFilename, mdContent, 'utf8');
 
   // Save the JSON metadata separately
-  const baseFilename = path.basename(filename, '.md');
-  const dirname = path.dirname(filename);
-  const jsonFilename = path.join(dirname, `${baseFilename}.json`);
+  const jsonFilename = tmpFilename.replace('.md', '.json');
   const jsonContent = {
     repository: {
       name: analysis.repository.name,
