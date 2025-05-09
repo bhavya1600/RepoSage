@@ -2,7 +2,6 @@ import { Octokit } from 'octokit';
 import { OpenAI } from 'openai';
 import { parseGitHubUrl } from './utils/github.js';
 import { buildFileTree } from './utils/fileTree.js';
-import { saveToTmpDirectory } from './utils/file.js';
 import chalk from 'chalk';
 import fs from 'fs'; // Added for saving API responses
 import path from 'path';
@@ -197,7 +196,7 @@ async function analyzeProjectStructure(openai, repoData, files, readmeContent) {
       console.log(chalk.green('✓ API responses log file deleted'));
     }
   } catch (error) {
-    console.error(chalk.red('Error deleting API responses log file:'), error);
+    console.error(chalk.red('Error deleting API responses log file:', error));
   }
 
   const fileList = files.map(f => f.path).join('\n');
@@ -513,38 +512,4 @@ async function generateSummary(openai, analysis) {
   // await saveApiCallContent("generateSummary", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
-}
-
-// New helper to save analysis results to the tmp directory
-export async function saveAnalysisToTmp(analysis) {
-  try {
-    // Save the analysis as JSON
-    const jsonPath = await saveToTmpDirectory(`analysis_${Date.now()}.json`, analysis, 'json');
-    
-    // Create a simplified version for text format
-    const simplifiedAnalysis = {
-      repositoryName: analysis.repository.name,
-      projectSummary: analysis.summary,
-      projectUnderstanding: analysis.projectUnderstanding,
-      callHierarchy: analysis.callHierarchy
-    };
-    
-    // Save the simplified analysis as text
-    const textPath = await saveToTmpDirectory(`analysis_${Date.now()}.txt`, 
-      `Repository Analysis for: ${analysis.repository.name}\n\n` +
-      `Summary:\n${analysis.summary}\n\n` +
-      `Understanding:\n${analysis.projectUnderstanding}\n\n` +
-      `Call Hierarchy:\n${analysis.callHierarchy}`, 
-      'text'
-    );
-    
-    console.log(chalk.green('Analysis saved to tmp directory:'));
-    console.log(chalk.cyan(`- JSON: ${jsonPath}`));
-    console.log(chalk.cyan(`- Text: ${textPath}`));
-    
-    return { jsonPath, textPath };
-  } catch (error) {
-    console.error(chalk.red('Error saving analysis to tmp:'), error.message);
-    throw error;
-  }
 }

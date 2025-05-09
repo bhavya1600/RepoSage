@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { analyzeRepository, saveAnalysisToTmp } from '../src/analyzer.js';
-import { saveToFile, saveToTmpDirectory } from '../src/utils/file.js';
+import { analyzeRepository } from '../src/analyzer.js';
+import { saveToFile } from '../src/utils/file.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -87,9 +87,6 @@ app.post('/api/analyze', async (req, res) => {
             console.log('Saving analysis results...');
             await saveToFile('analysis_results.md', analysis);
             
-            // Also save to tmp directory
-            await saveAnalysisToTmp(analysis);
-            
             // Signal that analysis is complete and file is ready
             res.write('ANALYSIS_COMPLETE\n');
             
@@ -121,31 +118,6 @@ app.post('/api/analyze', async (req, res) => {
             }
         }
     }
-});
-
-// Add a new endpoint to save files to tmp directory
-app.post('/api/save-to-tmp', async (req, res) => {
-  try {
-    const { filename, data, format } = req.body;
-    
-    if (!filename) {
-      return res.status(400).json({ error: 'Filename is required' });
-    }
-    
-    const savedPath = await saveToTmpDirectory(filename, data, format || 'json');
-    
-    res.json({ 
-      success: true, 
-      message: 'File saved successfully',
-      path: savedPath
-    });
-  } catch (error) {
-    console.error('Error saving to tmp directory:', error);
-    res.status(500).json({ 
-      error: 'Failed to save file',
-      message: error.message
-    });
-  }
 });
 
 // For local development

@@ -1,6 +1,5 @@
 import { writeFile } from 'fs/promises';
 import path from 'path';
-import { existsSync, mkdirSync } from 'fs';
 
 export async function saveToFile(filename, analysis) {
   // Create base GitHub URL for the repository
@@ -64,7 +63,9 @@ ${analysis.summary}`;
   await writeFile(filename, mdContent, 'utf8');
 
   // Save the JSON metadata separately
-  const jsonFilename = filename.replace('.md', '.json');
+  const baseFilename = path.basename(filename, '.md');
+  const dirname = path.dirname(filename);
+  const jsonFilename = path.join(dirname, `${baseFilename}.json`);
   const jsonContent = {
     repository: {
       name: analysis.repository.name,
@@ -131,35 +132,4 @@ function getFullPath(node) {
   }
   // Updated: Remove leading "root/" if present.
   return path.join('/').replace(/^root\/?/, '');
-}
-
-/**
- * Saves a file to the /tmp directory
- * @param {string} filename - Filename to save (without path)
- * @param {any} data - Data to save to the file
- * @param {string} format - Format to save as ('json' or 'text')
- * @returns {Promise<string>} - Full path to the saved file
- */
-export async function saveToTmpDirectory(filename, data, format = 'json') {
-  // Ensure the /tmp directory exists
-  const tmpDir = '/tmp';
-  if (!existsSync(tmpDir)) {
-    mkdirSync(tmpDir, { recursive: true });
-  }
-
-  // Generate full path
-  const fullPath = path.join(tmpDir, filename);
-  
-  // Format the data appropriately
-  let content;
-  if (format === 'json') {
-    content = JSON.stringify(data, null, 2);
-  } else {
-    content = String(data);
-  }
-  
-  // Write the file
-  await writeFile(fullPath, content, 'utf8');
-  
-  return fullPath;
 }
