@@ -15,6 +15,9 @@ dotenv.config();
 
 const app = express();
 
+// Store the latest analysis file path
+let latestAnalysisFile = null;
+
 // Function to strip ANSI color codes
 const stripAnsiCodes = (str) => {
     return str.replace(/\u001b\[\d+m/g, '');
@@ -32,10 +35,15 @@ app.get('/', (req, res) => {
 // Endpoint to serve the analysis file
 app.get('/api/download-analysis', async (req, res) => {
     try {
-        const filePath = path.join(__dirname, '..', 'analysis_results.md');
+        if (!latestAnalysisFile) {
+            return res.status(404).json({ error: 'No analysis file available. Please run an analysis first.' });
+        }
+        
         res.setHeader('Content-Type', 'text/markdown');
-        res.setHeader('Content-Disposition', 'attachment; filename=analysis_results.md');
-        const fileContent = await fs.readFile(filePath, 'utf-8');
+        const filename = path.basename(latestAnalysisFile);
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+        
+        const fileContent = await fs.readFile(latestAnalysisFile, 'utf-8');
         res.send(fileContent);
     } catch (error) {
         console.error('Error serving analysis file:', error);
@@ -85,7 +93,10 @@ app.post('/api/analyze', async (req, res) => {
             
             // Save results to file
             console.log('Saving analysis results...');
-            await saveToFile('analysis_results.md', analysis);
+            const { mdFilename } = await saveToFile('analysis_results.md', analysis);
+            
+            // Store the file path for download
+            latestAnalysisFile = mdFilename;
             
             // Signal that analysis is complete and file is ready
             res.write('ANALYSIS_COMPLETE\n');

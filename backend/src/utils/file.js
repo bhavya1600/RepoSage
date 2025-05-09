@@ -5,6 +5,9 @@ export async function saveToFile(filename, analysis) {
   const repoUrl = `https://github.com/${analysis.repository.owner.login}/${analysis.repository.name}`;
   const branch = analysis.repository.default_branch;
 
+  // Generate a unique ID for the files
+  const uniqueId = Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+  
   // Updated: Remove leading "root/" from file paths before encoding.
   const createGitHubLink = (filePath) => {
     const cleanPath = filePath.replace(/^root\/?/, '');
@@ -59,12 +62,17 @@ ${analysis.fileAnalysis.map(file => `
 ## ✒️ Project Summary 
 ${analysis.summary}`;
 
-  // Ensure we're saving to the /tmp directory
-  const tmpFilename = `/tmp/${filename.split('/').pop()}`;
-  await writeFile(tmpFilename, mdContent, 'utf8');
+  // Get base filename without path
+  const baseFilename = filename.split('/').pop();
+  
+  // Create filenames with unique ID
+  const mdFilename = `/tmp/${baseFilename.replace('.md', '')}_${uniqueId}.md`;
+  const jsonFilename = mdFilename.replace('.md', '.json');
+  
+  // Save markdown file
+  await writeFile(mdFilename, mdContent, 'utf8');
 
   // Save the JSON metadata separately
-  const jsonFilename = tmpFilename.replace('.md', '.json');
   const jsonContent = {
     repository: {
       name: analysis.repository.name,
@@ -83,6 +91,12 @@ ${analysis.summary}`;
   };
 
   await writeFile(jsonFilename, JSON.stringify(jsonContent, null, 2), 'utf8');
+  
+  // Return the generated filenames
+  return {
+    mdFilename,
+    jsonFilename
+  };
 }
 
 function formatFileTree(node, indent, repoUrl, branch, parentPath = '') {
