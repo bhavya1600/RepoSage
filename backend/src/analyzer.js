@@ -49,13 +49,27 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt) {
       messages: [
         { 
           role: "system", 
-          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+          content: [
+            {
+              "type": "text",
+              "text": "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully."
+            }
+          ]
         },
-        { role: "user", content: analysisPrompt }
+        { 
+          role: "user", 
+          content: [
+            {
+              "type": "text",
+              "text": analysisPrompt
+            }
+          ]
+        }
       ],
       temperature: 0.3,
+      // include_reasoning: false,
       // show_thought_process: false,
-      max_completion_tokens: 4000
+      max_tokens: 5000
     });
   } else {
     return await openai.chat.completions.create({
@@ -63,12 +77,25 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt) {
       messages: [
         { 
           role: "system", 
-          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+          content: [
+            {
+              "type": "text",
+              "text": "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully."
+            }
+          ]
         },
-        { role: "user", content: analysisPrompt }
+        { 
+          role: "user", 
+          content: [
+            {
+              "type": "text",
+              "text": analysisPrompt
+            }
+          ]
+        }
       ],
       temperature: 0.3,
-      max_tokens: 4000
+      max_tokens: 5000
     });
   }
 }
