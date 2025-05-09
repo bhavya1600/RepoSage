@@ -41,36 +41,39 @@ const IMPORTANT_FILES = [
 ];
 
 
-async function createChatCompletion(openai, model, modelType, analysisPrompt) {
-  // Check model name based on modelType.
-  if (modelType === "Reasoning") {
-    return await openai.chat.completions.create({
-      model: model,
-      messages: [
-        { 
-          role: "system", 
-          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
-        },
-        { role: "user", content: analysisPrompt }
-      ],
-      temperature: 0.3,
-      // show_thought_process: false,
-      max_completion_tokens: 4000
-    });
-  } else {
-    return await openai.chat.completions.create({
-      model: model,
-      messages: [
-        { 
-          role: "system", 
-          content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
-        },
-        { role: "user", content: analysisPrompt }
-      ],
-      temperature: 0.3,
-      max_tokens: 4000
-    });
+async function createChatCompletion(openai, model, modelType, analysisPrompt, jsonSchema = null) {
+  const baseParams = {
+    model: model,
+    messages: [
+      { 
+        role: "system", 
+        content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+      },
+      { role: "user", content: analysisPrompt }
+    ],
+    temperature: 0.3,
+  };
+
+  // Add JSON schema if provided for structured output
+  if (jsonSchema) {
+    baseParams.response_format = {
+      type: "json_schema",
+      json_schema: {
+        name: "analysis",
+        strict: true,
+        schema: jsonSchema
+      }
+    };
   }
+
+  // Add the appropriate max tokens parameter based on model type
+  if (modelType === "Reasoning") {
+    baseParams.max_completion_tokens = 4000;
+  } else {
+    baseParams.max_tokens = 4000;
+  }
+
+  return await openai.chat.completions.create(baseParams);
 }
 
 
@@ -260,26 +263,27 @@ Project Type Analysis:
 ${projectUnderstanding}
 
 File List:
-${filePaths.join('\n')}
+${filePaths.join('\n')}`;
 
-Respond with ONLY a JSON array of full file paths considered essential. Format: ["path1", "path2", ...]
-DO NOT use Markdown formatting or any additional explanation.`;
+    // Define schema for file list response
+    const fileListSchema = {
+      type: "object",
+      properties: {
+        importantFiles: {
+          type: "array",
+          items: { type: "string" },
+          description: "Array of file paths considered essential for understanding the codebase"
+        }
+      },
+      required: ["importantFiles"]
+    };
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
-    const response = await createChatCompletion(openai, model, modelType, prompt);
-
-    // await saveApiCallContent("smartFileFilter", response.choices[0].message.content); // Save API response
+    const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
     
-    // Clean the response and handle markdown formatting
-    const rawResponse = response.choices[0].message.content;
-    const cleanedResponse = rawResponse
-      .replace(/```json/g, '')
-      .replace(/```/g, '')
-      .trim();
-
-    // Handle cases where response might have extra text
-    const jsonString = cleanedResponse.match(/\[.*\]/s)?.[0] || '[]';
-    const importantFiles = JSON.parse(jsonString);
+    // Parse the JSON response
+    const jsonResponse = JSON.parse(response.choices[0].message.content);
+    const importantFiles = jsonResponse.importantFiles;
 
     if (!Array.isArray(importantFiles)) {
       throw new Error('AI response format invalid');
@@ -361,70 +365,57 @@ async function analyzeCode(openai, filePath, content, fileTree) {
       ${content}
       `;
 
-    const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
-    const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
+  const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCode');
+  const analysisResponse = await createChatCompletion(openai, model, modelType, analysisPrompt);
 
-  // await saveApiCallContent("analyzeCode - analysis", analysisResponse.choices[0].message.content); // Save API response
+  // Define the JSON schema for metadata
+  const metadataSchema = {
+    type: "object",
+    properties: {
+      name: { type: "string" },
+      path: { type: "string" },
+      imports: { type: "array", items: { type: "string" } },
+      mainPurpose: { type: "string" },
+      type: { type: "string" },
+      functions: { 
+        type: "array", 
+        items: { 
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            purpose: { type: "string" },
+            input: { type: "string" },
+            output: { type: "string" }
+          },
+          required: ["name", "purpose"]
+        } 
+      },
+      exports: { type: "array", items: { type: "string" } },
+      dependencies: { type: "array", items: { type: "string" } },
+      finalReturnType: { type: "string" }
+    },
+    required: ["name", "path", "mainPurpose"]
+  };
 
-  // Second prompt for JSON metadata
+  // Second prompt for JSON metadata with structured output
   const metadataPrompt = `
   Given the project filestructure this code belongs to (for more context):
 
   File tree:
   ${fileList}
   
-  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. 
+  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information.
   
-  Format template:
-    {
-      "name": "",
-      "path": "",
-      "imports": [],
-      "mainPurpose": "",
-      "type": "",
-      "functions": [{"name": "", "purpose": "", "input": "", "output": ""}],
-      "exports": [],
-      "dependencies": [],
-      "finalReturnType(s)" : ""
-    }
+  Code:
+  ${content}
+  `;
 
-    Code:
-    ${content}
-    
-    Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
-    Output only the JSON data, nothing else. 
-
-    Output Example:
-    {
-      'JSON DATA'
-    }
-
-    Bad Output Example:
-    \`\`\`json
-    {
-      'JSON DATA'
-    }
-    \`\`\`
-    `;
-
-    const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
+  const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt, metadataSchema);
  
-    let jsonMetadata;
-    try {
-      let responseContent = metadataResponse.choices[0].message.content;
-      
-      // Find first { and last }
-      const startIndex = responseContent.indexOf('{');
-      const endIndex = responseContent.lastIndexOf('}');
-      
-      if (startIndex === -1 || endIndex === -1) {
-        throw new Error('No valid JSON object markers found');
-      }
-      
-    // Extract only the JSON portion
-    responseContent = responseContent.substring(startIndex, endIndex + 1);
-    
-    jsonMetadata = JSON.parse(responseContent);
+  let jsonMetadata;
+  try {
+    // With structured output, the content should already be valid JSON
+    jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content);
   } catch (error) {
     console.error('Failed to parse JSON metadata:', error);
     jsonMetadata = { 
@@ -432,8 +423,6 @@ async function analyzeCode(openai, filePath, content, fileTree) {
       rawResponse: metadataResponse.choices[0].message.content
     };
   }
-
-  // await saveApiCallContent("analyzeCode - metadata", JSON.stringify(jsonMetadata, null, 2)); // Save API response
   
   return {
     textAnalysis: analysisResponse.choices[0].message.content,
@@ -492,24 +481,52 @@ async function generateSummary(openai, analysis) {
     Project Understanding: ${analysis.projectUnderstanding}
     File Tree: ${JSON.stringify(analysis.fileTree)}
     File Metadata: ${JSON.stringify(analysis.fileMetadata)}
-    Call Hierarchy: ${analysis.callHierarchy}
-    
-    The template to follow for response:
+    Call Hierarchy: ${analysis.callHierarchy}`;
 
-    "This project is a...
-      1. **Main purpose and functionality**:
-      2. **Tech stack and architecture**:
-      3. **Key components and their interactions**:
-      4. **Notable features**:
-      5. **Code organization and structure**:
-      Overall..."
-    
-    Only answer in the format stated above, nothing else, no main header, no extra information before this. Only add a one liner statement at the end that starts with "Overall,..."`;
+  // Define schema for summary response
+  const summarySchema = {
+    type: "object",
+    properties: {
+      mainPurpose: {
+        type: "string",
+        description: "Main purpose and functionality of the project"
+      },
+      techStack: {
+        type: "string",
+        description: "Tech stack and architecture used"
+      },
+      keyComponents: {
+        type: "string",
+        description: "Key components and their interactions"
+      },
+      notableFeatures: {
+        type: "string",
+        description: "Notable features of the project"
+      },
+      codeOrganization: {
+        type: "string",
+        description: "Code organization and structure" 
+      },
+      overall: {
+        type: "string",
+        description: "Overall summary that ties everything together"
+      }
+    },
+    required: ["mainPurpose", "techStack", "keyComponents", "notableFeatures", "codeOrganization", "overall"]
+  };
 
-    const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
-    const response = await createChatCompletion(openai, model, modelType, prompt);
+  const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
+  const response = await createChatCompletion(openai, model, modelType, prompt, summarySchema);
 
-  // await saveApiCallContent("generateSummary", response.choices[0].message.content); // Save API response
+  // Convert JSON response to formatted text
+  const summaryData = JSON.parse(response.choices[0].message.content);
+  const formattedSummary = `This project is a...
+1. **Main purpose and functionality**: ${summaryData.mainPurpose}
+2. **Tech stack and architecture**: ${summaryData.techStack}
+3. **Key components and their interactions**: ${summaryData.keyComponents}
+4. **Notable features**: ${summaryData.notableFeatures}
+5. **Code organization and structure**: ${summaryData.codeOrganization}
+Overall, ${summaryData.overall}`;
 
-  return response.choices[0].message.content;
+  return formattedSummary;
 }
