@@ -52,7 +52,7 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
       { role: "user", content: analysisPrompt }
     ],
     temperature: 0.3,
-    include_reasoning: false
+   
   };
 
   // Add JSON schema if provided for structured output
@@ -66,7 +66,8 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
 
   // Add the appropriate max tokens parameter based on model type
   if (modelType === "Reasoning") {
-    baseParams.max_tokens = 4000;
+    baseParams.max_tokens = 4000;\
+    baseParams.include_reasoning=false
   } else {
     baseParams.max_tokens = 4000;
   }
@@ -291,17 +292,14 @@ Return exactly:
       const jsonResponse = JSON.parse(response.choices[0].message.content);
       const importantFiles = jsonResponse.importantFiles;
       console.log("Important Files: ", importantFiles);
+      
 
       if (!Array.isArray(importantFiles)) {
         throw new Error('AI response format invalid');
+      }else{
+        return files.filter(file => importantFiles.includes(file.path));
       }
 
-      return files.filter(file => {
-        if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-          return false;
-        }
-        return importantFiles.includes(file.path);
-      });
     } catch (jsonError) {
       console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
       console.log(chalk.yellow('Parsing file paths from text response'));
