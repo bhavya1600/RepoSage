@@ -296,9 +296,9 @@ Return exactly:
 
       if (!Array.isArray(importantFiles)) {
         throw new Error('AI response format invalid');
-      }else{
-        return files.filter(file => importantFiles.includes(file.path));
       }
+
+      return files.filter(file => importantFiles.includes(file.path));
 
     } catch (jsonError) {
       console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
