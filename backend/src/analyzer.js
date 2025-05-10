@@ -49,10 +49,12 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
         role: "system", 
         content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. For formatting the response, Use single backticks to highlight wherever needed. Follow user instructions carefully." 
       },
-      { role: "user", content: analysisPrompt }
+      { 
+        role: "user", 
+        content: analysisPrompt }
     ],
     temperature: 0.3,
-    include_reasoning: false
+    
   };
 
   // Add JSON schema if provided for structured output
@@ -67,6 +69,7 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
   // Add the appropriate max tokens parameter based on model type
   if (modelType === "Reasoning") {
     baseParams.max_tokens = 4000;
+    include_reasoning: false;
   } else {
     baseParams.max_tokens = 4000;
   }
@@ -261,9 +264,9 @@ Project Type Analysis:
 ${projectUnderstanding}
 
 Here is the list of file paths (one per line):
-${files.map(f => f.path).join("\n")}
+${filePaths.join("\n")}
 
-Return exactly:
+IMPORTANT: Return exactly in the following format:
 
 {
   "importantFiles": ["<path1>", "<path2>", …]
@@ -309,6 +312,7 @@ Return exactly:
       // Fallback: extract file paths from text response
       const content = response.choices[0].message.content;
       const extractedPaths = [];
+      console.log("Extracted Paths: ", extractedPaths);
       
       // Extract file paths that match the pattern in our file list
       for (const path of filePaths) {
