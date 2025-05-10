@@ -47,11 +47,12 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
     messages: [
       { 
         role: "system", 
-        content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+        content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. For formatting the response, Use single backticks to highlight wherever needed. Follow user instructions carefully." 
       },
       { role: "user", content: analysisPrompt }
     ],
     temperature: 0.3,
+    include_reasoning: false
   };
 
   // Add JSON schema if provided for structured output
@@ -68,7 +69,7 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
 
   // Add the appropriate max tokens parameter based on model type
   if (modelType === "Reasoning") {
-    baseParams.max_completion_tokens = 4000;
+    baseParams.max_tokens = 4000;
   } else {
     baseParams.max_tokens = 4000;
   }
