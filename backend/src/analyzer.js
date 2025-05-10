@@ -59,8 +59,11 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
   if (jsonSchema) {
     baseParams.response_format = {
       type: "json_schema",
-      json_schema: jsonSchema,
-      strict: true
+      json_schema: {
+        name: "analysis",
+        strict: true,
+        schema: jsonSchema
+      }
     };
   }
 
