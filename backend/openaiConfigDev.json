@@ -3,32 +3,32 @@
   "configurations": [
     {
       "name": "analyzeProjectStructure",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Reasoning"
     },
     {
       "name": "smartFileFilter",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Reasoning"
     },
     {
       "name": "summarizeContent",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCode",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCallHierarchy",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Reasoning"
     },
     {
       "name": "generateSummary",
-      "model": "meta-llama/llama-4-maverick:free",
+      "model": "agentica-org/deepcoder-14b-preview:free",
       "modelType": "Non Reasoning"
     }
   ]
