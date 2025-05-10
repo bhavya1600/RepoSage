@@ -241,34 +241,34 @@ async function smartFileFilter(files, projectUnderstanding) {
   try {
     const prompt = `Analyze the project structure and identify the MOST CRITICAL files for understanding the core functionality and execution flow of this codebase.
 
-Focus on:
-1. Entry points (main files that start the application)
-2. Core business logic files
-3. Key utility/helper files that are frequently imported
-4. Configuration files that define the application structure
-5. Files that connect different parts of the application
+    Focus on:
+    1. Entry points (main files that start the application)
+    2. Core business logic files
+    3. Key utility/helper files that are frequently imported
+    4. Configuration files that define the application structure
+    5. Files that connect different parts of the application
 
-EXCLUDE:
-- Documentation files (.md)
-- Test files
-- Asset files (images, fonts, etc.)
-- Build configuration files
-- Files with minimal code or boilerplate
+    EXCLUDE:
+    - Documentation files (.md)
+    - Test files
+    - Asset files (images, fonts, etc.)
+    - Build configuration files
+    - Files with minimal code or boilerplate
 
-Prioritize files that reveal how data flows through the system and how components interact.
+    Prioritize files that reveal how data flows through the system and how components interact.
 
-Context:
-Project Type Analysis:
-${projectUnderstanding}
+    Context:
+    Project Type Analysis:
+    ${projectUnderstanding}
 
-Here is the list of file paths (one per line):
-${files.map(f => f.path).join("\n")}
+    Here is the list of file paths (one per line):
+    ${filePaths.join('\n')}
 
-Return exactly:
+    Return exactly:
 
-{
-  "importantFiles": ["<path1>", "<path2>", …]
-}`;
+    {
+      "importantFiles": ["<path1>", "<path2>", …]
+    }`;
 
     // Define schema for file list response
     const fileListSchema = {
@@ -280,7 +280,8 @@ Return exactly:
           description: "Array of file paths considered essential for understanding the codebase"
         }
       },
-      required: ["importantFiles"]
+      required: ["importantFiles"],
+      additionalProperties: false
     };
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
