@@ -59,11 +59,8 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
   if (jsonSchema) {
     baseParams.response_format = {
       type: "json_schema",
-      json_schema: {
-        name: "analysis",
-        strict: true,
-        schema: jsonSchema
-      }
+      json_schema: jsonSchema,
+      strict: true
     };
   }
 
@@ -263,8 +260,14 @@ Context:
 Project Type Analysis:
 ${projectUnderstanding}
 
-File List:
-${filePaths.join('\n')}`;
+Here is the list of file paths (one per line):
+${files.map(f => f.path).join("\n")}
+
+Return exactly:
+
+{
+  "importantFiles": ["<path1>", "<path2>", …]
+}`;
 
     // Define schema for file list response
     const fileListSchema = {
