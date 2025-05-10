@@ -58,9 +58,9 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
   // Add JSON schema if provided for structured output
   if (jsonSchema) {
     baseParams.response_format = {
-      type: "json_schema",
+      type:        "json_schema",
       json_schema: jsonSchema,
-      strict: true
+      strict:      true
     };
   }
 
