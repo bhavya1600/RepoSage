@@ -8,7 +8,7 @@
     },
     {
       "name": "smartFileFilter",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "qwen/qwen2.5-vl-32b-instruct:free",
       "modelType": "Reasoning"
     },
     {
