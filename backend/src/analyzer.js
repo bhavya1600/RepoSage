@@ -283,8 +283,10 @@ ${filePaths.join('\n')}`;
     
     try {
       // Parse the JSON response
+      console.log("Smart File Filter Response: ", response.choices[0].message.content);
       const jsonResponse = JSON.parse(response.choices[0].message.content);
       const importantFiles = jsonResponse.importantFiles;
+      console.log("Important Files: ", importantFiles);
 
       if (!Array.isArray(importantFiles)) {
         throw new Error('AI response format invalid');
