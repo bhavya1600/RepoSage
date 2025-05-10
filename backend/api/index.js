@@ -54,23 +54,25 @@ app.get('/api/download-analysis', async (req, res) => {
 // Endpoint to analyze GitHub repository
 app.post('/api/analyze', async (req, res) => {
     const { repo, githubToken, openaiToken } = req.body;
-
+    
     // Validate repo URL (only required field)
     if (!repo) {
         return res.status(400).json({ error: 'Repository URL is required' });
     }
-
+    
     // Set up streaming response
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
-
+    
+    // Store the original console.log outside the try-catch to ensure it's accessible in the catch block
+    const originalConsoleLog = console.log;
+    
     try {
         // Use provided tokens or fall back to .env values
         process.env.GITHUB_TOKEN = githubToken || process.env.GITHUB_TOKEN;
         process.env.OPENAI_API_KEY = openaiToken || process.env.OPENAI_API_KEY;
-
+        
         // Redirect console.log to client
-        const originalConsoleLog = console.log;
         console.log = (message) => {
             try {
                 if (typeof message === 'string') {
@@ -78,14 +80,21 @@ app.post('/api/analyze', async (req, res) => {
                     const cleanMessage = stripAnsiCodes(message);
                     res.write('LOG:' + cleanMessage + '\n');
                 } else {
-                    res.write('LOG:' + JSON.stringify(message) + '\n');
+                    // Make sure we properly stringify non-string messages
+                    let jsonMessage;
+                    try {
+                        jsonMessage = JSON.stringify(message);
+                    } catch (jsonError) {
+                        jsonMessage = String(message);
+                    }
+                    res.write('LOG:' + jsonMessage + '\n');
                 }
                 originalConsoleLog(message);
             } catch (error) {
                 originalConsoleLog('Error writing to response:', error);
             }
         };
-
+        
         try {
             // Run the analysis
             console.log('Starting repository analysis...');
@@ -109,14 +118,12 @@ app.post('/api/analyze', async (req, res) => {
         } catch (analysisError) {
             throw new Error(`Analysis failed: ${analysisError.message}`);
         }
-
+        
     } catch (error) {
         console.error('Error during analysis:', error);
         try {
             // Restore original console.log if error occurred
-            if (console.log !== originalConsoleLog) {
-                console.log = originalConsoleLog;
-            }
+            console.log = originalConsoleLog;
             
             // Send error to client
             res.write(`LOG:Error during analysis: ${error.message}\n`);

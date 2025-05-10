@@ -281,21 +281,47 @@ ${filePaths.join('\n')}`;
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
     const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
     
-    // Parse the JSON response
-    const jsonResponse = JSON.parse(response.choices[0].message.content);
-    const importantFiles = jsonResponse.importantFiles;
+    try {
+      // Parse the JSON response
+      const jsonResponse = JSON.parse(response.choices[0].message.content);
+      const importantFiles = jsonResponse.importantFiles;
 
-    if (!Array.isArray(importantFiles)) {
-      throw new Error('AI response format invalid');
-    }
-
-    return files.filter(file => {
-      if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-        return false;
+      if (!Array.isArray(importantFiles)) {
+        throw new Error('AI response format invalid');
       }
-      return importantFiles.includes(file.path);
-    });
 
+      return files.filter(file => {
+        if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
+          return false;
+        }
+        return importantFiles.includes(file.path);
+      });
+    } catch (jsonError) {
+      console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
+      console.log(chalk.yellow('Parsing file paths from text response'));
+      
+      // Fallback: extract file paths from text response
+      const content = response.choices[0].message.content;
+      const extractedPaths = [];
+      
+      // Extract file paths that match the pattern in our file list
+      for (const path of filePaths) {
+        if (content.includes(path)) {
+          extractedPaths.push(path);
+        }
+      }
+      
+      if (extractedPaths.length > 0) {
+        return files.filter(file => {
+          if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
+            return false;
+          }
+          return extractedPaths.includes(file.path);
+        });
+      } else {
+        throw new Error('Could not extract file paths from response');
+      }
+    }
   } catch (error) {
     console.error(chalk.red('AI Filter Error:'), error.message);
     console.log(chalk.yellow('Using fallback filtering'));
@@ -419,8 +445,11 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   } catch (error) {
     console.error('Failed to parse JSON metadata:', error);
     jsonMetadata = { 
+      name: path.basename(filePath),
+      path: filePath,
+      mainPurpose: "Extracted from text analysis",
       error: 'Failed to parse JSON metadata',
-      rawResponse: metadataResponse.choices[0].message.content
+      rawText: metadataResponse.choices[0].message.content.substring(0, 200) + '...' // Include only the first 200 chars
     };
   }
   
@@ -486,9 +515,11 @@ async function generateSummary(openai, analysis) {
   const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
   const response = await createChatCompletion(openai, model, modelType, prompt);
 
-  // Convert JSON response to formatted text
-  const summaryData = JSON.parse(response.choices[0].message.content);
-  const formattedSummary = `This project is a...
+  try {
+    // Try to parse as JSON
+    const summaryData = JSON.parse(response.choices[0].message.content);
+    // Convert JSON response to formatted text
+    const formattedSummary = `This project is a...
 1. **Main purpose and functionality**: ${summaryData.mainPurpose}
 2. **Tech stack and architecture**: ${summaryData.techStack}
 3. **Key components and their interactions**: ${summaryData.keyComponents}
@@ -496,5 +527,10 @@ async function generateSummary(openai, analysis) {
 5. **Code organization and structure**: ${summaryData.codeOrganization}
 Overall, ${summaryData.overall}`;
 
-  return formattedSummary;
+    return formattedSummary;
+  } catch (error) {
+    // If parsing fails, return the original response content
+    console.log('Summary not in JSON format, using text response instead');
+    return response.choices[0].message.content;
+  }
 }
