@@ -483,40 +483,8 @@ async function generateSummary(openai, analysis) {
     File Metadata: ${JSON.stringify(analysis.fileMetadata)}
     Call Hierarchy: ${analysis.callHierarchy}`;
 
-  // Define schema for summary response
-  const summarySchema = {
-    type: "object",
-    properties: {
-      mainPurpose: {
-        type: "string",
-        description: "Main purpose and functionality of the project"
-      },
-      techStack: {
-        type: "string",
-        description: "Tech stack and architecture used"
-      },
-      keyComponents: {
-        type: "string",
-        description: "Key components and their interactions"
-      },
-      notableFeatures: {
-        type: "string",
-        description: "Notable features of the project"
-      },
-      codeOrganization: {
-        type: "string",
-        description: "Code organization and structure" 
-      },
-      overall: {
-        type: "string",
-        description: "Overall summary that ties everything together"
-      }
-    },
-    required: ["mainPurpose", "techStack", "keyComponents", "notableFeatures", "codeOrganization", "overall"]
-  };
-
   const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
-  const response = await createChatCompletion(openai, model, modelType, prompt, summarySchema);
+  const response = await createChatCompletion(openai, model, modelType, prompt);
 
   // Convert JSON response to formatted text
   const summaryData = JSON.parse(response.choices[0].message.content);
