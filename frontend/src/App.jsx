@@ -6,7 +6,7 @@ function App() {
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const path = "http://localhost:5000"
+  const path = "http://localhost:5001"
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
