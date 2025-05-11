@@ -77,6 +77,49 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
   return await openai.chat.completions.create(baseParams);
 }
 
+async function createChatCompletionMultimodal(openai, model, modelType, analysisPrompt, jsonSchema = null) {
+  const baseParams = {
+    model: model,
+    messages: [
+      { 
+        role: "system", 
+        content: [
+          {
+            type: "text",
+            text: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. For formatting the response, Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+          }
+        ]
+      },
+      { 
+        role: "user", 
+        content: [
+          {
+            type: "text",
+            text: analysisPrompt
+          }
+        ]
+      }
+    ],
+    temperature: 0.3,
+    max_tokens: 4000
+  };
+
+  // Add JSON schema if provided for structured output
+  if (jsonSchema) {
+    baseParams.response_format = {
+      type: "json_schema",
+      json_schema: jsonSchema,
+      strict: true
+    };
+  }
+
+  return await openai.chat.completions.create(baseParams);
+}
+
+
+
+
+
 
 
 // New helper to save API call content to a TXT file
@@ -302,7 +345,7 @@ IMPORTANT: Reply only with JSON data. DO NOT use Markdown formatting or any addi
     };
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
-    const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
+    const response = await createChatCompletionMultimodal(openai, model, modelType, prompt, fileListSchema);
     
     try {
       // Parse the JSON response
