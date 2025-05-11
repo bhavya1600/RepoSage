@@ -41,20 +41,20 @@ const IMPORTANT_FILES = [
 ];
 
 
-async function createChatCompletion(openai, model, modelType, analysisPrompt, jsonSchema = null) {
+async function createChatCompletion(openai, model, modelType, analysisPrompt, jsonSchema = null, maxTokens = 4000) {
   const baseParams = {
     model: model,
     messages: [
       { 
         role: "system", 
-        content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. For formatting the response, Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+        content: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Follow user instructions carefully and reply only with the requested format." 
       },
       { 
         role: "user", 
         content: analysisPrompt }
     ],
     temperature: 0.3,
-    
+    max_tokens: maxTokens
   };
 
   // Add JSON schema if provided for structured output
@@ -68,16 +68,13 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
 
   // Add the appropriate max tokens parameter based on model type
   if (modelType === "Reasoning") {
-    baseParams.max_tokens = 4000;
     include_reasoning: false;
-  } else {
-    baseParams.max_tokens = 4000;
-  }
+  } 
 
   return await openai.chat.completions.create(baseParams);
 }
 
-async function createChatCompletionMultimodal(openai, model, modelType, analysisPrompt, jsonSchema = null) {
+async function createChatCompletionMultimodal(openai, model, modelType, analysisPrompt, jsonSchema = null, maxTokens = 4000) {
   const baseParams = {
     model: model,
     messages: [
@@ -86,7 +83,7 @@ async function createChatCompletionMultimodal(openai, model, modelType, analysis
         content: [
           {
             type: "text",
-            text: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. For formatting the response, Use single backticks to highlight wherever needed. Follow user instructions carefully." 
+            text: "You are a senior developer with expertise in code analysis, software architecture, and multiple programming languages. Provide detailed, accurate, and insightful analysis. Follow user instructions carefully and reply only with the requested format." 
           }
         ]
       },
@@ -101,7 +98,7 @@ async function createChatCompletionMultimodal(openai, model, modelType, analysis
       }
     ],
     temperature: 0.3,
-    max_tokens: 4000
+    max_tokens: maxTokens
   };
 
   // Add JSON schema if provided for structured output
@@ -115,11 +112,6 @@ async function createChatCompletionMultimodal(openai, model, modelType, analysis
 
   return await openai.chat.completions.create(baseParams);
 }
-
-
-
-
-
 
 
 // New helper to save API call content to a TXT file
@@ -243,7 +235,7 @@ async function analyzeProjectStructure(openai, repoData, files, readmeContent) {
       console.log(chalk.green('✓ API responses log file deleted'));
     }
   } catch (error) {
-    console.error(chalk.red('Error deleting API responses log file:', error));
+    console.error(chalk.red('Error deleting API responses log file:'), error);
   }
 
   const fileList = files.map(f => f.path).join('\n');
@@ -260,6 +252,8 @@ Please structure your response in the following format:
 4. **Architecture**: Describe the high-level architecture pattern (if identifiable)
 5. **Key Limitations/Constraints**: Note any obvious limitations or constraints
 
+Use single backticks to highlight wherever needed.
+
 Context:
   Provided Metadata:
 ${JSON.stringify(repoData)}
@@ -274,7 +268,7 @@ ${fileList}
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeProjectStructure');
   const response = await createChatCompletion(openai, model, modelType, prompt);
 
-  // // await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
+  await saveApiCallContent("analyzeProjectStructure", response.choices[0].message.content); // Save API response
 
   return response.choices[0].message.content;
 }
@@ -302,6 +296,13 @@ EXCLUDE:
 
 Prioritize files that reveal how data flows through the system and how components interact.
 
+IMPORTANT: Reply only with JSON data that has one key named "importantFiles" and an array of file paths as its value. DO NOT use Markdown formatting/ any backticks or any additional explanation. Just return plaintext JSON data.
+
+Output Example:
+{
+  "importantFiles": ["<path1>", "<path2>", …]
+}
+
 Context:
   Project Type Analysis:
   ${projectUnderstanding}
@@ -309,27 +310,10 @@ Context:
   Provided README:
   ${readmeContent}
 
-  Here is the list of file paths (one per line):
+  Here is the list of file paths:
   ${filePaths.join("\n")}
 
-IMPORTANT: Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
-    Output only the JSON data, nothing else. Return exactly in the following format:
-
-{
-  "importantFiles": ["<path1>", "<path2>", …]
-}
-  
-    Output Example:
-    {
-      'JSON DATA'
-    }
-
-    Bad Output Example:
-    \`\`\`json
-    {
-      'JSON DATA'
-    }
-    \`\`\``;
+`;
 
     // Define schema for file list response
     const fileListSchema = {
@@ -345,14 +329,18 @@ IMPORTANT: Reply only with JSON data. DO NOT use Markdown formatting or any addi
     };
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
-    const response = await createChatCompletionMultimodal(openai, model, modelType, prompt, fileListSchema);
+    const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
+    let content = response.choices[0].message.content;
     
+
     try {
+      // Preprocess response to remove markdown code block indicators
+      console.log("Smart File Filter Response No Formatting: ", content);
+      content = content.replace(/^```json\s*/, '').replace(/\s*```\s*$/, '');
+      await saveApiCallContent("smartFileFilter", content);
       // Parse the JSON response
-      console.log("Smart File Filter Response: ", response.choices[0].message.content);
-      const jsonResponse = JSON.parse(response.choices[0].message.content);
+      const jsonResponse = JSON.parse(content);
       const importantFiles = jsonResponse.importantFiles;
-      console.log("Important Files: ", importantFiles);
 
       if (!Array.isArray(importantFiles)) {
         throw new Error('AI response format invalid');
@@ -452,6 +440,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   ### Overall
   [Provide a brief summary that ties everything together]
 
+  Use single backticks to highlight wherever needed.
     Context:
       File tree:
       ${fileList}
@@ -517,7 +506,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
     Code:
     ${content}
     
-    Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
+    Reply only with JSON data. DO NOT use Markdown formatting/ any backticks or any additional explanation. Just return plaintext JSON data.
     Output only the JSON data, nothing else. 
 
     Output Example:
@@ -525,20 +514,20 @@ async function analyzeCode(openai, filePath, content, fileTree) {
       'JSON DATA'
     }
 
-    Bad Output Example:
-    \`\`\`json
-    {
-      'JSON DATA'
-    }
-    \`\`\`
     `;
 
   const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
- 
+  
+  
   let jsonMetadata;
   try {
+    // Preprocess response to remove markdown code block indicators
+    let responseContent = metadataResponse.choices[0].message.content;
+    responseContent = responseContent.replace(/^```json\s*/, '').replace(/\s*```\s*$/, '');
+    await saveApiCallContent("analyzeCode", responseContent);
+    
     // With structured output, the content should already be valid JSON
-    jsonMetadata = JSON.parse(metadataResponse.choices[0].message.content);
+    jsonMetadata = JSON.parse(responseContent);
   } catch (error) {
     console.error('Failed to parse JSON metadata:', error);
     jsonMetadata = { 
@@ -593,41 +582,34 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
 `;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'analyzeCallHierarchy');
-  const response = await createChatCompletion(openai, model, modelType, prompt);
+  const response = await createChatCompletion(openai, model, modelType, prompt, 5000);
   console.log("Call Hierarchy: ", response.choices[0].message.content);
-  // await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
+  await saveApiCallContent("analyzeCallHierarchy", response.choices[0].message.content);
   return response.choices[0].message.content;
 }
 
 async function generateSummary(openai, analysis) {
-  const prompt = `Provide a summary of this project for a person who wants to understand how this project works and its use. 
+  const prompt = `Provide a comprehensive summary of this project for a person who wants to understand how this project works and its use. 
   Based on the following metadata:
     
     Repository Info: ${JSON.stringify(analysis.repository)}
     Project Understanding: ${analysis.projectUnderstanding}
     File Tree: ${JSON.stringify(analysis.fileTree)}
     File Metadata: ${JSON.stringify(analysis.fileMetadata)}
-    Call Hierarchy: ${analysis.callHierarchy}`;
+    Call Hierarchy: ${analysis.callHierarchy}
+    
+  Please structure your response to include:
+  1. Main purpose and functionality
+  2. Tech stack and architecture
+  3. Key components and their interactions
+  4. Notable features
+  5. Code organization and structure
+  
+  Begin with "This project is a..." and provide a clear, organized summary that would help a developer understand the codebase.`;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
   const response = await createChatCompletion(openai, model, modelType, prompt);
-
-  try {
-    // Try to parse as JSON
-    const summaryData = JSON.parse(response.choices[0].message.content);
-    // Convert JSON response to formatted text
-    const formattedSummary = `This project is a...
-1. **Main purpose and functionality**: ${summaryData.mainPurpose}
-2. **Tech stack and architecture**: ${summaryData.techStack}
-3. **Key components and their interactions**: ${summaryData.keyComponents}
-4. **Notable features**: ${summaryData.notableFeatures}
-5. **Code organization and structure**: ${summaryData.codeOrganization}
-Overall, ${summaryData.overall}`;
-
-    return formattedSummary;
-  } catch (error) {
-    // If parsing fails, return the original response content
-    console.log('Summary not in JSON format, using text response instead');
-    return response.choices[0].message.content;
-  }
+  await saveApiCallContent("generateSummary", response.choices[0].message.content);
+  
+  return response.choices[0].message.content;
 }

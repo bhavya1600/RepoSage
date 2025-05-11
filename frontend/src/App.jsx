@@ -6,7 +6,7 @@ function App() {
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
+  const path = "http://localhost:5000"
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -14,7 +14,7 @@ function App() {
     setLogs("")
 
     try {
-      const response = await fetch('https://repo-sage-backend-2.vercel.app/api/analyze', {
+      const response = await fetch(`${path}/api/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ function App() {
 
   const handleDownload = async () => {
     try {
-      const response = await fetch('https://repo-sage-backend-2.vercel.app/api/download-analysis')
+      const response = await fetch(`${path}/api/download-analysis`)
       if (!response.ok) {
         throw new Error('Failed to download analysis file')
       }

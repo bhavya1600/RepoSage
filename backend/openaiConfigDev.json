@@ -3,32 +3,32 @@
   "configurations": [
     {
       "name": "analyzeProjectStructure",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Reasoning"
     },
     {
       "name": "smartFileFilter",
-      "model": "qwen/qwen2.5-vl-32b-instruct:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Reasoning"
     },
     {
       "name": "summarizeContent",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCode",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Non Reasoning"
     },
     {
       "name": "analyzeCallHierarchy",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Reasoning"
     },
     {
       "name": "generateSummary",
-      "model": "agentica-org/deepcoder-14b-preview:free",
+      "model": "deepseek/deepseek-r1-distill-llama-70b:free",
       "modelType": "Non Reasoning"
     }
   ]
