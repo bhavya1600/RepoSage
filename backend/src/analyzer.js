@@ -142,7 +142,7 @@ export async function analyzeRepository(repoUrl) {
     callHierarchy: ''
   };
 
-  const filesToAnalyze = await smartFileFilter(treeData.tree, projectUnderstanding);
+  const filesToAnalyze = await smartFileFilter(treeData.tree, projectUnderstanding, readmeContent);
   console.log(chalk.yellow(`\n📝 Analyzing ${filesToAnalyze.length} relevant files...`));
 
   console.log('File names to analyze:\n' + filesToAnalyze.map(file => file.path).join('\n'));
@@ -236,7 +236,7 @@ ${fileList}
   return response.choices[0].message.content;
 }
 
-async function smartFileFilter(files, projectUnderstanding) {
+async function smartFileFilter(files, projectUnderstanding, readmeContent) {
   const openai = new OpenAI({ baseURL: 'https://openrouter.ai/api/v1', apiKey: process.env.OPENROUTER_API_KEY });
   const filePaths = files.map(f => f.path);
 
@@ -260,17 +260,33 @@ EXCLUDE:
 Prioritize files that reveal how data flows through the system and how components interact.
 
 Context:
-Project Type Analysis:
-${projectUnderstanding}
+  Project Type Analysis:
+  ${projectUnderstanding}
 
-Here is the list of file paths (one per line):
-${filePaths.join("\n")}
+  Provided README:
+  ${readmeContent}
 
-IMPORTANT: Return exactly in the following format:
+  Here is the list of file paths (one per line):
+  ${filePaths.join("\n")}
+
+IMPORTANT: Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
+    Output only the JSON data, nothing else. Return exactly in the following format:
 
 {
   "importantFiles": ["<path1>", "<path2>", …]
-}`;
+}
+  
+    Output Example:
+    {
+      'JSON DATA'
+    }
+
+    Bad Output Example:
+    \`\`\`json
+    {
+      'JSON DATA'
+    }
+    \`\`\``;
 
     // Define schema for file list response
     const fileListSchema = {
@@ -440,13 +456,41 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   File tree:
   ${fileList}
   
-  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information.
+  Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. 
   
-  Code:
-  ${content}
-  `;
+  Format template:
+    {
+      "name": "",
+      "path": "",
+      "imports": [],
+      "mainPurpose": "",
+      "type": "",
+      "functions": [{"name": "", "purpose": "", "input": "", "output": ""}],
+      "exports": [],
+      "dependencies": [],
+      "finalReturnType(s)" : ""
+    }
 
-  const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt, metadataSchema);
+    Code:
+    ${content}
+    
+    Reply only with JSON data. DO NOT use Markdown formatting or any additional explanation. Just return plaintext JSON data.
+    Output only the JSON data, nothing else. 
+
+    Output Example:
+    {
+      'JSON DATA'
+    }
+
+    Bad Output Example:
+    \`\`\`json
+    {
+      'JSON DATA'
+    }
+    \`\`\`
+    `;
+
+  const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
  
   let jsonMetadata;
   try {
