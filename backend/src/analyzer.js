@@ -331,6 +331,12 @@ Context:
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
     const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
     let content = response.choices[0].message.content;
+    // Try to extract JSON from the response using regex
+    // This will find content that starts with { and ends with }, capturing everything in between
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      content = jsonMatch[0];
+    }
     
 
     try {
