@@ -154,53 +154,41 @@ body {
 
 .button-group {
   display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-.button-group button {
-  padding: 8px 16px;
+.submit-button, .download-button, .cancel-button {
+  padding: 10px 20px;
+  font-size: 16px;
   border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 0 8px;
+  transition: all 0.2s ease;
 }
 
 .submit-button {
-  background-color: var(--primary-color);
+  background-color: #4a6cf7;
   color: white;
 }
 
-.submit-button:hover {
-  background-color: #0256b4;
+.submit-button:hover:not(:disabled) {
+  background-color: #3a5ce5;
 }
 
-.submit-button:disabled {
-  background-color: var(--border-color);
-  color: var(--placeholder-color);
-  cursor: not-allowed;
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  font-weight: bold;
+}
+
+.cancel-button:hover {
+  background-color: #d32f2f;
 }
 
 .download-button {
+  background-color: #4CAF50;
   color: white;
-}
-
-.download-button.inactive {
-  background-color: var(--border-color);
-  color: var(--placeholder-color);
-  cursor: not-allowed;
-}
-
-.download-button.active {
-  background-color: var(--success-color);
-  cursor: pointer;
-}
-
-.download-button.active:hover {
-  background-color: #22863a;
 }
 
 .output-container {
