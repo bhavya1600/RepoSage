@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from './supabaseClient' // Import Supabase client
 import './App.css'
 
 function App() {
@@ -6,9 +7,90 @@ function App() {
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(false) // For auth operations
+
+  // Auth state
+  const [session, setSession] = useState(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
   const path = "http://localhost:5000"
+
+  useEffect(() => {
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    // Listen for auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session)
+      }
+    )
+
+    return () => {
+      // Cleanup listener
+      if (authListener && authListener.subscription) {
+        authListener.subscription.unsubscribe()
+      }
+    }
+  }, [])
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setIsAuthLoading(true)
+    setLogs("")
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      // Session will be set by onAuthStateChange
+    } catch (error) {
+      setLogs(`Login Error: ${error.message}\n`)
+      console.error('Login error:', error)
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
+
+  const handleSignup = async (e) => {
+    e.preventDefault()
+    setIsAuthLoading(true)
+    setLogs("")
+    try {
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) throw error
+      setLogs("Signup successful! Please check your email to confirm your account if email confirmation is enabled.\n")
+      // Session will be set by onAuthStateChange after email confirmation if enabled
+    } catch (error) {
+      setLogs(`Signup Error: ${error.message}\n`)
+      console.error('Signup error:', error)
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    setIsAuthLoading(true)
+    setLogs("")
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      // Session will be nulled by onAuthStateChange
+    } catch (error) {
+      setLogs(`Logout Error: ${error.message}\n`)
+      console.error('Logout error:', error)
+    } finally {
+      setIsAuthLoading(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!session) {
+      setLogs("Please log in to analyze a repository.\n")
+      return
+    }
     setIsLoading(true)
     setAnalysisComplete(false)
     setLogs("")
@@ -17,7 +99,8 @@ function App() {
       const response = await fetch(`${path}/api/analyze`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}` // Add JWT token
         },
         body: JSON.stringify({ repo })
       })
@@ -26,7 +109,7 @@ function App() {
         const reader = response.body.getReader()
         const decoder = new TextDecoder()
         let done = false
-        let buffer = "" // Add buffer for incomplete chunks
+        let buffer = ""
         
         while(!done) {
           try {
@@ -39,22 +122,18 @@ function App() {
             const chunk = decoder.decode(value, { stream: true })
             buffer += chunk
             
-            // Split buffer into lines, keeping any incomplete line in the buffer
             const lines = buffer.split('\n')
-            buffer = lines.pop() || "" // Keep the last incomplete line in buffer
+            buffer = lines.pop() || ""
             
             for (const line of lines) {
               const trimmedLine = line.trim()
               if (trimmedLine.startsWith('LOG:')) {
-                // This is a console log
                 const logMessage = trimmedLine.substring(4)
                 setLogs(prev => prev + logMessage + '\n')
               } else if (trimmedLine === 'ANALYSIS_COMPLETE') {
-                // Analysis is complete and file is ready
                 setAnalysisComplete(true)
                 setLogs(prev => prev + "✅ Analysis complete! Click the Download button to get the results.\n")
               } else if (trimmedLine) {
-                // Any other non-empty line goes to logs
                 setLogs(prev => prev + trimmedLine + '\n')
               }
             }
@@ -65,7 +144,6 @@ function App() {
           }
         }
         
-        // Process any remaining content in buffer
         if (buffer.trim()) {
           setLogs(prev => prev + buffer.trim() + '\n')
         }
@@ -82,17 +160,27 @@ function App() {
   }
 
   const handleDownload = async () => {
+    if (!session) {
+      setLogs("Please log in to download analysis results.\n")
+      return
+    }
     try {
-      const response = await fetch(`${path}/api/download-analysis`)
+      // TODO: Update this to fetch user-specific analysis later
+      const response = await fetch(`${path}/api/download-analysis`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}` // Add JWT token
+        }
+      })
       if (!response.ok) {
-        throw new Error('Failed to download analysis file')
+        const errorData = await response.json().catch(() => ({ detail: 'Failed to download analysis file' }));
+        throw new Error(errorData.detail || 'Failed to download analysis file');
       }
       
       const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'analysis_results.md'
+      a.download = 'analysis_results.md' // May need to change if filename becomes dynamic
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -103,10 +191,76 @@ function App() {
     }
   }
 
+  if (!session) {
+    return (
+      <div className="app-container auth-container">
+        <header className="app-header">
+          <h1>RepoSage</h1>
+          <p className="subtitle">Login or Signup to continue</p>
+        </header>
+        <form onSubmit={handleLogin} className="auth-form">
+          <h2>Login</h2>
+          <input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            required={true}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Your password"
+            value={password}
+            required={true}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" disabled={isAuthLoading}>
+            {isAuthLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <hr className="auth-divider" />
+        <form onSubmit={handleSignup} className="auth-form">
+          <h2>Sign Up</h2>
+          <input
+            type="email"
+            placeholder="Your email"
+            value={email}
+            required={true}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Your password"
+            value={password}
+            required={true}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" disabled={isAuthLoading}>
+            {isAuthLoading ? 'Signing up...' : 'Sign Up'}
+          </button>
+        </form>
+        {logs && (
+          <div className="output-section" style={{ marginTop: '20px' }}>
+            <h3>Status</h3>
+            <div className="console-output">
+              <pre>{logs}</pre>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>RepoSage</h1>
+        <div className="user-info">
+          <span>Logged in as: {session.user.email}</span>
+          <button onClick={handleLogout} disabled={isAuthLoading} className="logout-button">
+            {isAuthLoading ? 'Logging out...' : 'Logout'}
+          </button>
+        </div>
         <p className="subtitle">Generate comprehensive analysis for any GitHub repository</p>
       </header>
 
@@ -137,7 +291,7 @@ function App() {
               type="button"
               onClick={handleDownload}
               className={`download-button ${analysisComplete ? 'active' : 'inactive'}`}
-              disabled={!analysisComplete}
+              disabled={!analysisComplete || isLoading}
             >
               Download Results
             </button>

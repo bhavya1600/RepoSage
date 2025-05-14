@@ -187,6 +187,7 @@ export async function analyzeRepository(repoUrl) {
     console.log(chalk.yellow(`\n[${index + 1}/${filesToAnalyze.length}] Analyzing: ${file.path}`));
     
     console.log(chalk.gray('  ↳ Fetching file content...'));
+    console.log(chalk.gray(`  ↳ Full file path: ${file.path}`));
     const { data: fileContent } = await octokit.rest.repos.getContent({
       owner,
       repo,
@@ -356,7 +357,8 @@ Context:
         if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
           return false;
         }
-        return importantFiles.includes(file.path);
+        return importantFiles;
+        // return importantFiles.includes(file.path);
       });
     } catch (jsonError) {
       console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
@@ -595,23 +597,23 @@ async function analyzeCallHierarchy(openai, fileMetadata, projectUnderstandiong)
 }
 
 async function generateSummary(openai, analysis) {
-  const prompt = `Provide a comprehensive summary of this project for a person who wants to understand how this project works and its use. 
-  Based on the following metadata:
+  const prompt = `Provide a comprehensive summary of this github repository for a person who wants to understand how this project works and its use. Please structure your response to include:
+  
+  1. Main purpose and functionality [Describe what the project does and its primary goals]
+  2. Tech stack and architecture [List the programming languages, frameworks, libraries, and overall system design]
+  3. Key components and their interactions [Explain the main modules/components and how they communicate with each other]
+  4. Notable features [Highlight unique or important capabilities of the project]
+  5. Code organization and structure [Describe how the codebase is organized, including folder structure and design patterns]
+  
+  Begin with "This project is a..." and provide a clear, organized summary that would help a developer understand the codebase.
+  For more context, based on the following metadata:
     
     Repository Info: ${JSON.stringify(analysis.repository)}
-    Project Understanding: ${analysis.projectUnderstanding}
     File Tree: ${JSON.stringify(analysis.fileTree)}
     File Metadata: ${JSON.stringify(analysis.fileMetadata)}
     Call Hierarchy: ${analysis.callHierarchy}
-    
-  Please structure your response to include:
-  1. Main purpose and functionality
-  2. Tech stack and architecture
-  3. Key components and their interactions
-  4. Notable features
-  5. Code organization and structure
-  
-  Begin with "This project is a..." and provide a clear, organized summary that would help a developer understand the codebase.`;
+    Project Understanding: ${analysis.projectUnderstanding}
+  `;
 
   const { model, modelType } = config.configurations.find(c => c.name === 'generateSummary');
   const response = await createChatCompletion(openai, model, modelType, prompt);
