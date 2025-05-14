@@ -23,7 +23,7 @@ const SKIP_FILES = [
   '.css', '.scss', '.less',
   '.svg', '.png', '.jpg', '.jpeg', '.gif', '.ico',
   '.json', '.lock',
-  '.txt',
+  '.txt', '.md', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
   'LICENSE', 'CHANGELOG',
   '.gitignore', '.env.example',
   '.eslintrc', '.prettierrc',
@@ -53,8 +53,9 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
         role: "user", 
         content: analysisPrompt }
     ],
-    temperature: 0.3,
-    max_tokens: maxTokens
+    temperature: 0.1,
+    max_tokens: maxTokens,
+    reasoning: {"exclude" : true}
   };
 
   // Add JSON schema if provided for structured output
@@ -68,7 +69,8 @@ async function createChatCompletion(openai, model, modelType, analysisPrompt, js
 
   // Add the appropriate max tokens parameter based on model type
   if (modelType === "Reasoning") {
-    include_reasoning: false;
+    // baseParams.reasoning = {"exclude" : true}
+    // baseParams.include_reasoning = false;
   } 
 
   return await openai.chat.completions.create(baseParams);
@@ -97,7 +99,7 @@ async function createChatCompletionMultimodal(openai, model, modelType, analysis
         ]
       }
     ],
-    temperature: 0.3,
+    temperature: 0.1,
     max_tokens: maxTokens
   };
 
@@ -146,6 +148,9 @@ export async function analyzeRepository(repoUrl) {
   console.log(chalk.green('✓ File tree fetched'));
 
   const fileTree = buildFileTree(treeData.tree);
+  await saveApiCallContent("fileTree raw", treeData.tree);
+  await saveApiCallContent("fileTree processed", fileTree);
+  console.log("File Tree: ", fileTree);
   
   // New: Get README file content if exists
   let readmeContent = "No Readme file found";
@@ -279,7 +284,7 @@ async function smartFileFilter(files, projectUnderstanding, readmeContent) {
   const filePaths = files.map(f => f.path);
 
   try {
-    const prompt = `Analyze the project structure and identify the MOST CRITICAL files for understanding the core functionality and execution flow of this codebase.
+    const prompt = `Analyze the project structure and very smartly, identify the MOST CRITICAL files for understanding the core functionality and execution flow of this codebase.
 
 Focus on:
 1. Entry points (main files that start the application)
@@ -287,13 +292,6 @@ Focus on:
 3. Key utility/helper files that are frequently imported
 4. Configuration files that define the application structure
 5. Files that connect different parts of the application
-
-EXCLUDE:
-- Documentation files (.md)
-- Test files
-- Asset files (images, fonts, etc.)
-- Build configuration files
-- Files with minimal code or boilerplate
 
 Prioritize files that reveal how data flows through the system and how components interact.
 
@@ -303,6 +301,8 @@ Output Example:
 {
   "importantFiles": ["<path1>", "<path2>", …]
 }
+
+REMEMBER: NO ADDITIONAL EXPLANATION OR ANYTHING ELSE. JUST THE JSON DATA.
 
 Context:
   Project Type Analysis:
@@ -316,6 +316,12 @@ Context:
 
 `;
 
+// EXCLUDE:
+// - Documentation files (.md)
+// - Test files
+// - Asset files (images, fonts, PDF, etc.)
+// - Build configuration files
+// - Files with minimal code or boilerplate
     // Define schema for file list response
     const fileListSchema = {
       type: "object",
@@ -339,7 +345,6 @@ Context:
       content = jsonMatch[0];
     }
     
-
     try {
       // Preprocess response to remove markdown code block indicators
       console.log("Smart File Filter Response No Formatting: ", content);
@@ -357,15 +362,46 @@ Context:
         if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
           return false;
         }
-        return importantFiles;
-        // return importantFiles.includes(file.path);
+        // return importantFiles;
+        return importantFiles.includes(file.path);
       });
     } catch (jsonError) {
       console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
       console.log(chalk.yellow('Parsing file paths from text response'));
       
+      // Extract JSON using regex - find the shortest valid JSON object
+      const jsonMatches = content.match(/\{[\s\S]*?\}/g);
+      if (jsonMatches && jsonMatches.length > 0) {
+        // Sort matches by length and try to parse each one, starting with the shortest
+        const sortedMatches = jsonMatches.sort((a, b) => a.length - b.length);
+        
+        for (const match of sortedMatches) {
+          try {
+            const parsedJson = JSON.parse(match);
+            if (parsedJson.importantFiles && Array.isArray(parsedJson.importantFiles)) {
+              console.log("Found valid JSON with importantFiles:", match);
+              return files.filter(file => {
+                if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
+                  return false;
+                }
+                return parsedJson.importantFiles.includes(file.path);
+              });
+            }
+          } catch (e) {
+            console.log("Invalid JSON match:", match);
+            // Continue to next match if parsing fails
+          }
+        }
+      }
+      
+      // If we get here, we couldn't find a valid JSON with importantFiles
+      console.log("No valid JSON with importantFiles found in response");
+      
+      // Prepare for fallback text extraction
+      const filePaths = files.map(f => f.path);
+      await saveApiCallContent("smartFileFilter-JSON-Error", filePaths);
       // Fallback: extract file paths from text response
-      const content = response.choices[0].message.content;
+      // const content = response.choices[0].message.content;
       const extractedPaths = [];
       console.log("Extracted Paths: ", extractedPaths);
       
@@ -491,37 +527,30 @@ async function analyzeCode(openai, filePath, content, fileTree) {
 
   // Second prompt for JSON metadata with structured output
   const metadataPrompt = `
-  Given the project filestructure this code belongs to (for more context):
-
-  File tree:
-  ${fileList}
-  
   Analyze this code file (${filePath}) and provide a JSON structure containing essential technical information. 
-  
-  Format template:
-    {
-      "name": "",
-      "path": "",
-      "imports": [],
-      "mainPurpose": "",
-      "type": "",
-      "functions": [{"name": "", "purpose": "", "input": "", "output": ""}],
-      "exports": [],
-      "dependencies": [],
-      "finalReturnType(s)" : ""
-    }
 
-    Code:
-    ${content}
-    
-    Reply only with JSON data. DO NOT use Markdown formatting/ any backticks or any additional explanation. Just return plaintext JSON data.
-    Output only the JSON data, nothing else. 
+  IMPORTANT: Reply only with JSON data. DO NOT use Markdown formatting/ any backticks or any additional explanation. Just return plaintext JSON data.
 
-    Output Example:
-    {
-      'JSON DATA'
-    }
+  STRICTLY follow this Output Format template:
+  {
+    "name": "",
+    "path": "",
+    "imports": [],
+    "mainPurpose": "",
+    "type": "",
+    "functions": [{"name": "", "purpose": "", "input": "", "output": ""}],
+    "exports": [],
+    "dependencies": [],
+    "finalReturnType(s)" : ""
+  }
 
+  Code to analyze:
+  ${content}
+
+  You are also provided with the project filestructure this code belongs to (for more context):
+
+  File tree of the project:
+  ${fileList}
     `;
 
   const metadataResponse = await createChatCompletion(openai, model, modelType, metadataPrompt);
@@ -531,7 +560,15 @@ async function analyzeCode(openai, filePath, content, fileTree) {
   try {
     // Preprocess response to remove markdown code block indicators
     let responseContent = metadataResponse.choices[0].message.content;
-    responseContent = responseContent.replace(/^```json\s*/, '').replace(/\s*```\s*$/, '');
+    responseContent = responseContent.replace(/^```json\s*/, '').replace(/\s*```\s*$/, '').replace(/\\"/g, '"');    
+    // Check for and extract JSON if it's wrapped in other text
+    const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      responseContent = jsonMatch[0];
+    }
+    
+    // Additional cleanup for common formatting issues
+    responseContent = responseContent.trim();
     await saveApiCallContent("analyzeCode", responseContent);
     
     // With structured output, the content should already be valid JSON
@@ -543,7 +580,7 @@ async function analyzeCode(openai, filePath, content, fileTree) {
       path: filePath,
       mainPurpose: "Extracted from text analysis",
       error: 'Failed to parse JSON metadata',
-      rawText: metadataResponse.choices[0].message.content.substring(0, 200) + '...' // Include only the first 200 chars
+      rawText: metadataResponse.choices[0].message.content // Include only the first 200 chars
     };
   }
   

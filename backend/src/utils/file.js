@@ -1,11 +1,11 @@
 import { writeFile } from 'fs/promises';
 
-export async function saveToFile(filename, analysis) {
+export async function saveToFile(filePath, analysis) {
   // Create base GitHub URL for the repository
   const repoUrl = `https://github.com/${analysis.repository.owner.login}/${analysis.repository.name}`;
   const branch = analysis.repository.default_branch;
 
-  // Generate a unique ID for the files
+  // Generate a unique ID for differentiating the JSON file if needed, or for other purposes
   const uniqueId = Date.now() + '_' + Math.random().toString(36).substring(2, 10);
   
   // Updated: Remove leading "root/" from file paths before encoding.
@@ -62,17 +62,14 @@ ${analysis.fileAnalysis.map(file => `
 ## ✒️ Project Summary 
 ${analysis.summary}`;
 
-  // Get base filename without path
-  const baseFilename = filename.split('/').pop();
-  
-  // Create filenames with unique ID
-  const mdFilename = `/tmp/${baseFilename.replace('.md', '')}_${uniqueId}.md`;
-  const jsonFilename = mdFilename.replace('.md', '.json');
-  
-  // Save markdown file
-  await writeFile(mdFilename, mdContent, 'utf8');
+  // Save markdown file to the exact filePath provided
+  await writeFile(filePath, mdContent, 'utf8');
 
-  // Save the JSON metadata separately
+  // For the JSON file, we can derive its name from the filePath if we still want to save it
+  // For now, api/index.js only uses the markdown content.
+  // If JSON is needed later by the API, this part can be adjusted.
+  const jsonFilename = filePath.replace(/\.md$/, `_${uniqueId}.json`);
+  
   const jsonContent = {
     repository: {
       name: analysis.repository.name,
@@ -92,9 +89,9 @@ ${analysis.summary}`;
 
   await writeFile(jsonFilename, JSON.stringify(jsonContent, null, 2), 'utf8');
   
-  // Return the generated filenames
+  // Return the path of the markdown file we wrote to, and the generated JSON filename
   return {
-    mdFilename,
+    mdFilename: filePath, // This is the path api/index.js expects to read
     jsonFilename
   };
 }

@@ -6,6 +6,7 @@ function App() {
   const [repo, setRepo] = useState("")
   const [logs, setLogs] = useState("")
   const [analysisComplete, setAnalysisComplete] = useState(false)
+  const [currentAnalysisFilename, setCurrentAnalysisFilename] = useState(null) // To store the filename of the latest analysis
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(false) // For auth operations
 
@@ -130,9 +131,11 @@ function App() {
               if (trimmedLine.startsWith('LOG:')) {
                 const logMessage = trimmedLine.substring(4)
                 setLogs(prev => prev + logMessage + '\n')
-              } else if (trimmedLine === 'ANALYSIS_COMPLETE') {
+              } else if (trimmedLine.startsWith('ANALYSIS_COMPLETE:')) {
+                const completedFilename = trimmedLine.substring('ANALYSIS_COMPLETE:'.length);
+                setCurrentAnalysisFilename(completedFilename); // Store the filename
                 setAnalysisComplete(true)
-                setLogs(prev => prev + "✅ Analysis complete! Click the Download button to get the results.\n")
+                setLogs(prev => prev + `✅ Analysis complete for ${completedFilename}! Click Download to get results.\n`)
               } else if (trimmedLine) {
                 setLogs(prev => prev + trimmedLine + '\n')
               }
@@ -164,11 +167,15 @@ function App() {
       setLogs("Please log in to download analysis results.\n")
       return
     }
+    if (!currentAnalysisFilename) {
+      setLogs("No analysis file available to download. Please complete an analysis first.\n")
+      return;
+    }
+
     try {
-      // TODO: Update this to fetch user-specific analysis later
-      const response = await fetch(`${path}/api/download-analysis`, {
+      const response = await fetch(`${path}/api/download-analysis?filename=${encodeURIComponent(currentAnalysisFilename)}`, {
         headers: {
-          'Authorization': `Bearer ${session.access_token}` // Add JWT token
+          'Authorization': `Bearer ${session.access_token}`
         }
       })
       if (!response.ok) {
@@ -180,7 +187,7 @@ function App() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'analysis_results.md' // May need to change if filename becomes dynamic
+      a.download = currentAnalysisFilename // Use the actual filename for download
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)

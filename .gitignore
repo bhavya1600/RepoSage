@@ -17,3 +17,5 @@ analysis_results.md
 
 # Ignore .bolt file
 .bolt
+
+backend/temp_analysis*.json

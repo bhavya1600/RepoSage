@@ -38,9 +38,6 @@ const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supa
 
 const app = express();
 
-// Store the latest analysis file path - THIS WILL BE REVISITED FOR MULTI-USER SUPPORT
-let latestAnalysisFile = null;
-
 // Function to strip ANSI color codes
 const stripAnsiCodes = (str) => {
     return str.replace(/\u001b\[\d+m/g, '');
@@ -85,97 +82,145 @@ app.get('/', (req, res) => {
 
 // Endpoint to serve the analysis file - PROTECTED
 app.get('/api/download-analysis', requireAuth, async (req, res) => {
+    if (!supabase) return res.status(500).json({ error: 'Supabase not initialized' });
+    const { filename } = req.query;
+    const userId = req.user.id;
+
+    if (!filename) {
+        return res.status(400).json({ error: 'Filename query parameter is required.' });
+    }
+
     try {
-        // TODO: This needs to be user-specific. For now, it uses the global var.
-        if (!latestAnalysisFile) {
-            return res.status(404).json({ error: 'No analysis file available. Please run an analysis first.' });
+        const { data: analysisRecord, error: dbError } = await supabase
+            .from('analyses')
+            .select('storage_path, file_name') // Select file_name for content disposition
+            .eq('user_id', userId)
+            .eq('file_name', filename)
+            .single();
+
+        if (dbError) throw dbError;
+        if (!analysisRecord) {
+            return res.status(404).json({ error: 'Analysis file not found or access denied.' });
         }
-        
+
+        const { data: fileData, error: downloadError } = await supabase.storage
+            .from('analysis-results')
+            .download(analysisRecord.storage_path);
+
+        if (downloadError) throw downloadError;
+
         res.setHeader('Content-Type', 'text/markdown');
-        const filename = path.basename(latestAnalysisFile);
-        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
-        
-        const fileContent = await fs.readFile(latestAnalysisFile, 'utf-8');
-        res.send(fileContent);
+        res.setHeader('Content-Disposition', `attachment; filename="${analysisRecord.file_name}"`);
+        // fileData is a Blob, convert to Buffer to send
+        const buffer = Buffer.from(await fileData.arrayBuffer());
+        res.send(buffer);
+
     } catch (error) {
-        console.error('Error serving analysis file for user:', req.user.id, error);
-        res.status(500).json({ error: 'Failed to download analysis file' });
+        console.error(`Error downloading analysis file ${filename} for user ${userId}:`, error);
+        res.status(500).json({ error: `Failed to download analysis file: ${error.message}` });
     }
 });
 
 // Endpoint to analyze GitHub repository - PROTECTED
 app.post('/api/analyze', requireAuth, async (req, res) => {
+    if (!supabase) return res.status(500).json({ error: 'Supabase not initialized' });
     const { repo, githubToken, openaiToken } = req.body;
-    const userId = req.user.id; // Get authenticated user ID
-    
-    // Validate repo URL (only required field)
-    if (!repo) {
-        return res.status(400).json({ error: 'Repository URL is required' });
-    }
-    
-    // Set up streaming response
+    const userId = req.user.id;
+
+    if (!repo) return res.status(400).json({ error: 'Repository URL is required' });
+
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Transfer-Encoding', 'chunked');
-    
     const originalConsoleLog = console.log;
-    
+
+    // Define a temporary local path for the analysis file, ideally in /tmp for serverless
+    // For now, let's use a name that we will read and then delete.
+    // IMPORTANT: `saveToFile` needs to handle this path correctly or be refactored.
+    const tempLocalFilename = `temp_analysis_${Date.now()}.md`;
+    // On Vercel, you MUST write to /tmp. For local, this will be relative.
+    const tempLocalPath = process.env.VERCEL ? path.join('/tmp', tempLocalFilename) : tempLocalFilename; 
+
     try {
         process.env.GITHUB_TOKEN = githubToken || process.env.GITHUB_TOKEN;
         process.env.OPENAI_API_KEY = openaiToken || process.env.OPENAI_API_KEY;
         
         console.log = (message) => {
             try {
-                if (typeof message === 'string') {
-                    const cleanMessage = stripAnsiCodes(message);
-                    res.write('LOG:' + cleanMessage + '\n');
-                } else {
-                    let jsonMessage;
-                    try {
-                        jsonMessage = JSON.stringify(message);
-                    } catch (jsonError) {
-                        jsonMessage = String(message);
-                    }
-                    res.write('LOG:' + jsonMessage + '\n');
-                }
+                const cleanMessage = stripAnsiCodes(typeof message === 'string' ? message : JSON.stringify(message));
+                res.write('LOG:' + cleanMessage + '\n');
                 originalConsoleLog(message);
             } catch (error) {
                 originalConsoleLog('Error writing to response for user:', userId, error);
             }
         };
         
-        try {
-            console.log(`User ${userId} starting repository analysis for ${repo}...`);
-            const analysis = await analyzeRepository(repo);
-            
-            // TODO: Save results to Supabase Storage and link to user
-            console.log('Saving analysis results (temporarily local)... ');
-            const { mdFilename } = await saveToFile('analysis_results.md', analysis); // This needs to change
-            
-            latestAnalysisFile = mdFilename; // TEMPORARY
-            
-            res.write('ANALYSIS_COMPLETE\n');
-            console.log = originalConsoleLog;
-            res.end();
-        } catch (analysisError) {
-            // Ensure original console.log is restored before throwing or logging further
-            console.log = originalConsoleLog;
-            originalConsoleLog(`Analysis error for user ${userId} on repo ${repo}:`, analysisError);
-            // The error will be caught by the outer catch block
-            throw new Error(`Analysis failed: ${analysisError.message}`); 
+        console.log(`User ${userId} starting repository analysis for ${repo}...`);
+        console.log(`DEBUG: User object from requireAuth: ${JSON.stringify(req.user, null, 2)}`);
+        console.log(`DEBUG: User role: ${req.user.role}`);
+        const analysisResultObject = await analyzeRepository(repo);
+
+        console.log('Formatting analysis results...');
+        // Use the designated tempLocalPath for saveToFile
+        await saveToFile(tempLocalPath, analysisResultObject);
+        const markdownContent = await fs.readFile(tempLocalPath, 'utf-8');
+        
+        const repoName = path.basename(repo.replace(/\.git$/, ''));
+        const uniqueFileName = `analysis_${Date.now()}_${repoName}.md`;
+        const storagePath = `${userId}/${uniqueFileName}`;
+
+        console.log(`Uploading analysis to Supabase Storage at ${storagePath}...`);
+        console.log(`DEBUG: About to upload. User ID: ${userId}, Role: ${req.user.role}`);
+        const { error: uploadError } = await supabase.storage
+            .from('analysis-results')
+            .upload(storagePath, markdownContent, {
+                contentType: 'text/markdown',
+                upsert: false // Don't upsert, each analysis should be unique
+            });
+
+        if (uploadError) throw new Error(`Supabase Storage upload error: ${uploadError.message}`);
+        console.log('Upload successful. Recording analysis in database...');
+
+        const { data: dbRecord, error: dbInsertError } = await supabase
+            .from('analyses')
+            .insert({
+                user_id: userId,
+                repository_url: repo,
+                file_name: uniqueFileName,
+                storage_path: storagePath
+            })
+            .select(); // select() to get the inserted record, useful for analysis_id if needed
+
+        if (dbInsertError) {
+            // Attempt to delete the orphaned file from storage if DB insert fails
+            console.error('Database insert error, attempting to delete orphaned storage file:', dbInsertError);
+            await supabase.storage.from('analysis-results').remove([storagePath]);
+            throw new Error(`Database insert error: ${dbInsertError.message}`);
         }
         
+        console.log('Analysis recorded in database.');
+        res.write(`ANALYSIS_COMPLETE:${uniqueFileName}\n`); // Send filename to client
+
     } catch (error) {
-        // Ensure console.log is restored here too, in case of errors before analysis try block
-        console.log = originalConsoleLog;
-        originalConsoleLog('Error during analysis request for user:', userId, error); 
+        console.log = originalConsoleLog; // Restore console before logging final error
+        originalConsoleLog(`Error during analysis for user ${userId}, repo ${repo}:`, error);
         try {
             res.write(`LOG:Error during analysis: ${error.message}\n`);
-            res.end();
         } catch (writeError) {
             originalConsoleLog('Error sending error message to client for user:', userId, writeError);
-            if (!res.headersSent) {
-                res.status(500).json({ error: error.message });
+        }
+    } finally {
+        console.log = originalConsoleLog; // Ensure console.log is always restored
+        // Clean up the temporary local file
+        try {
+            await fs.unlink(tempLocalPath);
+            originalConsoleLog('Temporary analysis file deleted:', tempLocalPath);
+        } catch (cleanupError) {
+            if (cleanupError.code !== 'ENOENT') { // ENOENT means file doesn't exist, which is fine
+                originalConsoleLog('Error deleting temporary analysis file:', tempLocalPath, cleanupError);
             }
+        }
+        if (!res.writableEnded) {
+            res.end();
         }
     }
 });
