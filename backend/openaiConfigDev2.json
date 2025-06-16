@@ -1,0 +1,36 @@
+{
+  "MAX_TOKENS_PER_REQUEST": 128000,
+  "configurations": [
+    {
+      "name": "analyzeProjectStructure",
+      "model": "openai/gpt-4.1",
+      "modelType": "Reasoning"
+    },
+    {
+      "name": "smartFileFilter",
+      "model": "openai/gpt-4.1",
+      "modelType": "Reasoning"
+    },
+    {
+      "name": "summarizeContent",
+      "model": "openai/gpt-4.1",
+      "modelType": "Non Reasoning"
+    },
+    {
+      "name": "analyzeCode",
+      "model": "openai/gpt-4.1",
+      "modelType": "Non Reasoning"
+    },
+    {
+      "name": "analyzeCallHierarchy",
+      "model": "openai/gpt-4.1",
+      "modelType": "Reasoning"
+    },
+    {
+      "name": "generateSummary",
+      "model": "openai/gpt-4.1",
+      "modelType": "Non Reasoning"
+    }
+  ]
+}
+  

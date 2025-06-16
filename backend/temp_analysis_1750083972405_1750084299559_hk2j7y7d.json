@@ -1,0 +1,385 @@
+{
+  "repository": {
+    "name": "ZhongYi-NER2",
+    "description": "通过收集数据去训练下游的中医文本NER标注模型，在上游使用了Bert作为特征提取器，减少了下游模型的数据需求。",
+    "language": "Python"
+  },
+  "projectUnderstanding": "1. **Project Overview**: This project is a Named Entity Recognition (NER) model specifically designed for traditional Chinese medical texts. It uses BERT as an encoder to reduce data requirements for downstream tasks.\n\n2. **Main Components**: \n   - `DataFormat/`: Handles data formatting and preparation.\n   - `main.py`: Core application logic.\n   - `test_Modules.py`: Testing framework.\n   - `dataloder.py`: Data loading functionality.\n   - `img/`: Contains project images and diagrams.\n   - `README.md`/`README_EN.md`: Project documentation in Chinese and English.\n\n3. **Tech Stack**: \n   - `Python`: Primary programming language.\n   - `BERT`: Used as the encoder for feature extraction.\n   - `PyTorch`/`TensorFlow`: Likely used for model training (not explicitly mentioned but common in NLP tasks).\n   - `Doccano`: Open-source tool for data annotation.\n\n4. **Architecture**: \n   - The project follows a typical NLP pipeline:\n     1. **Data Preparation**: Data cleaning, formatting, and splitting.\n     2. **Model Training**: Using BERT for encoding and a custom NER model.\n     3. **Evaluation**: Performance assessment on a test dataset.\n\n5. **Key Limitations/Constraints**: \n   - Small dataset size (10,000 samples) which may limit model generalization.\n   - No explicit mention of dependency management (e.g., `requirements.txt`).\n   - Limited to specific entity categories (age, body parts, drug names, prescriptions).",
+  "fileTree": {
+    "name": "root",
+    "type": "directory",
+    "children": {
+      "DataFormat": {
+        "name": "DataFormat",
+        "type": "directory",
+        "children": {
+          "complete.json": {
+            "name": "complete.json",
+            "type": "blob",
+            "children": {}
+          },
+          "complete.txt": {
+            "name": "complete.txt",
+            "type": "blob",
+            "children": {}
+          },
+          "Format.py": {
+            "name": "Format.py",
+            "type": "blob",
+            "children": {}
+          },
+          "NER_Format.py": {
+            "name": "NER_Format.py",
+            "type": "blob",
+            "children": {}
+          },
+          "Split_File.py": {
+            "name": "Split_File.py",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      "img": {
+        "name": "img",
+        "type": "directory",
+        "children": {
+          "loge-1.png": {
+            "name": "loge-1.png",
+            "type": "blob",
+            "children": {}
+          },
+          "Picture1.png": {
+            "name": "Picture1.png",
+            "type": "blob",
+            "children": {}
+          },
+          "Picture2.png": {
+            "name": "Picture2.png",
+            "type": "blob",
+            "children": {}
+          },
+          "Picture3.png": {
+            "name": "Picture3.png",
+            "type": "blob",
+            "children": {}
+          },
+          "wechat_channel.jpg": {
+            "name": "wechat_channel.jpg",
+            "type": "blob",
+            "children": {}
+          }
+        }
+      },
+      ".gitignore": {
+        "name": ".gitignore",
+        "type": "blob",
+        "children": {}
+      },
+      "dataloder.py": {
+        "name": "dataloder.py",
+        "type": "blob",
+        "children": {}
+      },
+      "Example of data labeling.txt": {
+        "name": "Example of data labeling.txt",
+        "type": "blob",
+        "children": {}
+      },
+      "main.py": {
+        "name": "main.py",
+        "type": "blob",
+        "children": {}
+      },
+      "README_EN.md": {
+        "name": "README_EN.md",
+        "type": "blob",
+        "children": {}
+      },
+      "README.md": {
+        "name": "README.md",
+        "type": "blob",
+        "children": {}
+      },
+      "test_generator.py": {
+        "name": "test_generator.py",
+        "type": "blob",
+        "children": {}
+      },
+      "test_Modules.py": {
+        "name": "test_Modules.py",
+        "type": "blob",
+        "children": {}
+      }
+    }
+  },
+  "fileMetadata": [
+    {
+      "path": "DataFormat/Format.py",
+      "metadata": {
+        "name": "Format.py",
+        "path": "DataFormat/Format.py",
+        "imports": [
+          "json",
+          "codecs"
+        ],
+        "mainPurpose": "Processes data files by reading JSON lines and extracting text",
+        "type": "Python script",
+        "functions": [
+          {
+            "name": "__call__",
+            "purpose": "Opens a file, reads each line as JSON, and extracts the 'text' field",
+            "input": "Path (string)",
+            "output": "List of strings"
+          },
+          {
+            "name": "main",
+            "purpose": "Coordinates the file reading and writing process",
+            "input": "None",
+            "output": "None"
+          }
+        ],
+        "exports": [
+          "Openfile",
+          "main"
+        ],
+        "dependencies": [
+          "json",
+          "codecs"
+        ],
+        "finalReturnType(s)": "List of strings"
+      }
+    },
+    {
+      "path": "DataFormat/NER_Format.py",
+      "metadata": {
+        "name": "NER_Format.py",
+        "path": "DataFormat/NER_Format.py",
+        "imports": [
+          "json",
+          "codecs"
+        ],
+        "mainPurpose": "Process and format NER (Named Entity Recognition) data from a JSON file.",
+        "type": "Python script",
+        "functions": [],
+        "exports": [],
+        "dependencies": [
+          "json",
+          "codecs"
+        ],
+        "finalReturnType(s)": "JSON file"
+      }
+    },
+    {
+      "path": "DataFormat/Split_File.py",
+      "metadata": {
+        "name": "Split_File.py",
+        "path": "DataFormat/Split_File.py",
+        "imports": [
+          "json"
+        ],
+        "mainPurpose": "Split a large JSON file into smaller JSON files",
+        "type": "Python script",
+        "functions": [],
+        "exports": [],
+        "dependencies": [
+          "json"
+        ],
+        "finalReturnType(s)": "void"
+      }
+    },
+    {
+      "path": "dataloder.py",
+      "metadata": {
+        "name": "dataloder",
+        "path": "dataloder.py",
+        "imports": [
+          "json",
+          "os",
+          "numpy",
+          "torch",
+          "transformers.BertTokenizer"
+        ],
+        "mainPurpose": "Data loading and preprocessing for BERT-based NER model",
+        "type": "class",
+        "functions": [
+          {
+            "name": "list_find",
+            "purpose": "Finds the starting index of a sublist within a larger list",
+            "input": "list1, list2",
+            "output": "int"
+          },
+          {
+            "name": "seq_padding",
+            "purpose": "Pads sequences to a fixed length",
+            "input": "X, padding=0",
+            "output": "numpy array"
+          },
+          {
+            "name": "DataIndex.__init__",
+            "purpose": "Initializes the DataIndex class with data and batch size",
+            "input": "data, batch_size",
+            "output": "None"
+          },
+          {
+            "name": "DataIndex.__len__",
+            "purpose": "Returns the number of steps for the data loader",
+            "input": "None",
+            "output": "int"
+          },
+          {
+            "name": "DataIndex.__iter__",
+            "purpose": "Generates batches of preprocessed data",
+            "input": "None",
+            "output": "T, N1, N2 (tensors)"
+          }
+        ],
+        "exports": [
+          "DataIndex",
+          "list_find",
+          "seq_padding"
+        ],
+        "dependencies": [
+          "numpy",
+          "torch",
+          "transformers"
+        ],
+        "finalReturnType(s)": "T: numpy array, N1: numpy array, N2: numpy array"
+      }
+    },
+    {
+      "path": "main.py",
+      "metadata": {
+        "name": "main.py",
+        "path": "main.py",
+        "imports": [
+          "numpy as np",
+          "torch",
+          "codecs",
+          "json",
+          "logging",
+          "torch.nn as nn",
+          "tqdm",
+          "torchvision.transforms.Lambda",
+          "torch.optim as optim",
+          "transformers.BertTokenizer",
+          "transformers.BertModel",
+          "transformers.BertConfig",
+          "dataloder.DataIndex",
+          "time",
+          "torch.distributed as dist",
+          "Modules.Email.Email"
+        ],
+        "mainPurpose": "NER model training using BERT",
+        "type": "Python script",
+        "functions": [
+          {
+            "name": "train_epoch",
+            "purpose": "Perform one epoch of model training",
+            "input": "",
+            "output": "loss (float)"
+          },
+          {
+            "name": "extract_items",
+            "purpose": "Extract named entities from input text",
+            "input": "text_in (str)",
+            "output": "set of extracted entities (set)"
+          },
+          {
+            "name": "evaluate",
+            "purpose": "Evaluate model performance on dev data",
+            "input": "",
+            "output": "evaluation message (str)"
+          }
+        ],
+        "exports": [
+          "NER model",
+          "Email module"
+        ],
+        "dependencies": [
+          "numpy",
+          "torch",
+          "codecs",
+          "json",
+          "logging",
+          "tqdm",
+          "torchvision",
+          "transformers",
+          "dataloder",
+          "time",
+          "torch.distributed",
+          "Modules.Email"
+        ],
+        "finalReturnType(s)": "loss (float), set of strings, evaluation message (str)"
+      }
+    },
+    {
+      "path": "test_Modules.py",
+      "metadata": {
+        "name": "test_Modules.py",
+        "path": "test_Modules.py",
+        "mainPurpose": "Extracted from text analysis",
+        "error": "Failed to parse JSON metadata",
+        "rawText": "{\n    \"name\": \"test_Modules.py\",\n    \"path\": \"/ZhongYi-NER/test_Modules.py\",\n    \"imports\": [\"Email\"],\n    \"mainPurpose\": \"Test the Email module functionality\",\n    \"type\": \"Test Script\",\n    \"functions\": [\n        {\n            \"name\": \"Email\",\n            \"purpose\": \"Initialize Email object with receiver\",\n            \"input\": \"receivers=\\\"zhangguoqingself@outlook.com\\\"\",\n            \"output\": \"Email object instance\"\n        },\n        {\n            \"name\": \"generator\",\n            \"purpose\": \"Generate email content\",\n            \"input\": \"text=\\\"这是一封测试邮件\\\", subject=\\\"this is a test message\\\"\",\n            \"output\": \"Generated email content\"\n        },\n        {\n            \"name\": \"send\",\n            \"purpose\": \"Send the generated email\",\n            \"input\": \"\",\n            \"output\": \"Sent email status\"\n        }\n    ],\n    \"exports\": [],\n    \"dependencies\": [\"Modules.Email\"],\n    \"finalReturnType(s)\": \"None\"\n}"
+      }
+    },
+    {
+      "path": "test_generator.py",
+      "metadata": {
+        "name": "test_generator.py",
+        "path": "",
+        "imports": [
+          "DataIndex from dataloder2",
+          "DataLoader from torch.utils.data",
+          "tqdm from tqdm",
+          "codecs",
+          "json"
+        ],
+        "mainPurpose": "Testing data generation and batch processing",
+        "type": "Script",
+        "functions": [],
+        "exports": [],
+        "dependencies": [
+          "dataloder2",
+          "torch",
+          "tqdm",
+          "codecs",
+          "json"
+        ],
+        "finalReturnType(s)": "None"
+      }
+    }
+  ],
+  "callHierarchy": "```plaintext\n🚀 main.py (ENTRY POINT)\n  ┣━━ 📂 train() → Trains the NER model [main.py]\n  ┃   ┣━━ 🔧 train_epoch() → Performs one epoch of training [main.py]\n  ┃   ┃   ┣━━ 🔌 DataIndex.__iter__() → Yields batches of preprocessed data [dataloder.py]\n  ┃   ┃   ┗━━ 💾 model training → Updates model weights\n  ┃   ┗━━ 📊 evaluate() → Evaluates model on dev set [main.py]\n  ┣━━ 🌐 extract_items(text: str) → Extracts entities from text [main.py]\n  ┃   ┣━━ 🔍 data preprocessing → Processes input text for model\n  ┃   ┗━━ 📤 model inference → Returns extracted entities\n  ┗━━ 📂 Data Preparation [DataFormat/]\n      ┣━━ 🔧 Format.py → Processes and formats data [DataFormat/Format.py]\n      ┗━━ 💾 Split_File.py → Splits data into smaller files [DataFormat/Split_File.py]\n\n📂 Dependencies\n  ┣━━ 🔧 dataloder.py → Data loading and preprocessing\n  ┃   ┣━━ 🔌 list_find() → Finds sublists\n  ┃   ┗━━ 💾 seq_padding() → Pads sequences\n  ┣━━ 📂 transformers → BERT model and tokenizer\n  ┗━━ 🔧 torch → Model training and tensor operations\n```\n\n### Key Execution Flow:\n1. **Entry Point**: `main.py` is the main script that orchestrates the entire process.\n2. **Data Preparation**: \n   - `main.py` uses `DataFormat/Format.py` to read and process JSON files.\n   - `DataFormat/Split_File.py` splits large JSON files into manageable sizes.\n3. **Data Loading**:\n   - `dataloder.py` loads and preprocesses data using `DataIndex` class.\n   - `DataIndex.__iter__()` yields batches of data for training.\n4. **Model Training**:\n   - `train_epoch()` in `main.py` handles one epoch of training.\n   - It uses data from `DataIndex` and updates the model.\n5. **Model Evaluation**:\n   - `evaluate()` in `main.py` assesses model performance on the dev set.\n6. **Inference**:\n   - `extract_items()` processes input text and uses the trained model to extract entities.\n\n### Cross-File Calls:\n- `main.py` imports and uses `DataIndex` from `dataloder.py`.\n- `dataloder.py` uses `transformers.BertTokenizer` for tokenization.\n- `main.py` uses functions from `DataFormat/` for data preparation.\n\n### Module Dependencies:\n- `main.py` depends on `dataloder.py` for data handling.\n- `dataloder.py` depends on `transformers` and `torch` for tokenization and tensor operations.\n- `DataFormat/` modules are used by `main.py` for initial data processing.",
+  "fileAnalysis": [
+    {
+      "path": "DataFormat/Format.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `DataFormat/Format.py` file is primarily responsible for reading and processing data from a text file containing JSON-formatted lines. Its main purpose is to extract specific text data from these JSON objects and write it into a new JSON file. The file provides a reusable class `Openfile` for handling file operations and data extraction, along with a `main` function to demonstrate its usage.\n\n### 2. Key functions and their purposes\n\n- **`__call__(self, Path: str) -> list`**:\n  - **Inputs**:\n    - `Path` (str): The file path to the input text file containing JSON lines.\n  - **Processing**: \n    - Opens the file using `codecs.open` with UTF-8 encoding.\n    - Reads each line, parses it as JSON, and extracts the value associated with the key `'text'`.\n    - Collects all extracted text values into a list called `sequence`.\n  - **Output**: \n    - Returns a list of strings, each representing the `'text'` value from the JSON objects in the input file.\n\n- **`main()`**:\n  - **Inputs**: \n    - `path` (str): A hardcoded path to the input file `\"//DataLoader/complete.txt\"`.\n  - **Processing**: \n    - Creates an instance of the `Openfile` class.\n    - Calls the instance with the specified path to get the extracted text data.\n    - Opens a new file `complete.json` for writing.\n    - Writes each string from the extracted data into the new file, followed by a newline character.\n  - **Output**: \n    - A new JSON file named `complete.json` containing the extracted text data.\n\n### 3. Important interactions with other parts of the system\n- The `Openfile` class is designed to be reusable and can be imported and used by other modules in the system.\n- The `main` function demonstrates how to use the `Openfile` class and could potentially be called by other scripts or modules.\n- The file likely interacts with `dataloder.py` or other data processing modules, as it appears to be part of a data processing pipeline.\n\n### 4. Notable features or patterns\n- **Callable Class Pattern**: The `Openfile` class uses the `__call__` method, making its instances callable. This allows for a clean and flexible way to use the class for file processing.\n- **Encoding Handling**: The use of `codecs.open` with UTF-8 encoding ensures proper handling of text files with special characters.\n- **JSON Processing**: The class is specifically designed to work with JSON-formatted lines, making it suitable for processing data in JSON Lines format.\n\n### Overall\nThe `DataFormat/Format.py` file serves as a utility for reading and processing JSON-formatted text files, extracting specific text data, and writing it into a new JSON file. It provides a reusable class with a clean interface and demonstrates its usage through a `main` function. This file is likely part of a larger data processing pipeline, interacting with other modules to prepare data for further processing or analysis."
+    },
+    {
+      "path": "DataFormat/NER_Format.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `NER_Format.py` file is primarily responsible for processing and formatting Named Entity Recognition (NER) training data. It reads raw data from a JSON file, processes it into a structured format, and writes the cleaned data to a new JSON file. Additionally, it tracks character frequencies, which can be used for creating character-level mappings (though this functionality is currently commented out).\n\n### 2. Key functions and their purposes\n\n- **`Reading and processing data`**:\n  - **Inputs**: \n    - `dev_data.json`: A JSON file containing raw NER data.\n  - **Processing**: \n    - Reads each line of the JSON file.\n    - Parses each line into a JSON object.\n    - Extracts the text and its corresponding NER labels.\n    - Constructs a dictionary with the text and its NER annotations.\n    - Appends this dictionary to the `train_data` list.\n    - Counts character frequencies in the text data.\n  - **Output**: \n    - A list of dictionaries (`train_data`) containing formatted NER data.\n    - A dictionary (`chars`) containing character frequencies.\n\n- **`Writing cleaned data`**:\n  - **Inputs**: \n    - `train_data`: The list of formatted NER data.\n  - **Processing**: \n    - Writes the `train_data` to a new JSON file (`dev_data_clean.json`).\n  - **Output**: \n    - A JSON file containing the cleaned and formatted NER data.\n\n- **`Character mapping (commented out)`**:\n  - **Inputs**: \n    - `chars`: A dictionary of character frequencies.\n  - **Processing**: \n    - Filters characters that appear at least twice.\n    - Creates mappings from character IDs to characters and vice versa.\n  - **Output**: \n    - A JSON file containing character mappings (`all_chars.json`).\n\n### 3. Important interactions with other parts of the system\n- **Input**: Reads from `dev_data.json` located in the `data` directory.\n- **Output**: Writes cleaned data to `dev_data_clean.json` in the `data` directory.\n- **Optional Output**: If uncommented, writes character mappings to `all_chars.json` in the `data` directory.\n- **Dependencies**: Uses the `json` and `codecs` libraries for JSON parsing and file operations.\n\n### 4. Notable features or patterns\n- **Data Cleaning**: The script processes raw NER data into a structured format suitable for training models.\n- **Character Frequency Tracking**: Although commented out, the script includes logic to track character frequencies, which is useful for creating character-level embeddings or tokenization.\n- **Efficient Data Handling**: The script processes each JSON line individually, making it suitable for large datasets.\n- **Modular Structure**: The script is designed to be modular, with clear separation between data reading, processing, and writing stages.\n\n### Overall\nThe `NER_Format.py` script is a crucial component in the data preparation pipeline for an NER system. It processes raw data into a clean, structured format and provides additional utilities for character-level processing. This ensures that the data is ready for use in training NER models, with optional support for character-level tokenization."
+    },
+    {
+      "path": "DataFormat/Split_File.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThis script is designed to split a large JSON file (`complete.json`) into smaller, more manageable JSON files. Its primary responsibility is to divide the data into multiple parts based on a specified number of splits (currently set to 10), ensuring that the data remains intact and properly formatted across the resulting files.\n\n---\n\n### 2. Key functions and their purposes\n\n- **`Implicit line counting and splitting logic`**:\n    - **Inputs**:\n      - `complete.json`: The input file containing the data to be split.\n      - `split = 10`: The number of parts the file should be divided into.\n    - **Processing**:\n      - Counts the total number of lines in the input file.\n      - Calculates the split points based on the total number of lines and the number of splits.\n      - Reads the input file line by line, collects the data, and writes it to a new file whenever the current line count reaches a split point.\n    - **Output**:\n      - Multiple JSON files named `data_X.json` (where X represents the split number), each containing a portion of the original data.\n\n---\n\n### 3. Important interactions with other parts of the system\n- **Input File**: The script reads from `complete.json`, which is assumed to contain properly formatted JSON data.\n- **Output Files**: The script generates multiple JSON files (`data_1.json`, `data_2.json`, etc.) that can be used by other components of the system for further processing or analysis.\n- **No direct interactions with other modules**: This script appears to be a standalone utility for splitting files, though its output files may be consumed by other parts of the system (e.g., `dataloder.py` or other processing scripts).\n\n---\n\n### 4. Notable features or patterns\n- **Line-by-line processing**: The script processes the input file line by line, which is memory efficient and suitable for large files.\n- **Simple splitting logic**: The splitting is based on a straightforward calculation of line numbers, making it easy to understand and modify.\n- **File naming convention**: The output files follow a consistent naming pattern (`data_X.json`), which makes them easy to identify and manage.\n\n---\n\n### Overall\nThis script serves as a utility for splitting large JSON files into smaller, more manageable pieces. It is designed to handle the data efficiently without loading the entire file into memory, making it suitable for large datasets. The output files can then be used by other components of the system for processing, analysis, or other tasks."
+    },
+    {
+      "path": "dataloder.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `dataloder.py` file is primarily responsible for loading and preprocessing data for a Named Entity Recognition (NER) task using the BERT model. It handles tokenization, entity recognition, and batch preparation, ensuring data is formatted correctly for model training.\n\n### 2. Key functions and their purposes\n\n- **`list_find(list1: list, list2: list) -> int`**:\n  - **Inputs**:\n    - `list1` (list): The main list to search in.\n    - `list2` (list): The sublist to find.\n  - **Processing**: Iterates through `list1` to find the starting index of `list2`.\n  - **Output**: Returns the starting index if found, else -1.\n\n- **`seq_padding(X: list, padding: int) -> numpy.ndarray`**:\n  - **Inputs**:\n    - `X` (list): List of sequences to pad.\n    - `padding` (int): Value used for padding.\n  - **Processing**: Pads each sequence in `X` to a length of 514.\n  - **Output**: A padded numpy array of sequences.\n\n- **`DataIndex` class**:\n  - **Constructor (`__init__`)**:\n    - **Inputs**:\n      - `data` (list): The dataset to process.\n      - `batch_size` (int): Number of items per batch.\n    - **Processing**: Initializes data, batch size, and calculates steps.\n  - **`__len__` method**:\n    - **Output**: Number of batches.\n  - **`__iter__` method**:\n    - **Processing**: Yields batches of token IDs, start masks, and end masks.\n    - **Output**: Tuples of (token IDs, start masks, end masks).\n\n### 3. Important interactions with other parts of the system\n- Uses `BertTokenizer` from the `transformers` library for tokenization.\n- Likely used in a training loop where batches are fed into a BERT-based model for NER.\n- Interacts with data files for loading and saving random order indices.\n\n### 4. Notable features or patterns\n- **Iterator Pattern**: `DataIndex` generates batches on-demand, efficient for large datasets.\n- **Custom Data Loading**: Processes text, identifies entities, and prepares batches with padding.\n- **Efficient Memory Use**: Processes data in batches to avoid high memory usage.\n\n### Overall\nThis code is crucial for preprocessing NLP data, handling tokenization, entity recognition, and batch preparation. It uses the iterator pattern for efficient data loading, making it essential for training NER models with BERT."
+    },
+    {
+      "path": "main.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `main.py` file is the central component of a Named Entity Recognition (NER) system based on the BERT model. Its primary responsibilities include:\n- Loading and preparing training and validation data.\n- Defining and training a custom BERT-based model for NER tasks.\n- Evaluating the model's performance on the validation set.\n- Sending email notifications with training results and metrics.\n\n### 2. Key functions and their purposes\n\n- **`train_epoch()`**:\n  - **Inputs**: \n    - `train_data`: The training data loaded from a JSON file.\n  - **Processing**: \n    - Iterates over the training data in batches.\n    - Converts input data to tensors and moves them to the GPU.\n    - Zeroes the gradients, forwards the input through the model, computes loss using BCEWithLogitsLoss for two outputs, and updates the model parameters.\n  - **Output**: \n    - Returns the average loss after processing all batches in the epoch.\n\n- **`extract_items(text_in)`**:\n  - **Inputs**: \n    - `text_in`: A string of text to extract entities from.\n  - **Processing**: \n    - Tokenizes the input text.\n    - Passes the tokenized input through the model to get predictions.\n    - Applies thresholds (0.7 and 0.6) to the model's outputs to determine entity spans.\n  - **Output**: \n    - Returns a set of extracted entity strings.\n\n- **`evaluate()`**:\n  - **Inputs**: \n    - `dev_data`: The validation data loaded from a JSON file.\n  - **Processing**: \n    - Loads the best-performing model.\n    - Evaluates the model on each text in the validation set.\n    - Computes precision, recall, and F1 score.\n    - Writes detailed evaluation results to a CSV file.\n  - **Output**: \n    - Returns a formatted string with evaluation metrics.\n\n### 3. Important interactions with other parts of the system\n- **Data Loading**: \n  - The script loads training and validation data from JSON files located in the `data` directory.\n- **Model Serialization**: \n  - The trained model is saved to `NER_best.pth` for future use.\n- **Email Notifications**: \n  - The script sends an email with training loss and evaluation metrics using the `Email` class from `Modules.Email`.\n- **Distributed Training**: \n  - Although configured for distributed training, it currently runs on a single process.\n\n### 4. Notable features or patterns\n- **Custom BERT Model**: \n  - Extends BERT with custom linear layers and sigmoid activation for binary classification tasks.\n- **Dual Output Architecture**: \n  - The model produces two outputs (pn1 and pn2), possibly for different entity types or tasks.\n- **Threshold-based Inference**: \n  - Uses fixed thresholds (0.7 and 0.6) to determine entity spans from model outputs.\n- **Evaluation Metrics**: \n  - Computes precision, recall, and F1 score for comprehensive model evaluation.\n- **Email Integration**: \n  - Automates notifications for experiment tracking and monitoring.\n\n### Overall\nThis script is a complete implementation of a BERT-based NER system. It handles data loading, model definition, training, evaluation, and result reporting via email. The model's dual-output architecture suggests it may be handling multiple entity types or employing a specific strategy for improved performance. The inclusion of evaluation metrics and automated notifications makes it a robust tool for research or production environments."
+    },
+    {
+      "path": "test_Modules.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `test_Modules.py` file is a test script designed to verify the functionality of the `Email` module. Its primary responsibility is to test the email generation and sending capabilities of the system by interacting with the `Email` class from the `Modules` package.\n\n### 2. Key functions and their purposes\n\n- **`Email(receivers: str)`**:\n  - **Inputs**:\n    - `receivers` (str): The email address(es) of the recipient(s).\n  - **Processing**: Initializes an instance of the Email class with the specified receiver(s).\n  - **Output**: An instance of the Email class configured with the provided receiver(s).\n\n- **`generator(text: str, subject: str)`**:\n  - **Inputs**:\n    - `text` (str): The body of the email.\n    - `subject` (str): The subject line of the email.\n  - **Processing**: Constructs the email content using the provided text and subject.\n  - **Output**: The generated email content.\n\n- **`send()`**:\n  - **Inputs**: None.\n  - **Processing**: Sends the generated email to the specified receiver(s).\n  - **Output**: Confirmation of email delivery (implicit, based on the code).\n\n### 3. Important interactions with other parts of the system\n- The `Email` class is imported from the `Modules.Email` module, indicating that this test script relies on the implementation of the `Email` class in that module.\n- The script interacts with the email system (likely using an email library or framework) to send emails.\n\n### 4. Notable features or patterns\n- **Object-Oriented Programming (OOP)**: The `Email` class encapsulates email functionality, promoting modularity and reusability.\n- **Separation of Concerns**: The test script is separate from the implementation, following good testing practices.\n- **Testing**: This script serves as a test case for the email functionality, ensuring that emails can be generated and sent correctly.\n\n### Overall\nThe `test_Modules.py` script is a test harness for the `Email` module, designed to verify that emails can be generated and sent to specified recipients. It demonstrates the use of object-oriented programming and separation of concerns, with the `Email` class encapsulating email functionality and the test script validating its behavior."
+    },
+    {
+      "path": "test_generator.py",
+      "analysis": "### 1. Main purpose and responsibilities\nThe `test_generator.py` file is a test script designed to verify the functionality of data loading and batching. Its primary responsibility is to load training data from a JSON file, process it in batches, and ensure the data is correctly formatted and accessible.\n\n### 2. Key functions and their purposes\n\n- **`DataIndex(train_data: list, batch_size: int)`**:\n  - **Inputs**:\n    - `train_data` (list): A list of training data loaded from a JSON file.\n    - `batch_size` (int): The number of items per batch.\n  - **Processing**: Initializes the DataIndex object, preparing the data for batch processing.\n  - **Output**: An instance of DataIndex configured with the provided data and batch size.\n\n- **`DataLoader(dataset, batch_size, ...)`**:\n  - **Inputs**:\n    - `dataset`: The dataset to load.\n    - `batch_size`: Number of samples per batch.\n  - **Processing**: Creates a DataLoader instance to manage batched data access.\n  - **Output**: A DataLoader object that yields batches of data.\n\n- **`tqdm(iterable)`**:\n  - **Inputs**:\n    - `iterable`: The iterable to wrap (e.g., the DataIndex instance).\n  - **Processing**: Wraps the iterable with a progress bar for visual feedback.\n  - **Output**: An iterable with a progress bar indicating iteration progress.\n\n### 3. Important interactions with other parts of the system\n- **dataloder2.py**: The `DataIndex` class is imported from this module, indicating that `test_generator.py` relies on it for data handling.\n- **torch.utils.data**: The `DataLoader` is used, suggesting integration with PyTorch's data utilities.\n- **tqdm**: Used for displaying progress bars, enhancing user experience during data loading.\n- **./data/train_data.json**: The script loads data from this file, which is part of the project's data directory.\n\n### 4. Notable features or patterns\n- **Data Loading and Batching**: Uses PyTorch's DataLoader for efficient batch processing.\n- **Progress Tracking**: Implements tqdm for real-time progress monitoring.\n- **JSON Handling**: Utilizes codecs and json for reading and parsing JSON data.\n- **Modular Design**: Relies on external modules for data handling, promoting code separation and reusability.\n\n### Overall\nThe `test_generator.py` script is a test utility that ensures data loading and batching work correctly. It loads data from a JSON file, processes it in batches, and provides progress feedback. This script is essential for verifying the integrity of the data pipeline before integrating it into a larger application or model training workflow."
+    }
+  ],
+  "summary": "This project is a Named Entity Recognition (NER) model designed specifically for traditional Chinese medical texts. It leverages BERT as a feature extractor to reduce the amount of data required for training downstream models. The primary goal is to identify and extract specific entities such as symptoms, body parts, drug names, and prescriptions from unstructured medical text.\n\n### 1. Main Purpose and Functionality\nThe project focuses on developing a NER model tailored for traditional Chinese medical texts. Its primary functionality includes:\n- Extracting named entities (e.g., symptoms, body parts, drugs, prescriptions) from medical texts.\n- Utilizing BERT as an encoder to reduce the data requirements for training the downstream NER model.\n- Providing a pipeline for data preparation, model training, and evaluation.\n\n### 2. Tech Stack and Architecture\n- **Programming Languages**: Python is the primary language used for development.\n- **Frameworks and Libraries**: \n  - `transformers` library for BERT-based tokenization and feature extraction.\n  - `PyTorch` for model training and tensor operations.\n  - `numpy` for numerical computations.\n  - `tqdm` for progress bars during data processing.\n- **System Design**: The project follows a modular architecture with separate components for data formatting, data loading, model training, and evaluation. The overall system is designed as a typical NLP pipeline:\n  1. **Data Preparation**: Data cleaning, formatting, and splitting.\n  2. **Model Training**: Using BERT for encoding and a custom NER model for entity recognition.\n  3. **Evaluation**: Assessing model performance on a development set.\n\n### 3. Key Components and Their Interactions\n- **DataFormat**: A directory containing scripts for data processing:\n  - `Format.py`: Processes JSON files to extract text for training.\n  - `NER_Format.py`: Formats data specifically for NER tasks.\n  - `Split_File.py`: Splits large JSON files into smaller, manageable files.\n- **dataloder.py**: A custom data loader that handles data preprocessing and batching for training. It uses BERT tokenization and pads sequences to a fixed length.\n- **main.py**: The entry point of the application that orchestrates training, evaluation, and inference. It imports and uses components from `DataFormat` and `dataloder`.\n- **test_Modules.py**: A test script for verifying the functionality of the Email module.\n\n### 4. Notable Features\n- **BERT-Based Feature Extraction**: Reduces the amount of labeled data required for training the downstream NER model.\n- **Custom Data Loader**: Handles data preprocessing, tokenization, and batching efficiently.\n- **Modular Design**: Clear separation of concerns between data preparation, model training, and evaluation.\n- **Support for Both Chinese and English Documentation**: The project includes README files in both languages.\n\n### 5. Code Organization and Structure\n- **Folder Structure**:\n  - `DataFormat/`: Contains scripts for data processing and formatting.\n  - `img/`: Stores project-related images and diagrams.\n  - `main.py`: The entry point for model training and inference.\n  - `dataloder.py`: Custom data loading and preprocessing logic.\n  - `test_Modules.py`: Test script for the Email module.\n  - `README.md` and `README_EN.md`: Project documentation in Chinese and English.\n- **Design Patterns**: The project uses a modular approach with clear separation of concerns. The data loader is implemented as a class, and the main script orchestrates the overall workflow.\n\nThis project provides a structured approach to NER in traditional Chinese medical texts, leveraging state-of-the-art techniques like BERT for feature extraction while maintaining a clean and modular codebase."
+}
