@@ -281,161 +281,189 @@ ${fileList}
 
 async function smartFileFilter(files, projectUnderstanding, readmeContent) {
   const openai = new OpenAI({ baseURL: 'https://openrouter.ai/api/v1', apiKey: process.env.OPENROUTER_API_KEY });
-  const filePaths = files.map(f => f.path);
+  
+  // Filter out non-code files first
+  const codeFiles = files.filter(file => {
+    if (file.type !== 'blob') return false;
+    if (SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) return false;
+    return true;
+  });
+
+  const filePaths = codeFiles.map(f => f.path);
+
+  if (filePaths.length === 0) {
+    console.log(chalk.yellow('No code files found to analyze'));
+    return [];
+  }
+
+  console.log(chalk.blue(`📋 Found ${filePaths.length} code files, using AI to filter most important ones...`));
 
   try {
-    const prompt = `Analyze the project structure and very smartly, identify the MOST CRITICAL files for understanding the core functionality and execution flow of this codebase.
+    const prompt = `You are an expert code analyst. Analyze this project structure and identify the MOST CRITICAL files needed to understand the core business logic, architecture, and execution flow.
 
-Focus on:
-1. Entry points (main files that start the application)
-2. Core business logic files
-3. Key utility/helper files that are frequently imported
-4. Configuration files that define the application structure
-5. Files that connect different parts of the application
+SELECTION CRITERIA:
+1. Entry points (main application files, servers, index files)
+2. Core business logic and domain models
+3. Key controllers, services, or handlers
+4. Important utility/helper files that are widely used
+5. Configuration files that define application behavior
+6. Database models, schemas, or data access layers
+7. API routes and middleware
+8. Key components that connect different parts of the system
 
-Prioritize files that reveal how data flows through the system and how components interact.
+EXCLUDE:
+- Test files (*test*, *spec*, __tests__)
+- Documentation files
+- Build/config files (webpack, babel, etc.)
+- Simple utility files with minimal logic
+- Generated files
 
-IMPORTANT: Reply only with JSON data that has one key named "importantFiles" and an array of file paths as its value. DO NOT use Markdown formatting/ any backticks or any additional explanation. Just return plaintext JSON data.
+PROJECT CONTEXT:
+${projectUnderstanding}
 
-Output Example:
+README CONTENT:
+${readmeContent}
+
+FILE PATHS TO ANALYZE:
+${filePaths.join('\n')}
+
+RESPONSE FORMAT:
+Return ONLY a valid JSON object with this exact structure (no markdown, no explanations):
 {
-  "importantFiles": ["<path1>", "<path2>", …]
+  "importantFiles": ["path1", "path2", "path3"]
 }
 
-REMEMBER: NO ADDITIONAL EXPLANATION OR ANYTHING ELSE. JUST THE JSON DATA.
+Select 8-15 most critical files that would give someone the best understanding of how this codebase works.`;
 
-Context:
-  Project Type Analysis:
-  ${projectUnderstanding}
-
-  Provided README:
-  ${readmeContent}
-
-  Here is the list of file paths:
-  ${filePaths.join("\n")}
-
-`;
-
-// EXCLUDE:
-// - Documentation files (.md)
-// - Test files
-// - Asset files (images, fonts, PDF, etc.)
-// - Build configuration files
-// - Files with minimal code or boilerplate
-    // Define schema for file list response
+    // Define schema for structured response
     const fileListSchema = {
-      type: "object",
-      properties: {
-        importantFiles: {
-          type: "array",
-          items: { type: "string" },
-          description: "Array of file paths considered essential for understanding the codebase"
-        }
-      },
-      required: ["importantFiles"]
+      name: "file_filter_response",
+      schema: {
+        type: "object",
+        properties: {
+          importantFiles: {
+            type: "array",
+            items: { 
+              type: "string",
+              description: "File path from the provided list"
+            },
+            description: "Array of file paths considered essential for understanding the codebase",
+            minItems: 1,
+            maxItems: 20
+          }
+        },
+        required: ["importantFiles"],
+        additionalProperties: false
+      }
     };
 
     const { model, modelType } = config.configurations.find(c => c.name === 'smartFileFilter');
+    console.log(chalk.gray(`  ↳ Using model: ${model}`));
+    
     const response = await createChatCompletion(openai, model, modelType, prompt, fileListSchema);
+
+    // Validate response structure
+    if (!response || !response.choices || !response.choices[0] || !response.choices[0].message) {
+      throw new Error('Invalid API response structure');
+    }
+
     let content = response.choices[0].message.content;
-    // Try to extract JSON from the response using regex
-    // This will find content that starts with { and ends with }, capturing everything in between
+    console.log(chalk.gray(`  ↳ Raw AI response: ${content.substring(0, 200)}...`));
+
+    // Clean up the response content
+    content = content.trim();
+    
+    // Remove markdown code blocks if present
+    content = content.replace(/^```json\s*/i, '').replace(/\s*```\s*$/i, '');
+    
+    // Extract JSON if wrapped in other text
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       content = jsonMatch[0];
     }
-    
+
+    // Parse JSON response
+    let parsedResponse;
     try {
-      // Preprocess response to remove markdown code block indicators
-      console.log("Smart File Filter Response No Formatting: ", content);
-      content = content.replace(/^```json\s*/, '').replace(/\s*```\s*$/, '');
-      await saveApiCallContent("smartFileFilter", content);
-      // Parse the JSON response
-      const jsonResponse = JSON.parse(content);
-      const importantFiles = jsonResponse.importantFiles;
-
-      if (!Array.isArray(importantFiles)) {
-        throw new Error('AI response format invalid');
-      }
-
-      return files.filter(file => {
-        if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-          return false;
-        }
-        // return importantFiles;
-        return importantFiles.includes(file.path);
-      });
-    } catch (jsonError) {
-      console.error(chalk.yellow('JSON parsing error:'), jsonError.message);
-      console.log(chalk.yellow('Parsing file paths from text response'));
-      
-      // Extract JSON using regex - find the shortest valid JSON object
-      const jsonMatches = content.match(/\{[\s\S]*?\}/g);
-      if (jsonMatches && jsonMatches.length > 0) {
-        // Sort matches by length and try to parse each one, starting with the shortest
-        const sortedMatches = jsonMatches.sort((a, b) => a.length - b.length);
-        
-        for (const match of sortedMatches) {
-          try {
-            const parsedJson = JSON.parse(match);
-            if (parsedJson.importantFiles && Array.isArray(parsedJson.importantFiles)) {
-              console.log("Found valid JSON with importantFiles:", match);
-              return files.filter(file => {
-                if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-                  return false;
-                }
-                return parsedJson.importantFiles.includes(file.path);
-              });
-            }
-          } catch (e) {
-            console.log("Invalid JSON match:", match);
-            // Continue to next match if parsing fails
-          }
-        }
-      }
-      
-      // If we get here, we couldn't find a valid JSON with importantFiles
-      console.log("No valid JSON with importantFiles found in response");
-      
-      // Prepare for fallback text extraction
-      const filePaths = files.map(f => f.path);
-      await saveApiCallContent("smartFileFilter-JSON-Error", filePaths);
-      // Fallback: extract file paths from text response
-      // const content = response.choices[0].message.content;
-      const extractedPaths = [];
-      console.log("Extracted Paths: ", extractedPaths);
-      
-      // Extract file paths that match the pattern in our file list
-      for (const path of filePaths) {
-        if (content.includes(path)) {
-          extractedPaths.push(path);
-        }
-      }
-      
-      if (extractedPaths.length > 0) {
-        return files.filter(file => {
-          if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-            return false;
-          }
-          return extractedPaths.includes(file.path);
-        });
-      } else {
-        throw new Error('Could not extract file paths from response');
-      }
+      parsedResponse = JSON.parse(content);
+    } catch (parseError) {
+      console.error(chalk.red('JSON parsing failed:'), parseError.message);
+      console.log(chalk.yellow('Response content:'), content);
+      throw new Error('Failed to parse AI response as JSON');
     }
+
+    // Validate response structure
+    if (!parsedResponse.importantFiles || !Array.isArray(parsedResponse.importantFiles)) {
+      throw new Error('AI response missing importantFiles array');
+    }
+
+    const importantFilePaths = parsedResponse.importantFiles;
+    console.log(chalk.green(`✓ AI selected ${importantFilePaths.length} important files`));
+
+    // Save API response for debugging
+    await saveApiCallContent("smartFileFilter-success", JSON.stringify({
+      selectedFiles: importantFilePaths,
+      totalCodeFiles: filePaths.length
+    }, null, 2));
+
+    // Filter and return the selected files
+    const selectedFiles = codeFiles.filter(file => importantFilePaths.includes(file.path));
+    
+    // Log the selected files for visibility
+    console.log(chalk.blue('📋 Selected files:'));
+    selectedFiles.forEach(file => {
+      console.log(chalk.gray(`  • ${file.path}`));
+    });
+
+    return selectedFiles;
+
   } catch (error) {
     console.error(chalk.red('AI Filter Error:'), error.message);
-    console.log(chalk.yellow('Using fallback filtering'));
-    
-    // Enhanced fallback filtering
-    return files.filter(file => {
-      if (file.type !== 'blob' || SKIP_FILES.some(ext => file.path.toLowerCase().endsWith(ext))) {
-        return false;
+    console.log(chalk.yellow('🔄 Using intelligent fallback filtering...'));
+
+    // Save error details for debugging
+    await saveApiCallContent("smartFileFilter-error", `Error: ${error.message}\nStack: ${error.stack}`);
+
+    // Enhanced fallback filtering with better logic
+    const fallbackFiles = codeFiles.filter(file => {
+      const path = file.path.toLowerCase();
+      const fileName = file.path.split('/').pop().toLowerCase();
+      
+      // Priority 1: Entry points and main files
+      if (fileName.match(/^(index|main|app|server|start)\.(js|ts|jsx|tsx|py|java|go|rb|php|cs)$/)) {
+        return true;
       }
-      return IMPORTANT_FILES.some(name => file.path.toLowerCase().includes(name)) ||
-             file.path.match(/\.(js|jsx|ts|tsx|py|java|go|rb|php|cs)$/i) ||
-             file.path.match(/^(src|app|lib|config|core|server|client)\//);
+      
+      // Priority 2: Important configuration files
+      if (IMPORTANT_FILES.some(name => path.includes(name.toLowerCase()))) {
+        return true;
+      }
+      
+      // Priority 3: Core application files
+      if (path.match(/^(src|app|lib|core|server|client|api|routes|controllers|services|models|components)\//)) {
+        return true;
+      }
+      
+      // Priority 4: Common important file patterns
+      if (fileName.match(/^(router|route|controller|service|model|handler|middleware|config|util|helper)\.(js|ts|jsx|tsx|py|java|go|rb|php|cs)$/)) {
+        return true;
+      }
+      
+      // Priority 5: Database and data files
+      if (path.match(/(database|db|schema|migration|model)/)) {
+        return true;
+      }
+      
+      return false;
     });
+
+    console.log(chalk.green(`✓ Fallback selected ${fallbackFiles.length} files`));
+    console.log(chalk.blue('📋 Fallback selected files:'));
+    fallbackFiles.forEach(file => {
+      console.log(chalk.gray(`  • ${file.path}`));
+    });
+
+    return fallbackFiles.slice(0, 15); // Limit to 15 files to avoid overwhelming analysis
   }
 }
 
